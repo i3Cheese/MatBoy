@@ -1,0 +1,6 @@
+sqlalchemy==1.3.5
+sqlalchemy-mixins==1.2.1
+wtforms==2.2.1
+flask==1.1.1
+flask-login==0.5.0
+flask-wtf==0.14.3
