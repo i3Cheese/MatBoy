@@ -27,3 +27,5 @@ class Team(BaseModel):
     trainer = orm.relationship("User", backref="teams")
     tournament = orm.relationship("Tournament", backref="teams")
     league = orm.relationship("League", backref="teams")
+
+    players = orm.relationship("User", secondary="users_to_teams", backref="teams")
