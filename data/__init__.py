@@ -1,2 +1,2 @@
 from .__all_models import *
-from . import db_session
+from .db_session import session, global_init
