@@ -6,16 +6,9 @@ if(typeof(String.prototype.strip) === "undefined")
     };
 }
 
-function joinPath(paths){
-    let res=""
-    paths.forEach(path => {
-        path = path.strip("/");
-        res +=  path + "/";
-    });
-    return res.strip("/");
-}
 
 
-function redirectWithStep(page){
-    window.location.pathname=joinPath([page,window.location.pathname,document.location.hash]);
+function redirectWithStep(path){
+    window.location.href = path;
+    // window.location.search = "?" + "return_to=" + window.location.pathname;
 }

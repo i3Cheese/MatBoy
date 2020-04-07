@@ -1,0 +1,19 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "air-datepicker": {
+      "version": "2.2.3",
+      "resolved": "https://registry.npmjs.org/air-datepicker/-/air-datepicker-2.2.3.tgz",
+      "integrity": "sha1-nbtrxryMnZ2zgEdQkTcNrYLC94c=",
+      "requires": {
+        "jquery": ">=2.0.0 <4.0.0"
+      }
+    },
+    "jquery": {
+      "version": "3.4.1",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-3.4.1.tgz",
+      "integrity": "sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw=="
+    }
+  }
+}

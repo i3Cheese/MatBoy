@@ -29,6 +29,10 @@
       crossorigin="anonymous"
     ></script>
     
+    <!-- Beautiful calendar -->
+    <link href="../static/node_modules/air-datepicker/dist/css/datepicker.min.css" rel="stylesheet" type="text/css">
+    <script src="../static/node_modules/air-datepicker/dist/js/datepicker.min.js"></script>
+
     <script src="../static/js/script.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
 
@@ -38,30 +42,42 @@
   </head>
 
   <body>
-    <header class="">
-      <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand logo", href="/">MatBoy</a>
-        <div class="login-manager">
-            {% if current_user.is_authenticated %}
-                <a 
-                  class="navbar-brand" 
-                  href="/profile/{{current_user.id}}"
-                >{{ current_user.name }}</a>
-            {% else %}
-                <a class="btn btn-primary" onclick="redirectWithStep('/register');">
-                    Зарегистрироваться
-                </a>
-                <a class="btn btn-success" onclick="redirectWithStep('/login');">
-                    Войти
-                </a>
-            {% endif %}
+    <div class="layout">
+      <div class="layout__page layout__page_thin">
+        <div class="shadow-box">
+          <div class="shadow-box__title">
+            {% block title_layout %}
+              
+            {% endblock title_layout %}
+          </div>
+          {% block form %}
+      
+          {% endblock form %}
         </div>
-      </nav>
-    </header>
-
-    <!-- Begin page content -->
-    <main role="main" class="container">
-      {% block content %}{% endblock %}
-    </main>
+        <div class="shadow-box shadow-box_additionals">
+          <span class="form-additional-message">
+            {% block link_to %}
+            
+            {% endblock link_to %}
+          </span>
+        </div>
+        <div class="horizontal-spacer"></div>
+      </div>
+    </div>
   </body>
 </html>
+
+{% macro form_field(field) %}
+  {% if field.errors %}
+    <div class="form__field s-with-error">
+  {% else %}
+    <div class="form__field">
+  {% endif %}
+{% endmacro %}
+{% macro field_errors(field) %}
+  {% for error in field.errors %}
+      <div class="s-error">
+        {{error}}
+      </div>
+  {% endfor %}
+{% endmacro %}

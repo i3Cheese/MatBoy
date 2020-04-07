@@ -1,0 +1,147 @@
+{% extends 'sign__.html' %}
+{% block title %} Регистрация {% endblock title %}
+{% block title_layout %} Регистрация {% endblock title_layout %} 
+{% block form %}
+
+<form
+    class="form form_register s-form validateble"
+    id="register_form"
+    method="post"
+    data-remote="true"
+>
+{{form.hidden_tag()}}
+  <fieldset class="form__fields">
+    {% from "sign__.html" import form_field, field_errors %}
+    {{form_field(form.email)}}
+      {{form.email.label(for="email_field", class="form__field-label")}}
+      {{form.email(
+        class="form__field-input",
+        value="",
+        autofocus="",
+        type="email",
+        id="email_field",
+      )}}
+      {{field_errors(form.email)}}
+    </div>
+    {{form_field(form.surname)}}
+      {{form.surname.label(for="surname_field", class="form__field-label")}}
+      {{form.surname(
+        type="text",
+        value="",
+        class="form__field-input",
+        id="surname_field",
+      )}}
+      {{field_errors(form.surname)}}
+    </div>
+    {{form_field(form.name)}}
+      {{form.name.label(for="name_field", class="form__field-label")}}
+      {{form.name(
+        type="text",
+        value="",
+        class="form__field-input",
+        id="name_field",
+      )}}
+      {{field_errors(form.name)}}
+    </div>
+    {{form_field(form.patronymic)}}
+      {{form.patronymic.label(for="patronymic_field", class="form__field-label")}}
+      {{form.patronymic(
+        type="text",
+        value="",
+        class="form__field-input",
+        id="patronymic_field",
+      )}}
+      {{field_errors(form.patronymic)}}
+    </div>
+    {{form_field(form.birthday)}}
+      {{form.birthday.label(for="birthday_field", class="form__field-label")}}
+      {{form.birthday(
+        type="text",
+        value="",
+        class="form__field-input datepicker-here",
+        id="birthday_field",
+        data_position="right top"
+      )}}
+      {{field_errors(form.birthday)}}
+    </div>
+    {{form_field(form.city)}}
+      {{form.city.label(for="city_field",class="form__field-label")}}
+      {{form.city(
+        type="city",
+        value="",
+        class="form__field-input",
+        id="city_field" 
+      )}}
+      {{field_errors(form.city)}}
+    </div>
+
+    {{form_field(form.password)}}
+      {{form.password.label(for="password_field", class="form__field-label")}}
+      {{form.password(
+        type="password",
+        value="",
+        class="form__field-input",
+        id="password_field",
+        autocomplete="off",
+      )}}
+      {{field_errors(form.password)}}
+    </div>
+    {{form_field(form.password_again)}}
+      {{form.password_again.label(for="password_repeat", class="form__field-label")}}
+      {{form.password_again(
+        type="password",
+        value="",
+        class="form__field-input",
+        id="password_repeat",
+        autocomplete="off"
+      )}}
+      {{field_errors(form.password_again)}}
+    </div>
+
+
+    <!-- <div class="form__field">
+          <input name="captcha" type="hidden">
+              
+<div class="captcha">
+<div id="captcha_widget"><div style="width: 304px; height: 78px;"><div><iframe src="https://www.google.com/recaptcha/api2/anchor?ar=2&amp;k=6LftHuoSAAAAAORONRXn_6xb2f_QCtXqfbRPfY2e&amp;co=aHR0cHM6Ly9hY2NvdW50LmhhYnIuY29tOjQ0Mw..&amp;hl=ru&amp;v=OOKISvkNnVD_m_9dreR_1S0n&amp;theme=light&amp;size=normal&amp;cb=6gd4rwc91y3s" width="304" height="78" role="presentation" name="a-4rfzh8n2cgoh" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox"></iframe></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div></div>
+<input type="hidden" name="captcha_type" value="recaptcha">
+</div>
+<script src="https://apis.google.com/_/scs/apps-static/_/js/k=oz.gapi.ru.t5GEBoMzr9M.O/m=client,plusone/rt=j/sv=1/d=1/ed=1/am=wQE/rs=AGLTcCPPPuSosich1nKC7-b1vtIqp-7BQA/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="https://www.gstatic.com/recaptcha/releases/OOKISvkNnVD_m_9dreR_1S0n/recaptcha__ru.js"></script><script async="" src="//www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://mc.yandex.ru/metrika/watch.js"></script><script type="text/javascript">
+var widgetId1;
+var verifyCallback = function(response) {
+  $('.item.captcha').closest('.s-with-error').removeClass('s-with-error').find('.s-error').remove();
+  $('.item.captcha input[name="captcha_type"]').trigger('change');
+};
+var onloadCallback = function() {
+  widgetId1 = grecaptcha.render('captcha_widget', {
+    'sitekey' : '6LftHuoSAAAAAORONRXn_6xb2f_QCtXqfbRPfY2e',
+    'callback' : verifyCallback,
+    'theme' : 'light'
+  });
+};
+</script>
+<script>
+function reloadRecaptcha(){
+  // reload captcha
+  grecaptcha.reset(widgetId1);
+}
+</script>
+<script async="" defer="" src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&amp;render=explicit&amp;hl=ru"></script>
+
+
+        </div> -->
+
+    <div class="form__buttons s-buttons">
+      {{form.submit(
+        type="submit",
+        id="registration_button",
+        class="button button_wide button_primary"
+      )}}
+    </div>
+  </fieldset>
+</form>
+{% endblock form %}
+
+{% block link_to %}
+Уже зарегестрированы?&nbsp;<a href="/login" class="form-additional-message__link">Войдите</a>
+{% endblock link_to %}
