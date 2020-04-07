@@ -2,21 +2,24 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 import sqlalchemy.ext.declarative as dec
-from sqlalchemy_mixins import AllFeaturesMixin
+from sqlalchemy_mixins import ReprMixin, SerializeMixin, TimestampsMixin
 
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
-session = None
 
 
-class BaseModel(SqlAlchemyBase, AllFeaturesMixin):
+class BaseModel(SqlAlchemyBase, ReprMixin, SerializeMixin, TimestampsMixin):
     __abstract__ = True
-    pass
+    
+    def fill(self, **kwargs):
+        for name in kwargs.keys():
+            setattr(self, name, kwargs[name])
+        return self
 
 
 def global_init(db_file: str) -> None:
-    global __factory, session
+    global __factory
     if __factory:
         return
 
@@ -28,15 +31,13 @@ def global_init(db_file: str) -> None:
     print(f'Подключение к базе данных по адресу {repr(conn_str)}')
 
     engine = sa.create_engine(conn_str, echo=False)
-    __factory = orm.sessionmaker(bind=engine)
+    __factory = orm.sessionmaker(autocommit=False,
+                                 autoflush=False, 
+                                 bind=engine)
 
     from . import __all_models
 
     SqlAlchemyBase.metadata.create_all(engine)
-    session = scoped_session(sessionmaker(autocommit=False,
-                                          autoflush=False,
-                                          bind=engine))
-    BaseModel.set_session(session)
 
 
 def create_session() -> Session:

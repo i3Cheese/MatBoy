@@ -24,7 +24,7 @@ class Team(BaseModel):
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"), nullable=True)
     league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=True)
 
-    trainer = orm.relationship("User", backref="teams")
+    trainer = orm.relationship("User", backref="teams_for_train")
     tournament = orm.relationship("Tournament", backref="teams")
     league = orm.relationship("League", backref="teams")
 

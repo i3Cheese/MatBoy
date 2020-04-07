@@ -17,6 +17,6 @@ class Game(BaseModel):
     protocol = sa.Column(sa.Text, nullable=True)
     finish = sa.Column(sa.Boolean, default=False)
 
-    team1 = orm.relationship("Team", backref="games")
-    team2 = orm.relationship("Team", backref="games")
+    team1 = orm.relationship("Team", backref="games_1", foreign_keys=[team1_id,])
+    team2 = orm.relationship("Team", backref="games_2", foreign_keys=[team2_id,])
     league = orm.relationship("League", backref="games")

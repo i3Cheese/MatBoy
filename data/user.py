@@ -15,11 +15,11 @@ class User(BaseModel, UserMixin):
     name = sa.Column(sa.String, nullable=False)
     patronymic = sa.Column(sa.String, nullable=True)
     city = sa.Column(sa.String, nullable=True)
-    birthday = sa.Column(sa.DateTime)
+    birthday = sa.Column(sa.Date)
     email = sa.Column(sa.String, index=True, unique=True, nullable=True)
     hashed_password = sa.Column(sa.String, nullable=True)
     is_creator = sa.Column(sa.Boolean, default=False)
-
+    
     def __str__(self):
         return f"{self.surname} {self.name} {self.patronymic}"
 
