@@ -171,6 +171,16 @@ fieldset {
     background-color: cornflowerblue;
 }
 
+.button_success{
+    color: #eee;
+    background-color: #00a550;
+}
+
+.login_manager>.btn{
+    color: inherit;
+    margin: 0 3px;
+}
+
 .shadow-box_additionals {
     margin-top: 16px;
     padding: 15px 0;
@@ -198,6 +208,7 @@ fieldset {
 
 input {
     -webkit-writing-mode: horizontal-tb !important;
+    writing-mode: horizontal-tb !important;
     text-rendering: auto;
     color: -internal-light-dark-color(black, white);
     letter-spacing: normal;

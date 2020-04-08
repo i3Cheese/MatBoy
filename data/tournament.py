@@ -12,8 +12,8 @@ class Tournament(BaseModel):
     title = sa.Column(sa.String, unique=True)
     description = sa.Column(sa.Text, nullable=True)
     place = sa.Column(sa.String, nullable=True)
-    start = sa.Column(sa.DateTime, nullable=True)
-    end = sa.Column(sa.DateTime, nullable=True)
+    start = sa.Column(sa.Date, nullable=True)
+    end = sa.Column(sa.Date, nullable=True)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
 
     chief = orm.relationship("User", backref="tournaments")

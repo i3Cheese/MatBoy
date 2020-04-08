@@ -68,6 +68,12 @@ def register_page():
         return redirect("/login")
     return render_template("register.html", form=form)
 
+@login_required
+@app.route("/logout")
+def logout_page():
+    logout_user()
+    return redirect("/")
+
 
 
 if __name__ == "__main__":
