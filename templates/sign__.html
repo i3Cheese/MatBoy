@@ -66,18 +66,3 @@
     </div>
   </body>
 </html>
-
-{% macro form_field(field) %}
-  {% if field.errors %}
-    <div class="form__field s-with-error">
-  {% else %}
-    <div class="form__field">
-  {% endif %}
-{% endmacro %}
-{% macro field_errors(field) %}
-  {% for error in field.errors %}
-      <div class="s-error">
-        {{error}}
-      </div>
-  {% endfor %}
-{% endmacro %}

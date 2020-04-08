@@ -4,7 +4,9 @@ from wtforms import BooleanField, TextAreaField, SubmitField, DateField
 from wtforms.fields.html5 import EmailField, IntegerField
 from flask_wtf import FlaskForm
 import datetime
-from data import User, create_session
+from data import User, Tournament, create_session
+
+DATA_FORMAT = "%d.%m.%Y"
 
 
 class NullableDateField(DateField):
@@ -40,6 +42,7 @@ def unique_email_validator(form, field):
     session = create_session()
     if session.query(User).filter(User.email == email).first():
         raise ValidationError("Пользователь с таким e-mail уже зарегестрирован")
+    
 
 
 def password_secure_validator(form, field):
@@ -59,7 +62,7 @@ class RegisterForm(FlaskForm):
     name = StringField('Имя', validators=[field_data_capitalizer, DataRequired()])
     patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer])
     city = StringField("Город", validators=[field_data_capitalizer, DataRequired()])
-    birthday = DateField("Дата рождения", format="%d.%m.%Y", validators=[DataRequired()])
+    birthday = DateField("Дата рождения", format=DATA_FORMAT, validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
 
@@ -67,3 +70,11 @@ class LoginForm(FlaskForm):
     email = EmailField("E-mail", validators=[field_data_lower, Email(),  DataRequired()])
     password = PasswordField("Пароль", validators=[DataRequired()])
     submit = SubmitField("Войти")
+
+class TournamentInfoForm(FlaskForm):
+    title = StringField("Название", validators=[DataRequired()])
+    description = TextAreaField("Дополнительная информация")
+    place = StringField("Местро проведения")
+    start = NullableDateField("Начало турнира", format=DATA_FORMAT)
+    end = NullableDateField("Конец турнира", format=DATA_FORMAT)
+    submit = SubmitField("Подтвердить")

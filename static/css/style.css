@@ -22,15 +22,25 @@ body {
     margin: 0 auto;
 }
 
+.layout__page_middle {
+    max-width: 700px;
+    margin-top: 50px;
+}
+
 .layout__page_thin {
     margin-top: 60px;
     max-width: 460px;
 }
 
 @media only screen and (max-width: 480px){
-.layout__page_thin {
-    margin-top: 0;
+    .layout__page_thin {
+        margin-top: 0;
+    }
 }
+@media only screen and (max-width: 750px){
+    .layout__page_middle{
+        margin-top: 0;
+    }
 }
 
 .shadow-box {
@@ -119,6 +129,9 @@ fieldset {
     font-size: 14px;
     font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
     color: #333;
+}
+textarea.form__field-input {
+    height: 160px;
 }
 
 .s-with-error .form__field-input {

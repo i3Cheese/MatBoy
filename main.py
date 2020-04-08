@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_login import login_required
 
 from data import *
-from forms import RegisterForm, LoginForm
+from forms import RegisterForm, LoginForm, TournamentInfoForm
 
 
 app = Flask(__name__)
@@ -24,7 +24,7 @@ def main():
 
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(user_id) -> User:
     session = create_session()
     return session.query(User).get(user_id)
 
@@ -68,11 +68,70 @@ def register_page():
         return redirect("/login")
     return render_template("register.html", form=form)
 
-@login_required
+
 @app.route("/logout")
+@login_required
 def logout_page():
     logout_user()
     return redirect("/")
+
+
+@app.route("/new_tournament", methods=["POST", "GET"])
+@login_required
+def tournament_creator_page():
+    if not current_user.is_creator:
+        abort(403)
+    form = TournamentInfoForm()
+    if form.validate_on_submit():
+        session = create_session()
+        if session.query(Tournament).filter(Tournament.title == form.title.data).first():
+            form.title.errors.append("Турнир с таким названием уже существует")
+        tournament = Tournament().fill(title=form.title.data,
+                                       description=form.description.data,
+                                       place=form.place.data,
+                                       start=form.start.data,
+                                       end=form.end.data,)
+        current_user.tournaments.append(tournament)
+        session.merge(current_user)
+        session.commit()
+        
+        return redirect("/")
+    return render_template("tournament_editor.html", form=form)
+
+@app.route("/edit_tournament/<int:tour_id>", methods=["POST", "GET"])
+@login_required
+def tournament_edit_page(tour_id: int):
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not (current_user.id == 1 or tour.chief_id == current_user.id):
+        abort(403)
+    form = TournamentInfoForm()
+    if form.validate_on_submit():
+        new_title = form.title.data
+        # if title changed and new_title exist
+        if new_title != tour.title and session.query(Tournament).filter(Tournament.title == new_title).first():
+            form.title.errors.append("Турнир с таким названием уже существует")
+            return render_template("tournament_editor.html", form=form)
+        
+        # Change tour values
+        tour.title = new_title
+        tour.description = form.description.data
+        tour.place = form.place.data
+        tour.start = form.start.data
+        tour.end = form.end.data
+        session.merge(tour)
+        session.commit()
+        return redirect("/")
+    elif not form.is_submitted():
+        form.title.data = tour.title
+        form.description.data = tour.description
+        form.place.data = tour.place
+        form.start.data = tour.start
+        form.end.data = tour.end
+    return render_template("tournament_editor.html", form=form)
+    
+        
+        
 
 
 

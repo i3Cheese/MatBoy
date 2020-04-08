@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% from "form_macroses.html" import form_field, field_errors %}
+{% block title %}
+  {% if form.title.data %}
+    {{form.title.data}} - Edit
+  {% else %}
+    Новый Турнир
+  {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="layout">
+  <div class="layout__page layout__page_middle">
+    <div class="shadow-box">
+      {% block form %}        
+      <form
+        class="form form_tournament"
+        method="post"
+        data-remote="true"
+      >
+        {{form.hidden_tag()}}
+        <fieldset class="form__fields">
+          {{form_field(form.title)}}
+            {{form.title.label(for="title_field", class="form__field-label")}}
+            {{form.title(
+                type="text",
+                class="form__field-input",
+                autocomplete="off"
+            )}}
+            {{field_errors(form.title)}}
+          </div>
+          {{form_field(form.description)}}
+            {{form.description.label(class="form__field-label")}}
+            {{form.description(
+                class="form__field-input",
+                autocomplete="off"
+            )}}
+            {{field_errors(form.description)}}
+          </div>
+          {{form_field(form.place)}}
+            {{form.place.label(class="form__field-label")}}
+            {{form.place(
+                type="text",
+                class="form__field-input",
+                autocomplete="off"
+            )}}
+            {{field_errors(form.place)}}
+          </div>
+            {{form_field(form.start)}}
+            {{form.start.label(class="form__field-label")}}
+            {{form.start(
+                type="text",
+                class="form__field-input datepicker-here",
+                autocomplete="off"
+            )}}
+            {{field_errors(form.start)}}
+          </div>
+          {{form_field(form.end)}}
+            {{form.end.label(class="form__field-label")}}
+            {{form.end(
+                type="text",
+                class="form__field-input datepicker-here",
+                autocomplete="off"
+            )}}
+            {{field_errors(form.end)}}
+          </div>
+          <div class="form__buttons s-buttons">
+            {{form.submit(
+                type="submit",
+                id="registration_button",
+                class="button button_wide button_primary"
+            )}}
+          </div>
+        </fieldset>
+      </form>
+      {% endblock form %}
+    </div>
+    <div class="horizontal-spacer"></div>
+  </div>
+</div>
+{% endblock content %}
