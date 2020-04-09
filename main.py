@@ -165,7 +165,5 @@ def team_request(tour_id: int):
     return render_template("team_request.html", tour=tour, form=form)
         
 
-
-
 if __name__ == "__main__":
     main()
