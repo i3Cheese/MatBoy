@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="layout">
+  <div class="box_container">
+    <div class="tournaments_box">
+      <div class="shadow-box__title">
+        Турниры
+      </div>
+      {% for tour in tournaments %}
+      {% set format = "%d.%m.%Y" %}
+        <div class="tournament block_link" onclick="redirectWithStep('/tournament/{{tour.id}}')">
+          <h2 class="item_title">{{tour.title}}</h2>
+          <div class="dates">
+            {% if tour.start and tour.end %}
+            {{tour.start.strftime(format)}} - {{tour.end.strftime(format)}}
+            {% elif tour.start %}
+            {{tour.start.strftime(format)}}
+            {% else %}
+            Даты проведения не известны.
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

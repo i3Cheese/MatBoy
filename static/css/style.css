@@ -214,9 +214,18 @@ textarea.form__field-input {
     color: #558cb7;
 }
 
+.form__field-list {
+    list-style-type: none;
+    padding: 0 20px;
+}
+
 .horizontal-spacer{
     height: 10px;
     width: 100%;
+}
+
+.item_title{
+    margin-top: 20px;
 }
 
 input {
@@ -246,3 +255,55 @@ input {
 button, input {
     overflow: visible;
 }
+
+.block_link{
+    cursor: pointer;
+    transition: 0.2s ease-in;
+}
+
+.block_link:hover{
+    background: rgba(0, 255, 255, 0.05)
+}
+
+.tournament {
+    text-align: center;
+    padding: 10px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: center;
+}
+
+.tournaments_box{
+    max-width: 700px;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    border-radius: 4px;
+    flex-grow: 1;   
+    
+    padding: 10px;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+
+.box_container{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap-reverse;
+    flex-direction: row;
+    margin-top: 60px;
+    margin-bottom: 10px;
+    padding: 0 13px;
+}
+
+@media only screen and (max-width: 700px){
+    .box_container{
+        flex-direction: column;
+        margin-top: 0px;
+        padding: 0px;
+    }
+    .box_container > div{
+        width: 100%;
+    }
+}
+

@@ -4,7 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_login import login_required
 
 from data import *
-from forms import RegisterForm, LoginForm, TournamentInfoForm
+from forms import RegisterForm, LoginForm, TournamentInfoForm, TeamForm
 
 
 app = Flask(__name__)
@@ -32,7 +32,9 @@ def load_user(user_id) -> User:
 @app.route("/")
 @app.route("/index")
 def index_page():
-    return render_template("base.html")
+    session = create_session()
+    tournaments = session.query(Tournament).all()
+    return render_template("index.html", tournaments=tournaments)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -98,6 +100,7 @@ def tournament_creator_page():
         return redirect("/")
     return render_template("tournament_editor.html", form=form)
 
+
 @app.route("/edit_tournament/<int:tour_id>", methods=["POST", "GET"])
 @login_required
 def tournament_edit_page(tour_id: int):
@@ -121,16 +124,45 @@ def tournament_edit_page(tour_id: int):
         tour.end = form.end.data
         session.merge(tour)
         session.commit()
+        
         return redirect("/")
+    
     elif not form.is_submitted():
         form.title.data = tour.title
         form.description.data = tour.description
         form.place.data = tour.place
         form.start.data = tour.start
         form.end.data = tour.end
+        
     return render_template("tournament_editor.html", form=form)
     
+    
+@app.route("/team_request/<int:tour_id>", methods=["GET", "POST"])
+@login_required
+def team_request(tour_id: int):
+    form = TeamForm()
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not tour:
+        abort(404)
+    if form.validate_on_submit():
+        team = Team().fill(
+            name=form.name.data,
+            motto=form.motto.data,
+            trainer_id=current_user.id,
+            tournament_id=tour.id,
+        )
         
+        # for email in form.players.data:
+        #     user = session.query(User).filter(User.email==email)
+        #     if not user:
+        #         return render_template("team_request.html", tour=tour, form=form, message=message)
+        #     team.players.append(user)
+        session.add(team)
+        session.commit()
+        return redirect(f"/tournament/{tour_id}")
+
+    return render_template("team_request.html", tour=tour, form=form)
         
 
 
