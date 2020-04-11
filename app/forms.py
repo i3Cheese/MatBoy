@@ -1,10 +1,10 @@
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
+from wtforms.validators import DataRequired, Email, ValidationError, EqualTo, Optional
 from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList
 from wtforms.fields.html5 import EmailField, IntegerField
 from flask_wtf import FlaskForm
 import datetime
-from data import User, Tournament, create_session
+from app import User, Tournament
 
 DATA_FORMAT = "%d.%m.%Y"
 
@@ -114,9 +114,11 @@ class TeamForm(FlaskForm):
     motto = TextAreaField("Девиз команды")
     players = FieldList(ListItemEmailField(arguments={"class": u"form__field-input",
                                                        "autocomplete": u"offfff",
-                                                       "type": "e-m-a"},
+                                                       "type": u"e-m-a-i-l"},
                                             label="E-mail участника",
-                                            validators=[field_data_lower, exist_email_validator]
+                                            validators=[DataRequired(),
+                                                        field_data_lower,
+                                                        exist_email_validator]
                                             ),
                         "Участники",
                         min_entries=4,

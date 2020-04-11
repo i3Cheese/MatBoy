@@ -4,7 +4,16 @@
 Заявка - {{tour.title}}
 {% endblock title %}
 
+
+
 {% block form %}
+<template id="user_email_field">
+  <li>
+    <label for="players-0">E-mail участника</label>
+    <input autocomplete="offfff" class="form__field-input" id="players-0" name="players-0" type="e-m-a" value="">
+  </li>
+</template>
+
   <form
     class="form form_team"
     method="post"
@@ -37,6 +46,14 @@
           autocomplete="offfff"
         )}}
         {{field_errors(form.players)}}
+        <button class="button button_circle button_plus"
+                onclick="addUserEmailField()"
+                type="button">+
+        </button>
+        <button class="button button_circle button_minus"
+                onclick="deleteUserEmailField()"
+                type="button">-
+        </button>
       </div>
       {{message}}
       <div class="form__buttons s-buttons">
