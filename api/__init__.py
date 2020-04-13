@@ -6,12 +6,10 @@ from data import global_init
 from config import config
 
 app = Flask(__name__)
-for key, value in config.APP_CONFIG.items():
+for key, value in config.API_CONFIG.items():
     app.config[key] = value
     
-login_manager = LoginManager()
-login_manager.init_app(app)
-
+    
 from . import web_pages
 app.register_blueprint(web_pages.blueprint)
 

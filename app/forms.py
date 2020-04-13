@@ -5,8 +5,9 @@ from wtforms.fields.html5 import EmailField, IntegerField
 from flask_wtf import FlaskForm
 import datetime
 from data import User, Tournament, create_session
+from config import config
 
-DATA_FORMAT = "%d.%m.%Y"
+DATE_FORMAT = config.DATE_FORMAT
 
 
 class NullableDateField(DateField):
@@ -77,7 +78,7 @@ class RegisterForm(FlaskForm):
                              field_data_capitalizer])
     city = StringField("Город", validators=[
                        field_data_capitalizer, DataRequired()])
-    birthday = DateField("Дата рождения", format=DATA_FORMAT,
+    birthday = DateField("Дата рождения", format=DATE_FORMAT,
                          validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
@@ -93,8 +94,8 @@ class TournamentInfoForm(FlaskForm):
     title = StringField("Название", validators=[DataRequired()])
     description = TextAreaField("Дополнительная информация")
     place = StringField("Местро проведения")
-    start = NullableDateField("Начало турнира", format=DATA_FORMAT)
-    end = NullableDateField("Конец турнира", format=DATA_FORMAT)
+    start = NullableDateField("Начало турнира", format=DATE_FORMAT)
+    end = NullableDateField("Конец турнира", format=DATE_FORMAT)
     submit = SubmitField("Подтвердить")
 
 

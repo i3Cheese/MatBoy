@@ -1,11 +1,15 @@
 from app import login_manager
 from flask import Blueprint, render_template, redirect, abort
-from flask_login import login_user, logout_user
-from data import User, Tournament, create_session
-from forms import LoginForm, RegisterForm, JobsForm, DepartmentForm,
+from flask_login import login_user, logout_user, login_required, current_user
+from data import User, Tournament, create_session, Team
+from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm
+from config import config
 
 
-blueprint = Blueprint('web_pages', __name__, template_folder="templates")
+blueprint = Blueprint('web_pages',
+                      __name__,
+                      template_folder=config.TEMPLATES_FOLDER,
+                      static_folder=config.STATIC_FOLDER)
 
 
 @login_manager.user_loader
@@ -27,9 +31,11 @@ def login_page():
     form = LoginForm()
     if form.validate_on_submit():
         session = create_session()
-        user = session.query(User).filter(User.email == form.email.data).first()
+        user = session.query(User).filter(
+            User.email == form.email.data).first()
         if not user:
-            form.email.errors.append("Пользователь с таким e-mail не зарегестрирован")
+            form.email.errors.append(
+                "Пользователь с таким e-mail не зарегестрирован")
         elif not user.check_password(form.password.data):
             form.password.errors.append("Неправильный пароль")
         else:
@@ -44,11 +50,11 @@ def register_page():
     if form.validate_on_submit():
         session = create_session()
         user = User().fill(email=form.email.data,
-                    name=form.name.data,
-                    surname=form.surname.data,
-                    patronymic=form.patronymic.data,
-                    city=form.city.data,
-                    birthday=form.birthday.data,)
+                           name=form.name.data,
+                           surname=form.surname.data,
+                           patronymic=form.patronymic.data,
+                           city=form.city.data,
+                           birthday=form.birthday.data,)
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
@@ -81,7 +87,7 @@ def tournament_creator_page():
         current_user.tournaments.append(tournament)
         session.merge(current_user)
         session.commit()
-        
+
         return redirect("/")
     return render_template("tournament_editor.html", form=form)
 
@@ -100,7 +106,7 @@ def tournament_edit_page(tour_id: int):
         if new_title != tour.title and session.query(Tournament).filter(Tournament.title == new_title).first():
             form.title.errors.append("Турнир с таким названием уже существует")
             return render_template("tournament_editor.html", form=form)
-        
+
         # Change tour values
         tour.title = new_title
         tour.description = form.description.data
@@ -109,19 +115,19 @@ def tournament_edit_page(tour_id: int):
         tour.end = form.end.data
         session.merge(tour)
         session.commit()
-        
+
         return redirect("/")
-    
+
     elif not form.is_submitted():
         form.title.data = tour.title
         form.description.data = tour.description
         form.place.data = tour.place
         form.start.data = tour.start
         form.end.data = tour.end
-        
+
     return render_template("tournament_editor.html", form=form)
-    
-    
+
+
 @blueprint.route("/team_request/<int:tour_id>", methods=["GET", "POST"])
 @login_required
 def team_request(tour_id: int):
@@ -137,15 +143,14 @@ def team_request(tour_id: int):
             trainer_id=current_user.id,
             tournament_id=tour.id,
         )
-        
-        # for email in form.players.data:
-        #     user = session.query(User).filter(User.email==email)
-        #     if not user:
-        #         return render_template("team_request.html", tour=tour, form=form, message=message)
-        #     team.players.append(user)
+
+        for email in form.players.data:
+            user = session.query(User).filter(User.email==email)
+            if not user:
+                return render_template("team_request.html", tour=tour, form=form)
+            team.players.append(user)
         session.add(team)
         session.commit()
         return redirect(f"/tournament/{tour_id}")
 
     return render_template("team_request.html", tour=tour, form=form)
-        
