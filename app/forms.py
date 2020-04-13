@@ -1,10 +1,10 @@
 from wtforms import StringField, PasswordField
-from wtforms.validators import DataRequired, Email, ValidationError, EqualTo, Optional
-from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList
-from wtforms.fields.html5 import EmailField, IntegerField
+from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
+from wtforms import TextAreaField, SubmitField, DateField, FieldList
+from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm
 import datetime
-from app import User, Tournament
+from app import User
 
 DATA_FORMAT = "%d.%m.%Y"
 
@@ -40,19 +40,17 @@ def field_data_capitalizer(form, field):
 def unique_email_validator(form, field):
     """Check if user with same e-mail exist"""
     email = field.data.lower()
-    session = create_session()
-    if session.query(User).filter(User.email == email).first():
+    if User.query.filter(User.email == email).first():
         raise ValidationError(
             "Пользователь с таким e-mail уже зарегестрирован")
-        
+
+
 def exist_email_validator(form, field):
     """Check if user with the e-mail exist"""
     email = field.data.lower()
-    session = create_session()
-    if not session.query(User).filter(User.email == email).first():
+    if not User.query.filter(User.email == email).first():
         raise ValidationError(
             "Пользователь не найден")
-    
 
 
 def password_secure_validator(form, field):
@@ -65,7 +63,7 @@ def password_secure_validator(form, field):
 
 class RegisterForm(FlaskForm):
     email = EmailField(
-        'E-mail', validators=[field_data_lower, Email(),  DataRequired(), unique_email_validator])
+        'E-mail', validators=[field_data_lower, Email(), DataRequired(), unique_email_validator])
     password = PasswordField('Пароль', validators=[password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль', validators=[EqualTo("password", message="Пароли должны совпадать")])
@@ -84,7 +82,7 @@ class RegisterForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = EmailField(
-        "E-mail", validators=[field_data_lower, Email(),  DataRequired()])
+        "E-mail", validators=[field_data_lower, Email(), DataRequired()])
     password = PasswordField("Пароль", validators=[DataRequired()])
     submit = SubmitField("Войти")
 
@@ -113,13 +111,13 @@ class TeamForm(FlaskForm):
     name = StringField("Название команды", validators=[DataRequired()])
     motto = TextAreaField("Девиз команды")
     players = FieldList(ListItemEmailField(arguments={"class": u"form__field-input",
-                                                       "autocomplete": u"offfff",
-                                                       "type": u"e-m-a-i-l"},
-                                            label="E-mail участника",
-                                            validators=[DataRequired(),
-                                                        field_data_lower,
-                                                        exist_email_validator]
-                                            ),
+                                                      "autocomplete": u"offfff",
+                                                      "type": u"e-m-a-i-l"},
+                                           label="E-mail участника",
+                                           validators=[DataRequired(),
+                                                       field_data_lower,
+                                                       exist_email_validator]
+                                           ),
                         "Участники",
                         min_entries=4,
                         max_entries=8,)

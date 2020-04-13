@@ -9,7 +9,7 @@ def main():
 @login_manager.user_loader
 def load_user(user_id) -> User:
     return User.query.get(user_id)
-        
+
 
 if __name__ == "__main__":
     main()

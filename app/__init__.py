@@ -8,8 +8,10 @@ app = Flask(__name__, template_folder="../templates", static_folder="../static")
 for key, value in app_config.items():
     app.config[key] = value
 db = SQLAlchemy(app)
+session = db.session
 
 from .models import User, Team, League, Tournament, Game
+
 db.create_all()
 
 migrate = Migrate()
@@ -24,3 +26,7 @@ login_manager.init_app(app)
 
 from . import web_pages
 app.register_blueprint(web_pages.blueprint)
+
+
+# For flake8 F401
+User(), Team(), League(), Tournament(), Game()
