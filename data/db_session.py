@@ -2,7 +2,8 @@ import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
-from sqlalchemy_mixins import ReprMixin, SerializeMixin, TimestampsMixin
+from sqlalchemy_mixins import ReprMixin, TimestampsMixin
+from sqlalchemy_serializer import SerializerMixin
 from config import config
 
 SqlAlchemyBase = dec.declarative_base()
@@ -10,7 +11,7 @@ SqlAlchemyBase = dec.declarative_base()
 __factory = None
 
 
-class BaseModel(SqlAlchemyBase, ReprMixin, SerializeMixin, TimestampsMixin):
+class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     __abstract__ = True
     
     def fill(self, **kwargs):

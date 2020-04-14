@@ -1,4 +1,4 @@
 from .configs import DebugConfig as config
 import logging
 
-logging.basicConfig(filename='example.log')
+logging.basicConfig(filename='matboy.log')

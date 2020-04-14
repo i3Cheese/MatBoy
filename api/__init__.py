@@ -11,7 +11,7 @@ for key, value in config.API_CONFIG.items():
     
     
 from .user_resource import UserResource, UsersResource
-api.add_resource(UserResource, '/user')
+api.add_resource(UserResource, '/user/<int:user_id>')
 api.add_resource(UsersResource, '/users')
 
 

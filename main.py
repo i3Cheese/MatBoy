@@ -5,13 +5,11 @@ import api
 
 
 def main():
-    app.run()
-    # app_thread = Process(target=)
-    # api_thread = Process(target=api.run)
-    # app_thread.start()
-    # api_thread.start()
-    # app_thread.join()
-    # api_thread.join()
+    """Параллельно запускаем апи и приложение"""
+    app_thread = Process(target=app.run)
+    api_thread = Process(target=api.run)
+    app_thread.start()
+    api_thread.start()
     
 if __name__ == "__main__":
     main()
