@@ -1,4 +1,4 @@
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import reqparse, abort, Resource
 from flask import jsonify
 from data import User, create_session
 from datetime import date
@@ -6,7 +6,7 @@ from config import config
 
 
 def get_date_from_string(strdate: str) -> date:
-    return date.strftime(strdate, config.DATE_FORMAT)
+    return date.fromisoformat('-'.join(reversed(strdate.split("."))))
 
 
 def get_user(session, user_id, do_abort=True) -> User:
@@ -15,7 +15,7 @@ def get_user(session, user_id, do_abort=True) -> User:
         abort(404, message=f"User #{user_id} not found")
         
 def abort_if_email_exist(session, email):
-    if session.query(User).filter(User.email == email):
+    if session.query(User).filter(User.email == email).first():
         abort(409, message=f"User wiht email {repr(email)} alredy exist")
         
 
@@ -44,7 +44,8 @@ class UsersResource(Resource):
     reg_pars.add_argument('patronymic', required=False)
     reg_pars.add_argument('city', required=False)
     reg_pars.add_argument('birthday', required=True, type=get_date_from_string)
-    reg_pars.add_argument('password', required=False)
+    reg_pars.add_argument('email', required=True)
+    reg_pars.add_argument('password', required=True)
     
     def post(self):
         args = UsersResource.reg_pars.parse_args()
@@ -60,3 +61,4 @@ class UsersResource(Resource):
         user.set_password(args['password'])
         session.add(user)
         session.commit()
+        return jsonify({"success": "ok"})

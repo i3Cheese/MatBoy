@@ -9,7 +9,8 @@ from config import config
 blueprint = Blueprint('web_pages',
                       __name__,
                       template_folder=config.TEMPLATES_FOLDER,
-                      static_folder=config.STATIC_FOLDER)
+                      static_folder=config.STATIC_FOLDER,
+                      )
 
 
 @login_manager.user_loader

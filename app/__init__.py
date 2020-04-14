@@ -5,7 +5,7 @@ from flask_login import login_required
 from data import global_init
 from config import config
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 for key, value in config.APP_CONFIG.items():
     app.config[key] = value
     
@@ -18,7 +18,7 @@ app.register_blueprint(web_pages.blueprint)
 
 def run():
     global_init()
-    app.run(debug=config.DEBUG)
+    app.run(host=config.HOST, port=config.APP_PORT, debug=config.DEBUG)
 
 
 if __name__ == "__main__":

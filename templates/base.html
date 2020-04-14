@@ -30,12 +30,12 @@
     ></script>
 
     <!-- Beautiful calendar -->
-    <link href="../static/node_modules/air-datepicker/dist/css/datepicker.min.css" rel="stylesheet" type="text/css">
-    <script src="../static/node_modules/air-datepicker/dist/js/datepicker.min.js"></script>
+    <link href="{{url_for('static', filename='node_modules/air-datepicker/dist/css/datepicker.min.css')}}" rel="stylesheet" type="text/css">
+    <script src="{{url_for('static', filename='node_modules/air-datepicker/dist/js/datepicker.min.js')}}"></script>
 
     
-    <script src="../static/js/script.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+    <script src="{{url_for('static', filename='js/script.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}" />
 
     <title>{% block title %}MatBoy{% endblock %}</title>
   </head>
