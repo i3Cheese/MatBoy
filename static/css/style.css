@@ -307,3 +307,57 @@ button, input {
     }
 }
 
+.title_container{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.box_container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.page_title{
+    margin: 0 10px 0 10px;
+}
+
+.box-label{
+    font-size: 3em;
+}
+
+.box{
+    flex-shrink: 0;
+    flex-grow: 1;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    border-radius: 4px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.box-tiny{
+    max-width: 400px;
+}
+
+.team-title{
+    font-size: 1.5em;
+}
+
+.team-title:hover{
+    cursor: pointer;
+}
+
+.team{
+    padding: 10px;
+}
+.team:hover{
+    background-color: rgba(0, 0, 100, 0.05);
+}
+
+.hidden{
+    display: none;
+}

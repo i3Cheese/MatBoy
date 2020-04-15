@@ -1,68 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <!-- Bootstrap -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-      crossorigin="anonymous"
-    ></script>
-    
-    <!-- Beautiful calendar -->
-    <link href="../static/node_modules/air-datepicker/dist/css/datepicker.min.css" rel="stylesheet" type="text/css">
-    <script src="../static/node_modules/air-datepicker/dist/js/datepicker.min.js"></script>
-
-    <script src="../static/js/script.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>{% block title %}{{title}}{% endblock %}</title>
-  </head>
-
-  <body>
-    <div class="layout">
-      <div class="layout__page layout__page_thin">
-        <div class="shadow-box">
-          <div class="shadow-box__title">
-            {% block title_layout %}
-              
-            {% endblock title_layout %}
-          </div>
-          {% block form %}
-      
-          {% endblock form %}
-        </div>
-        <div class="shadow-box shadow-box_additionals">
-          <span class="form-additional-message">
-            {% block link_to %}
+{% extends 'base.html' %}
+{% block header %}
+{% endblock %}
+{% block main %}
+  <div class="layout">
+    <div class="layout__page layout__page_thin">
+      <div class="shadow-box">
+        <div class="shadow-box__title">
+          {% block title_layout %}
             
-            {% endblock link_to %}
-          </span>
+          {% endblock title_layout %}
         </div>
-        <div class="horizontal-spacer"></div>
+        {% block form %}
+    
+        {% endblock form %}
       </div>
+      <div class="shadow-box shadow-box_additionals">
+        <span class="form-additional-message">
+          {% block link_to %}
+          
+          {% endblock link_to %}
+        </span>
+      </div>
+      <div class="horizontal-spacer"></div>
     </div>
-  </body>
-</html>
+  </div>
+{% endblock main %}

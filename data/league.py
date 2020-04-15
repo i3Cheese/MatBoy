@@ -12,6 +12,8 @@ class League(BaseModel):
     title = sa.Column(sa.String, unique=True)
     description = sa.Column(sa.Text, nullable=True)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
+    tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"))
 
     chief = orm.relationship("User", backref="leagues")
+    tournament = orm.relationship("Tournament", backref="leagues")
     

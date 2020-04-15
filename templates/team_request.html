@@ -30,14 +30,37 @@
         )}}
         {{field_errors(form.motto)}}
       </div>
+      
+      <template id="user_email_field">
+        <li class="form__field">
+          <input autocomplete="offfff"
+                 class="form__field-input" 
+                 id="players-1" 
+                 name="players-1" 
+                 type="e-m-a-i-l" value="">
+        </li>
+      </template>
       {{form_field(form.players)}}
         {{form.players.label(class="form__field-label")}}
-        {{form.players(
-          class="form__field-list",
-          autocomplete="offfff"
-        )}}
-        {{field_errors(form.players)}}
+        <ul class="form__field-list" autocomplete="offf" id={{form.players.id}}>
+          {% for subfield in form.players %}
+              {% if subfield.errors %}
+                <li class="form__field s-with-error">
+              {% else %}
+                <li class="form__field">
+              {% endif %}
+              {{subfield(
+                class="form__field-input",
+                autocomplete="offfff",
+                type="e-m-a-i-l"
+              )}}
+              {{field_errors(subfield)}}
+            </li>
+          {% endfor %}
+        </ul>
       </div>
+      <button onclick="addUserEmailField()" type="button">+</button>
+      <button onclick="deleteUserEmailField()" type="button">-</button>
       {{message}}
       <div class="form__buttons s-buttons">
         {{form.submit(

@@ -45,7 +45,8 @@ def unique_email_validator(form, field):
     if session.query(User).filter(User.email == email).first():
         raise ValidationError(
             "Пользователь с таким e-mail уже зарегестрирован")
-        
+
+
 def exist_email_validator(form, field):
     """Check if user with the e-mail exist"""
     email = field.data.lower()
@@ -53,7 +54,6 @@ def exist_email_validator(form, field):
     if not session.query(User).filter(User.email == email).first():
         raise ValidationError(
             "Пользователь не найден")
-    
 
 
 def password_secure_validator(form, field):
@@ -99,27 +99,15 @@ class TournamentInfoForm(FlaskForm):
     submit = SubmitField("Подтвердить")
 
 
-class ListItemEmailField(EmailField):
-    """Класс для добавления html аргументов во вложенные поля"""
-
-    def __init__(self, arguments: dict = {}, **kwargs):
-        super().__init__(**kwargs)
-        self.arguments = arguments
-
-    def __call__(self, **kwargs):
-        return super().__call__(**self.arguments)
-
-
 class TeamForm(FlaskForm):
     name = StringField("Название команды", validators=[DataRequired()])
     motto = TextAreaField("Девиз команды")
-    players = FieldList(ListItemEmailField(arguments={"class": u"form__field-input",
-                                                       "autocomplete": u"offfff",
-                                                       "type": "e-m-a"},
-                                            label="E-mail участника",
-                                            validators=[field_data_lower, exist_email_validator]
-                                            ),
-                        "Участники",
-                        min_entries=4,
-                        max_entries=8,)
+    players = FieldList(EmailField(label="E-mail участника",
+                                   validators=[DataRequired(),
+                                               field_data_lower,
+                                               exist_email_validator]
+                                   ),
+        "Участники",
+        min_entries=4,
+        max_entries=8,)
     submit = SubmitField("Подтвердить")

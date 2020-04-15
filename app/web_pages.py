@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from data import User, Tournament, create_session, Team
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm
 from config import config
+import logging
 
 
 blueprint = Blueprint('web_pages',
@@ -146,7 +147,7 @@ def team_request(tour_id: int):
         )
 
         for email in form.players.data:
-            user = session.query(User).filter(User.email==email)
+            user = session.query(User).filter(User.email==email).first()
             if not user:
                 return render_template("team_request.html", tour=tour, form=form)
             team.players.append(user)
@@ -155,3 +156,19 @@ def team_request(tour_id: int):
         return redirect(f"/tournament/{tour_id}")
 
     return render_template("team_request.html", tour=tour, form=form)
+
+
+@blueprint.route("/tournament_console/<int:tour_id>")
+@login_required
+def tournament_console(tour_id: int):
+    """Web page for manage tournament"""
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not tour:
+        abort(404)
+    # If user haven't access to tournament
+    if not(tour.chief_id == 1 or tour.chief_id == current_user.id):
+        logging.info(f"{repr(current_user)} try to edit {repr(tour)}")
+        abort(403)
+    
+    return render_template("tournament_console.html", tour=tour)

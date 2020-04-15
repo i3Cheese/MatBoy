@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% block head %}
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -36,11 +37,12 @@
     
     <script src="{{url_for('static', filename='js/script.js')}}"></script>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}" />
-
+    {% endblock head %}
     <title>{% block title %}MatBoy{% endblock %}</title>
   </head>
 
   <body>
+    {% block header %}
     <header class="">
       <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand logo", href="/">MatBoy</a>
@@ -62,10 +64,13 @@
         </div>
       </nav>
     </header>
-
+    {% endblock header %}
+    {% block main %}
     <!-- Begin page content -->
     <main role="main" class="container">
-      {% block content %}{% endblock %}
+      {% block content %}
+      {% endblock content%}
     </main>
+    {% endblock main %}
   </body>
 </html>

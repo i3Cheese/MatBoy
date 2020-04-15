@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Console - {{tour.title}}
+{% endblock title %}
+
+{% block header %}
+  {{super()}}
+  <div class="title_container">
+    <h3 class="page_title">
+      {{tour.title}}
+    </h3>
+    <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')" href="">
+      редактировать
+    </a>
+</div>
+{% endblock header %}
+
+{% block main %}
+  <main role="main">
+    <div class="box_container">
+      <div class="box box-tiny">
+        <label class="box-label">
+          Команды
+        </label>
+        {% for team in tour.teams %}
+          {% if team.accepted %}
+          <div class="team team-accepted">
+          {% else %}
+          <div class="team team-waiting" id="team-{{team.id}}">
+          {% endif %}
+            <label class="team-title nested-toggler" for="team_info-{{team.id}}">
+              {{team.name}}
+            </label>
+            <div class="team-info" id="team_info-{{team.id}}" style="display: none;">
+              <p class="team-motto">
+                {{team.motto}}
+              </p>
+              <p class="team-sender">
+                Заявку отправил:
+                <a class="link link-shadow" href="/profile/{{team.trainer.id}}">
+                  {{team.trainer}}
+                </a>
+              </p>
+              <p class="team-mail">
+                Почта:
+                <a class="link link-mail" href="mailto:{{team.trainer.email}}">
+                  {{team.trainer.email}}
+                </a>
+              </p>
+              <div class="team-players">
+                {% for player in team.players %}
+                  <p class="team-player">
+                    <a class="link link-shadow" href="/profile/{{player.id}}">
+                      {{player}}
+                    </a>
+                  </p>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+{% endblock main %}
