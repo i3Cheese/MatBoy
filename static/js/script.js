@@ -1,3 +1,8 @@
+// Base settings
+const API_URL = "/api/"
+
+
+
 if(typeof(String.prototype.strip) === "undefined")
 {
     String.prototype.strip = function(char) 
@@ -46,7 +51,8 @@ function deleteUserEmailField() {
 }
 
 
-$(".nested-toggler").click(function(event){
-    target = $(`#${event.target.attr("for")}`)
-    target.toggleClass('hidden')
+$(document).ready(function(){$(".nested-toggler").click(function(event){
+        target = $(`#${$(event.target).attr("for")}`);
+        target.toggleClass('hidden');
+    })
 });

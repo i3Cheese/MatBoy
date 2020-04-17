@@ -21,7 +21,10 @@ class User(BaseModel, UserMixin):
     is_creator = sa.Column(sa.Boolean, default=False)
     
     def __str__(self):
-        return f"{self.surname} {self.name} {self.patronymic}"
+        if self.patronymic:
+            return f"{self.surname} {self.name} {self.patronymic}"
+        else:
+            return f"{self.surname} {self.name}"
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

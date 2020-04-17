@@ -19,7 +19,7 @@ class Team(BaseModel):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
-    accepted = sa.Column(sa.Boolean, default=True)
+    accepted = sa.Column(sa.Boolean, default=False)
     trainer_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"), nullable=True)
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"), nullable=True)
     league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=True)
@@ -29,3 +29,6 @@ class Team(BaseModel):
     league = orm.relationship("League", backref="teams")
 
     players = orm.relationship("User", secondary="users_to_teams", backref="teams")
+    
+    def __str__(self):
+        return self.name

@@ -10,7 +10,7 @@
     <h3 class="page_title">
       {{tour.title}}
     </h3>
-    <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')" href="">
+    <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
       редактировать
     </a>
 </div>
@@ -25,16 +25,22 @@
         </label>
         {% for team in tour.teams %}
           {% if team.accepted %}
-          <div class="team team-accepted">
+          <div class="box_item team team-accepted" id="team-{{team.id}}">
+            <span class="status team-status">
+            Учавствует в турнире
+            </span>
           {% else %}
-          <div class="team team-waiting" id="team-{{team.id}}">
+          <div class="box_item team team-waiting" id="team-{{team.id}}">
+            <span class="status team-status">
+              Ожидает подтверждения
+            </span>
           {% endif %}
-            <label class="team-title nested-toggler" for="team_info-{{team.id}}">
+            <label class="box_item-title team-title nested-toggler" for="team_info-{{team.id}}">
               {{team.name}}
             </label>
-            <div class="team-info" id="team_info-{{team.id}}" style="display: none;">
+            <div class="info_bar team-info hidden" id="team_info-{{team.id}}">
               <p class="team-motto">
-                {{team.motto}}
+                <i>{{team.motto}}</i>
               </p>
               <p class="team-sender">
                 Заявку отправил:
@@ -48,11 +54,141 @@
                   {{team.trainer.email}}
                 </a>
               </p>
-              <div class="team-players">
+              Участники:
+              <div class="team-players like_list">
                 {% for player in team.players %}
                   <p class="team-player">
                     <a class="link link-shadow" href="/profile/{{player.id}}">
                       {{player}}
+                    </a>
+                  </p>
+                {% endfor %}
+              </div>
+              Лига:
+              {% if team.accepted %}
+                <div class="team_league_title">{{team.league.title}}</div>
+              {% else %}
+                <div class="team_league_title hidden">{{team.league.title}}</div>
+              {% endif %}
+              <select class="selector league_selector {{'hidden' if team.accepted else ''}}" 
+                      id="team_league-{{team.id}}">
+                {% for league in tour.leagues %}
+                  {% if team.league_id == league.id %}
+                    <option class="selector-option"
+                            value="{{league.id}}"
+                            selected>
+                      {{league.title}}
+                    </option>
+                  {% else %}
+                    <option class="selector-option"
+                            value="{{league.id}}">
+                      {{league.title}}
+                    </option>
+                  {% endif %}
+                {% endfor %}
+                {% if not team.league_id%}
+                  <option class="selecor-option" value="null">
+                    Не выбрано
+                  </option>
+                {% else %}
+                  <option class="selecor-option" value="null" selected>
+                    Не выбрано
+                  </option>
+                {% endif %}
+              </select>
+              <div class="buttons-menu">
+                {% if team.accepted %}
+                  <button class="button button_warning team-button team-decline"
+                          for="team-{{team.id}}">
+                    Отклонить
+                  </button>
+                  <button class="button button_success team-buton team-accept hidden"
+                          for="team-{{team.id}}">
+                    Принять
+                  </button>
+                  <button class="button button_danger team-buton team-delete hidden" 
+                          for="team-{{team.id}}">
+                    Удалить
+                  </button>
+                {% else %}
+                  <button class="button button_warning team-button team-decline hidden"
+                          for="team-{{team.id}}">
+                    Отклонить
+                  </button>
+                  <button class="button button_success team-buton team-accept"
+                          for="team-{{team.id}}">
+                    Принять
+                  </button>
+                  <button class="button button_danger team-buton team-delete" 
+                          for="team-{{team.id}}">
+                    Удалить
+                  </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="box box-tiny">
+        <label class="box-label">
+          Лиги
+        </label>
+
+        <template id="league_template">
+          <div class="box_item league" id="league-">
+            <label class="box_item-title league-title nested-toggler" for="league_info-">
+              Безымянный турнир
+            </label>
+            <div class="info_bar league-info hidden" id="league_info-">
+              <p class="league-description">
+              </p>
+              <p class="league-chief">
+                Главный по лиге:
+                <a class="link link-shadow" href="/profile/">
+                  Такой-то такойтович
+                </a>
+              </p>
+              <label class="nested-toggler" for="league_teams-">
+                Команды:
+              </label>
+              <div class="league-teams like_list" id="league_teams-">
+                
+              </div>
+            </div>
+          </div>
+        </template>
+        <template id="league_team_template">
+          <p id="league_team-">
+            <a class="link" href="/team/">
+              Безымянная команда
+            </a>
+          </p>
+        </template>
+
+        {% for league in tour.leagues %}
+          <div class="box_item league" id="league-{{league.id}}">
+            <label class="box_item-title league-title nested-toggler" for="league_info-{{league.id}}">
+              {{league.title}}
+            </label>
+            <div class="info_bar league-info hidden" id="league_info-{{league.id}}">
+              <p class="league-description">
+                {{league.description}}
+              </p>
+              <p class="league-chief">
+                Главный по лиге:
+                <a class="link link-shadow" href="/profile/{{league.chief.id}}">
+                  {{league.chief}}
+                </a>
+              </p>
+              <label for="league_teams-{{league.id}}">
+                Команды:
+              </label>
+              <div class="league-teams like_list" id="league_teams-{{league.id}}">
+                {% for team in league.teams %}
+                  <p id="league_team-{{team.id}}">
+                    <a class="link" href="/team/{{team.id}}">
+                      {{team}}
                     </a>
                   </p>
                 {% endfor %}
@@ -62,5 +198,6 @@
         {% endfor %}
       </div>
     </div>
+    <script src="{{url_for('static', filename='js/tournament_console.js')}}"></script>
   </main>
 {% endblock main %}

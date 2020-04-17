@@ -1,13 +1,28 @@
-div {
-    display: block;
-}
-
 body {
     height: 100%;
     background: #f4f4f4;
     font-size: 14px;
     font-weight: normal;
     font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+}
+
+.hidden{
+    display: none !important;
+}
+
+button.hidden{
+    height: 0;
+    width: 0;
+    position: absolute;
+    bottom: 0;
+}
+
+.link{
+    color: blue !important;
+}
+
+.link:hover{
+    cursor: pointer;
 }
 
 .layout {
@@ -153,6 +168,18 @@ textarea.form__field-input {
     margin-top: 28px;
 }
 
+
+.buttons-menu{
+    display: flex;
+    justify-content: left;
+    padding-top: 10px;
+}
+
+.buttons-menu > button{
+    margin-right: 5px;
+}
+
+
 .button {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -187,6 +214,16 @@ textarea.form__field-input {
 .button_success{
     color: #eee;
     background-color: #00a550;
+}
+
+.button_warning{
+    background-color: orange;
+    color: white;
+}
+
+.button_danger{
+    background-color: red;
+    color: white;
 }
 
 .login_manager>.btn{
@@ -317,17 +354,19 @@ button, input {
 }
 
 .box_container{
+    padding: 0 20px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap-reverse;
     justify-content: space-between;
 }
 
 .page_title{
-    margin: 0 10px 0 10px;
+    margin: 0 6px 0 6px;
 }
 
 .box-label{
     font-size: 3em;
+    width: 100%;
 }
 
 .box{
@@ -339,25 +378,48 @@ button, input {
     padding: 20px;
     box-sizing: border-box;
 }
+
 .box-tiny{
     max-width: 400px;
 }
 
-.team-title{
+.box_item-title{
     font-size: 1.5em;
+    width: 100%;
 }
 
-.team-title:hover{
+.nested-toggler:hover{
     cursor: pointer;
 }
 
-.team{
+.box_item{
     padding: 10px;
-}
-.team:hover{
-    background-color: rgba(0, 0, 100, 0.05);
+    margin-bottom: 15px;
+    border-radius: 3px;
+    border-style: solid;
 }
 
-.hidden{
-    display: none;
+.team-accepted{
+    border-color: green;
+}
+
+.team-waiting{
+    border-color: orange;
+}
+
+.team-motto{
+    margin-left: 10px;
+    margin-bottom: 13px;
+    color: gray;
+}
+
+.team_league_title{
+    display: inline;
+}
+.like_list{
+    margin-left: 10px;
+}
+
+.info_bar p {
+    margin-bottom: 3px;
 }

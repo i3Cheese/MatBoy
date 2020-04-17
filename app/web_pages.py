@@ -168,7 +168,6 @@ def tournament_console(tour_id: int):
         abort(404)
     # If user haven't access to tournament
     if not(tour.chief_id == 1 or tour.chief_id == current_user.id):
-        logging.info(f"{repr(current_user)} try to edit {repr(tour)}")
         abort(403)
     
-    return render_template("tournament_console.html", tour=tour)
+    return render_template("tournament_console.html", tour=tour)    
