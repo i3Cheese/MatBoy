@@ -328,40 +328,24 @@ button, input {
     justify-content: center;
     flex-wrap: wrap-reverse;
     flex-direction: row;
-    margin-top: 60px;
-    margin-bottom: 10px;
-    padding: 0 13px;
+    margin: 60px 0px 10px 0px;
+    padding: 0;
+}
+
+/* Сохраняет расстояние между элементами */
+.box_container-covid{
+    justify-content: space-between;
 }
 
 @media only screen and (max-width: 700px){
     .box_container{
-        flex-direction: column;
+        justify-content: center;
         margin-top: 0px;
         padding: 0px;
     }
     .box_container > div{
         width: 100%;
     }
-}
-
-.title_container{
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: center;
-    margin-bottom: 10px;
-    margin-top: 20px;
-}
-
-.box_container{
-    padding: 0 20px;
-    display: flex;
-    flex-wrap: wrap-reverse;
-    justify-content: space-between;
-}
-
-.page_title{
-    margin: 0 6px 0 6px;
 }
 
 .box-label{
@@ -376,7 +360,9 @@ button, input {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
     border-radius: 4px;
     padding: 20px;
+    margin: 20px;
     box-sizing: border-box;
+    align-self: flex-end;
 }
 
 .box-tiny{
@@ -387,6 +373,20 @@ button, input {
     font-size: 1.5em;
     width: 100%;
 }
+
+.title_container{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.page_title{
+    margin: 0 6px 0 6px;
+}
+
 
 .nested-toggler:hover{
     cursor: pointer;
@@ -423,3 +423,4 @@ button, input {
 .info_bar p {
     margin-bottom: 3px;
 }
+

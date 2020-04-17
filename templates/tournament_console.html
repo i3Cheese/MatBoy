@@ -4,21 +4,17 @@
   Console - {{tour.title}}
 {% endblock title %}
 
-{% block header %}
-  {{super()}}
-  <div class="title_container">
-    <h3 class="page_title">
-      {{tour.title}}
-    </h3>
-    <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
-      редактировать
-    </a>
-</div>
-{% endblock header %}
-
 {% block main %}
-  <main role="main">
-    <div class="box_container">
+  <main class="container-fluid" role="main">
+    <div class="title_container">
+      <h3 class="page_title">
+        {{tour.title}}
+      </h3>
+      <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
+        редактировать
+      </a>
+    </div>
+    <div class="box_container box_container-covid">
       <div class="box box-tiny">
         <label class="box-label">
           Команды
@@ -165,6 +161,13 @@
             </a>
           </p>
         </template>
+        <template id="league_form_template">
+          <form class="box_item league league_form" id="league_form-">
+            <input class="box_item-title league-title editor-title" type="text" required name="title"/>
+            <textarea class="textarea editor-textarea" name="description"></textarea>
+            <input class="editor-chief.email" name="chief.email"/>
+          </form>
+        </template>
 
         {% for league in tour.leagues %}
           <div class="box_item league" id="league-{{league.id}}">
@@ -177,7 +180,7 @@
               </p>
               <p class="league-chief">
                 Главный по лиге:
-                <a class="link link-shadow" href="/profile/{{league.chief.id}}">
+                <a class="link link-shadow chief" href="/profile/{{league.chief.id}}">
                   {{league.chief}}
                 </a>
               </p>
@@ -195,6 +198,9 @@
               </div>
             </div>
           </div>
+          <form class="box_item league league_form hidden" id="league_form-{{league.id}}">
+            <input type="text" required value="{{league.title}}">
+          </form>
         {% endfor %}
       </div>
     </div>
