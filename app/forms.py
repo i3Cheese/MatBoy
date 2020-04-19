@@ -107,7 +107,7 @@ class TeamForm(FlaskForm):
                                                field_data_lower,
                                                exist_email_validator]
                                    ),
-        "Участники",
-        min_entries=4,
-        max_entries=8,)
+                        "E-mail yчастников",
+                        min_entries=4,
+                        max_entries=8,)
     submit = SubmitField("Подтвердить")

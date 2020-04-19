@@ -1,5 +1,10 @@
 {% extends 'tournament_editor.html' %}
 
+{% block head %}
+  {{super()}}
+  <script src="{{url_for('static', filename='js/team_request.js')}}"></script>
+{% endblock head %}
+
 {% block title %}
 Заявка - {{tour.title}}
 {% endblock title %}
@@ -42,7 +47,7 @@
       </template>
       {{form_field(form.players)}}
         {{form.players.label(class="form__field-label")}}
-        <ul class="form__field-list" autocomplete="offf" id={{form.players.id}}>
+        <ul class="form__field-list shadow_list" autocomplete="offf" id={{form.players.id}}>
           {% for subfield in form.players %}
               {% if subfield.errors %}
                 <li class="form__field s-with-error">

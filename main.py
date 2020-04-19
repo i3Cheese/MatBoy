@@ -1,11 +1,17 @@
 from multiprocessing import Process
 from config import config
+import logging
 import app
 
 
+logging.basicConfig(handlers=[logging.FileHandler(filename=config.LOGGING_FILE,
+                                                  encoding='utf-8',)],
+                    level=config.LOGGING_LEVEL)
+
+
 def main():
-    """Параллельно запускаем апи и приложение"""
     app.run()
-    
+
+
 if __name__ == "__main__":
     main()

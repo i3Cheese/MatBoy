@@ -153,6 +153,22 @@ textarea.form__field-input {
     border-color: #ff6e6e;
 }
 
+
+.form-additional-message {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 18px;
+    color: #333;
+    font-size: 14px;
+    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-weight: 500;
+}
+
+.form-additional-message__link {
+    color: #558cb7;
+}
+
+
 .s-error {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -226,6 +242,20 @@ textarea.form__field-input {
     color: white;
 }
 
+.label-bold {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #333;
+    /* font-size: 14px; */
+    /* font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif; */
+    font-weight: 550;
+    margin-top: 10px;
+    margin-bottom: 0;
+    display: inline-block;
+    width: 100%;
+    vertical-align: baseline;
+}
+
 .login_manager>.btn{
     color: inherit;
     margin: 0 3px;
@@ -235,25 +265,6 @@ textarea.form__field-input {
     margin-top: 16px;
     padding: 15px 0;
     text-align: center;
-}
-
-.form-additional-message {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 18px;
-    color: #333;
-    font-size: 14px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
-    font-weight: 500;
-}
-
-.form-additional-message__link {
-    color: #558cb7;
-}
-
-.form__field-list {
-    list-style-type: none;
-    padding: 0 20px;
 }
 
 .horizontal-spacer{
@@ -369,8 +380,15 @@ button, input {
     max-width: 400px;
 }
 
+.box-middle{
+    max-width: 550px;
+}
+
 .box_item-title{
-    font-size: 1.5em;
+    color: #333;
+    font-size: 1.6em;
+    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-weight: 700;
     width: 100%;
 }
 
@@ -416,10 +434,26 @@ button, input {
 .team_league_title{
     display: inline;
 }
-.like_list{
-    margin-left: 10px;
+
+.shadow_list{
+    list-style-type: none;
+    padding: 0 20px;
 }
 
+.like_list{
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+.input-wide{
+    width: 100%;
+}
+
+textarea.input-wide{
+    height: 150px;
+}
 .info_bar p {
     margin-bottom: 3px;
 }

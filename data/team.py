@@ -13,13 +13,28 @@ users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
 
 
 class Team(BaseModel):
+    """Status: 0 - deleted
+               1 - waiting
+               2 - accepted"""
     __tablename__ = "teams"
     __repr_attrs__ = ["name", "tournament"]
+    serialize_only = ("id",
+                      "name",
+                      "motto",
+                      "accepted",
+                      "trainer.id",
+                      "trainer.email",
+                      "trainer.fullname",
+                      "tournament.id",
+                      "tournament.title",
+                      "league.id",
+                      "league.title",
+                      )
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
-    accepted = sa.Column(sa.Boolean, default=False)
+    status = sa.Column(sa.Integer, default=1)
     trainer_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"), nullable=True)
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"), nullable=True)
     league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=True)

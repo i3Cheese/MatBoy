@@ -9,6 +9,7 @@ from config import config
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 for key, value in config.APP_CONFIG.items():
     app.config[key] = value
+app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
     
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -18,10 +19,12 @@ app.register_blueprint(web_pages.blueprint)
 
 
 api = Api(app)
-from .resources import UserResource, UsersResource, TeamResource
+from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/users')
 api.add_resource(TeamResource, '/api/team/<int:team_id>')
+api.add_resource(LeagueResource, '/api/league/<int:league_id>')
+api.add_resource(LeaguesResource, '/api/league')
 
 
 def run():

@@ -5,6 +5,7 @@ import sqlalchemy.ext.declarative as dec
 from sqlalchemy_mixins import ReprMixin, TimestampsMixin
 from sqlalchemy_serializer import SerializerMixin
 from config import config
+import logging
 
 SqlAlchemyBase = dec.declarative_base()
 
@@ -28,7 +29,8 @@ def global_init() -> None:
     conn_str = config.DATA_BASE_URL
     if not conn_str:
         raise Exception("Необходимо указать файл базы данных")
-    print(f'Подключение к базе данных по адресу {repr(conn_str)}')
+    
+    logging.info(f'Подключение к базе данных по адресу {repr(conn_str)}')
 
     engine = sa.create_engine(conn_str, echo=False)
     __factory = orm.sessionmaker(autocommit=False,

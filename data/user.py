@@ -9,6 +9,16 @@ from flask_login import UserMixin
 class User(BaseModel, UserMixin):
     __tablename__ = "users"
     __repr_attrs__ = ["surname", "name"]
+    serialize_only = ("id",
+                      "name",
+                      "surname",
+                      "patronymic",
+                      "fullname",
+                      "city",
+                      "birthday",
+                      "email",
+                      "is_creator",
+                      )
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     surname = sa.Column(sa.String, nullable=False)
@@ -19,12 +29,16 @@ class User(BaseModel, UserMixin):
     email = sa.Column(sa.String, index=True, unique=True, nullable=True)
     hashed_password = sa.Column(sa.String, nullable=True)
     is_creator = sa.Column(sa.Boolean, default=False)
-    
-    def __str__(self):
+
+    @property
+    def fullname(self):
         if self.patronymic:
             return f"{self.surname} {self.name} {self.patronymic}"
         else:
             return f"{self.surname} {self.name}"
+
+    def __str__(self):
+        return self.fullname
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

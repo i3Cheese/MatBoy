@@ -14,10 +14,16 @@ class BaseConfig:
     TEMPLATES_FOLDER = os.path.abspath("templates")
     STATIC_FOLDER = os.path.abspath("static")
     ROOT_PATH = os.path.abspath(".")
+    JINJA_EXTENSIONS = ['jinja2.ext.loopcontrols']
+    
     DEBUG = False
     
     DATE_FORMAT = "%d.%m.%Y"
+    
+    LOGGING_FILE = "matboy.log"
+    LOGGING_LEVEL = logging.WARNING
 
 
 class DebugConfig(BaseConfig):
     DEBUG = True
+    LOGGING_LEVEL = logging.DEBUG
