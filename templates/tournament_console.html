@@ -6,7 +6,7 @@
 
 {% block main %}
   <div class="hidden" id="tour-id">{{tour.id}}</div>
-  <main class="container-fluid" role="main">
+  <main class="container" role="main">
     <div class="title_container">
       <h3 class="page_title">
         {{tour.title}}
@@ -16,11 +16,11 @@
       </a>
     </div>
     <div class="box_container box_container-covid">
-      <div class="box box-tiny">
+      <div class="box box-middle">
         <label class="box-label">
           Команды
         </label>
-        {% for team in tour.teams if team.status %}}
+        {% for team in tour.teams if team.status %}
           {% if team.status == 2 %}
           <div class="box_item team team-accepted" id="team-{{team.id}}">
             <span class="status team-status">
@@ -65,32 +65,38 @@
                 Лига:
               </label>
               {% if team.status == 2 %}
-                <div class="team-league_title like_list">{{team.league.title}}</div>
+                <div class="team-league_title league_in like_list"
+                     value="{{team.league.id}}">
+                  {{team.league.title}}
+                </div>
               {% else %}
-                <div class="team-league_title like_list hidden">{{team.league.title}}</div>
+                <div class="team-league_title like_list league_in hidden" 
+                     value="{{team.league.id}}">
+                  {{team.league.title}}
+                </div>
               {% endif %}
-              <select class="selector league_selector {{'hidden' if team.accepted else ''}}" 
+              <select class="selector league_selector {{'hidden' if team.status == 2 else ''}}" 
                       id="team_league-{{team.id}}">
                 {% for league in tour.leagues %}
                   {% if team.league_id == league.id %}
-                    <option class="selector-option league_option"
+                    <option class="selector-option league_option league_in"
                             value="{{league.id}}"
                             selected>
                       {{league.title}}
                     </option>
                   {% else %}
-                    <option class="selector-option league_option"
+                    <option class="selector-option league_option league_in"
                             value="{{league.id}}">
                       {{league.title}}
                     </option>
                   {% endif %}
                 {% endfor %}
-                {% if not team.league_id%}
-                  <option class="selecor-option" value="null">
+                {% if not team.league_id %}
+                  <option class="selecor-option league_in" value="null">
                     Не выбрано
                   </option>
                 {% else %}
-                  <option class="selecor-option" value="null" selected>
+                  <option class="selecor-option league_in" value="null" selected>
                     Не выбрано
                   </option>
                 {% endif %}

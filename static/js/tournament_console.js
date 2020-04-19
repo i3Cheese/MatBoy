@@ -54,6 +54,7 @@ function acceptTeam(team_id) {
             let team_league_title = team.find(".team-league_title");
             team_league_title.removeClass('hidden');
             team_league_title.text(data["team"]["league"]["title"])
+            team_league_title.attr("value", data['team']['league']['id'])
 
             let team_temp = $(document.querySelector("#league_team_template").content).clone();
             let team_li = team_temp.find("li");
@@ -109,7 +110,6 @@ function addLeagueForm(league_id) {
         title = league.find(".league-title").text().strip();
         description = league.find(".league-description").text().strip();
         chief_email = league.find(".league-chief").attr("title").strip();
-        console.log(chief_email);
         id = id + league_id;
     } else {
         id = id + "new";
@@ -221,7 +221,7 @@ function sendLeagueForm(event) {
 
                 let l_title = league.find(".league-title");
                 l_title.text(league_data["title"]);
-                l_title.attr("for", l_title.attr("for") + id);
+                $(`.league_in[value='${league_id}']`).text(league_data['title'])
 
                 form.remove();
                 league.removeClass('hidden');
@@ -249,7 +249,6 @@ function deleteLeague(league_id){
         type: "DELETE",
         url: API_URL + "league/" + league_id,
         success: function () {
-            $("#league-" + league_id).remove();
             location.reload();
         },
     });

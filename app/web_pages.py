@@ -1,7 +1,7 @@
 from app import login_manager
 from flask import Blueprint, render_template, redirect, abort
 from flask_login import login_user, logout_user, login_required, current_user
-from data import User, Tournament, create_session, Team
+from data import User, Tournament, League, Team, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm
 from config import config
 import logging
@@ -170,4 +170,18 @@ def tournament_console(tour_id: int):
     if not(tour.chief_id == 1 or tour.chief_id == current_user.id):
         abort(403)
     
-    return render_template("tournament_console.html", tour=tour)    
+    return render_template("tournament_console.html", tour=tour)
+
+
+@blueprint.route("/league_console/<int:league_id>")
+@login_required
+def league_console(league_id):
+    session = create_session()
+    league = session.query(League).get(league_id)
+    if not league:
+        abort(404)
+    # If user haven't access to league
+    if not(current_user.id in (1, league.tournament.chief.id, League)):
+        abort(403)
+        
+    return render_template("league_console.html", league=league)
