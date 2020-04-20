@@ -30,6 +30,9 @@ function redirectWithStep(path){
     window.location.href = path;
     // window.location.search = "?" + "return_to=" + window.location.pathname;
 }
+function redirect(path){
+    window.location.href = path;
+}
 
 
 function getForId(target){

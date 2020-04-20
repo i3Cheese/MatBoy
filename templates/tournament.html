@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="layout">
+  <div class="title_container">
+    <h1 class="page_title">
+      {{tour.title}}
+    </h1>
+    {% if current_user.id in (1, tour.chief_id,) %}
+      <div class="link_menu">
+        <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
+          редактировать
+        </a>
+        |
+        <a class="link link-small" href='/tournament_console/{{tour.id}}'>
+          управлять
+        </a>
+      </div>
+    {% endif %}
+  </div>
+  <div class="box_container">
+    <div class="box box-large">
+      <div class="shadow-box__title">
+        Лиги
+      </div>
+      {% for league in tour.leagues %}
+        <div class="centered_block block_link" onclick="redirectWithStep('/league/{{league.id}}')">
+          <h2 class="item_title">{{league.title}}</h2>
+          <div class="description">
+            {{league.description}}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

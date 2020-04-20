@@ -4,13 +4,20 @@
 
 <div class="layout">
   <div class="box_container">
-    <div class="tournaments_box">
+    <div class="box box-large">
       <div class="shadow-box__title">
         Турниры
       </div>
+      {% if current_user.is_creator %}
+        <div class="link_menu">
+          <a class="link link-small" onclick="redirectWithStep('/new_tournament')">
+            Создать турнир
+          </a>
+        </div>
+      {% endif %}
       {% for tour in tournaments %}
       {% set format = "%d.%m.%Y" %}
-        <div class="tournament block_link" onclick="redirectWithStep('/tournament/{{tour.id}}')">
+        <div class="centered_block block_link" onclick="redirect('/tournament/{{tour.id}}')">
           <h2 class="item_title">{{tour.title}}</h2>
           <div class="dates">
             {% if tour.start and tour.end %}

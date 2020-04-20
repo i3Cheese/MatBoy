@@ -28,6 +28,15 @@ def index_page():
     return render_template("index.html", tournaments=tournaments)
 
 
+@blueprint.route("/tournament/<int:tour_id>")
+def tournament_page(tour_id):
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not tour:
+        abort(404)
+    return render_template("tournament.html", tour=tour)
+
+
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
