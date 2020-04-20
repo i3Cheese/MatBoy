@@ -2,7 +2,6 @@ function deleteTeamFromLeagues(team_id) {
     $("#league_team-" + team_id).remove();
 }
 
-
 function declineTeam(team_id) {
     $.ajax({
         type: "PUT",
@@ -15,8 +14,8 @@ function declineTeam(team_id) {
         success: function () {
             let team = $("#team-" + team_id);
             console.log(team);
-            team.removeClass("team-accepted");
-            team.addClass("team-waiting");
+            team.removeClass("border-success");
+            team.addClass("border-warning");
             team.find(".team-decline").addClass("hidden");
             team.find(".team-accept").removeClass("hidden");
             team.find(".team-delete").removeClass("hidden");
@@ -27,7 +26,6 @@ function declineTeam(team_id) {
         },
     });
 }
-
 
 function acceptTeam(team_id) {
     let team = $("#team-" + team_id);
@@ -43,8 +41,8 @@ function acceptTeam(team_id) {
         },
         dataType: 'json',
         success: function (data) {
-            team.addClass("team-accepted");
-            team.removeClass("team-waiting");
+            team.addClass("border-success");
+            team.removeClass("border-warning");
             team.find(".team-decline").removeClass("hidden");
             team.find(".team-accept").addClass("hidden");
             team.find(".team-delete").addClass("hidden");
@@ -68,7 +66,6 @@ function acceptTeam(team_id) {
     });
 }
 
-
 function deleteTeam(team_id) {
     $.ajax({
         type: "DELETE",
@@ -80,7 +77,6 @@ function deleteTeam(team_id) {
     });
 }
 
-
 $(document).on('click', ".team-decline", function (event) {
     declineTeam(getForId($(event.target)));
 });
@@ -91,6 +87,8 @@ $(document).on('click', ".team-accept", function (event) {
 $(document).on('click', ".team-delete", function (event) {
     deleteTeam(getForId($(event.target)));
 });
+
+
 
 
 function addLeagueForm(league_id) {
@@ -231,7 +229,6 @@ function sendLeagueForm(event) {
     }
 }
 
-
 function removeLeagueForm(event) {
     console.log(event);
     event.preventDefault();
@@ -243,7 +240,6 @@ function removeLeagueForm(event) {
     form.remove();
 }
 
-
 function deleteLeague(league_id){
     $.ajax({
         type: "DELETE",
@@ -253,7 +249,6 @@ function deleteLeague(league_id){
         },
     });
 }
-
 
 $(document).on('click', '.league-edit', function (event) {
     addLeagueForm(getForId($(event.target)));

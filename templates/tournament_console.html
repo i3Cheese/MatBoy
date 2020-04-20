@@ -6,7 +6,7 @@
 
 {% block main %}
   <div class="hidden" id="tour-id">{{tour.id}}</div>
-  <main class="container" role="main">
+  <main class="container-xl" role="main">
     <div class="title_container">
       <h3 class="page_title">
         {{tour.title}}
@@ -22,12 +22,12 @@
         </label>
         {% for team in tour.teams if team.status %}
           {% if team.status == 2 %}
-          <div class="box_item team team-accepted" id="team-{{team.id}}">
+          <div class="box_item team border-success" id="team-{{team.id}}">
             <span class="status team-status">
             Учавствует в турнире
             </span>
           {% else %}
-          <div class="box_item team team-waiting" id="team-{{team.id}}">
+          <div class="box_item team border-warning" id="team-{{team.id}}">
             <span class="status team-status">
               Ожидает подтверждения
             </span>
@@ -183,7 +183,6 @@
           <template id="league_form_template">
             <form class="box_item league league_form"
                   id="league_form-"
-                  name="-" 
                   accept-charset="utf-8">
               <label class="label-bold">Название:</label>
               <input class="input-wide box_item-title league-title editor-title" 

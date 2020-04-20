@@ -48,4 +48,3 @@ $(document).on('click', ".nested-toggler", function(event){
     target.toggleClass('hidden');
 });
 
-document.ontimeupdate
