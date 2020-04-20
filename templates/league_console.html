@@ -110,6 +110,15 @@
               <label class="box_item-title game-title nested-toggler" for="game_info-">
 
               </label>
+              <div class="link_menu">
+                <a class="link link-small" href='/game_console/'>
+                  управлять
+                </a>
+                |
+                <a class="link link-small" href='/game/'>
+                  перейти на страницу
+                </a>
+              </div>
               <div class="info_bar game-info" id="game_info-">
                 <label class="label-bold">
                   Судья:
@@ -160,6 +169,15 @@
               <label class="box_item-title game-title nested-toggler" for="game_info-{{game.id}}">
                 {{game.team1.name}} — {{game.team2.name}}
               </label>
+              <div class="link_menu">
+                <a class="link link-small game-manage" href='/game_console/{{game.id}}'>
+                  управлять
+                </a>
+                |
+                <a class="link link-small game-goto" href='/game/{{game.id}}'>
+                  перейти на страницу
+                </a>
+              </div>
               <div class="info_bar game-info" id="game_info-{{game.id}}">
                 <label class="label-bold">
                   Судья:

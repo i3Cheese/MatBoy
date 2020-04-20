@@ -1,7 +1,15 @@
 import os
 import logging
+import locale
+
 
 class BaseConfig:
+    """
+    Contains config constants.
+    
+    Call .setup() at the begging of the program.
+    """
+    
     DATA_BASE = 'db/matboy.db'
     DATA_BASE_URL = 'sqlite:///db/matboy.db?check_same_thread=False'
     
@@ -22,6 +30,19 @@ class BaseConfig:
     
     LOGGING_FILE = "matboy.log"
     LOGGING_LEVEL = logging.WARNING
+    
+    LOCALE = 'ru_RU'
+    
+    
+    @classmethod
+    def setup(cls):
+        """Setup builtin modules"""
+        logging.basicConfig(handlers=[logging.FileHandler(filename=cls.LOGGING_FILE,
+                                                          encoding='utf-8',)],
+                            level=cls.LOGGING_LEVEL)
+        logging.getLogger('serializer').setLevel(logging.WARNING)  # Disable spam log
+        locale.setlocale(locale.LC_ALL, cls.LOCALE)
+
 
 
 class DebugConfig(BaseConfig):

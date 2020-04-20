@@ -353,7 +353,7 @@ button, input {
     .box_container{
         justify-content: center;
         margin-top: 0px;
-        padding: 0px;
+        padding: 0px 5px;
     }
     .box_container > div{
         width: 100%;
@@ -372,7 +372,7 @@ button, input {
     box-shadow: 0 4px 8px 2px rgba(0,0,0,0.2);
     border-radius: 8px;
     padding: 20px;
-    margin: 20px;
+    margin: 5px;
     box-sizing: border-box;
     align-self: flex-end;
 }
@@ -395,6 +395,16 @@ button, input {
     font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
     font-weight: 700;
     width: 100%;
+    margin-bottom: 0;
+}
+
+.square-tiny{
+    max-width: 300px;
+    height: 300px;
+}
+
+.info_bar{
+    margin-top: 5px;
 }
 
 .title_container{
@@ -408,6 +418,12 @@ button, input {
 
 .page_title{
     margin: 0 6px 0 6px;
+}
+
+.page_description{
+    text-align: center;
+    font-size: 16px;
+    font-style: italic;
 }
 
 
@@ -428,6 +444,10 @@ button, input {
 
 .border-warning{
     border-color: orange;
+}
+
+.border-danger{
+    border-color: red;
 }
 
 .team-motto{

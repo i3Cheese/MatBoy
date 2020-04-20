@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="layout">
+  <div class="title_container">
+    <h1 class="page_title">
+      {{team.name}}
+    </h1>
+  </div>
+  <div class="page_description box">
+    {{team.motto}}
+  </div>
+  <div class="box_container">
+    <div class="box box-large">
+      <div class="shadow-box__title">
+        Игры
+      </div>
+      {% for game in team.games %}
+        <!-- TODO: do teams -->
+      {% endfor %}
+    </div>
+    {% set border_class =  ".border-success" 
+                           if team.status == 2 else 
+                           ".border-warning"
+                           if team.status == 1 else ".border-danger" %}
+    <div class="box square-tiny {{border_class}}">
+      <div class="shadow-box__title">
+        Информация
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

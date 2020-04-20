@@ -1,0 +1,11 @@
+{% set format = "%d %B %Y" %}
+
+{% macro tour_dates(tour) %}
+  {% if tour.start and tour.end %}
+    {{tour.start.strftime(format)}} — {{tour.end.strftime(format)}}
+  {% elif tour.start %}
+    {{tour.start.strftime(format)}}
+  {% else %}
+    Даты проведения не известны.
+  {% endif %}
+{% endmacro %}

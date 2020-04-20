@@ -37,6 +37,24 @@ def tournament_page(tour_id):
     return render_template("tournament.html", tour=tour)
 
 
+@blueprint.route("/league/<int:league_id>")
+def league_page(league_id):
+    session = create_session()
+    league = session.query(League).get(league_id)
+    if not league:
+        abort(404)
+    return render_template("league.html", league=league)
+
+
+@blueprint.route("/team/<int:team_id>")
+def team_page(team_id):
+    session = create_session()
+    team = session.query(Team).get(team_id)
+    if not team:
+        abort(404)
+    return render_template("team.html", team=team)
+
+
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
@@ -114,7 +132,8 @@ def tournament_edit_page(tour_id: int):
     if form.validate_on_submit():
         new_title = form.title.data
         # if title changed and new_title exist
-        if new_title != tour.title and session.query(Tournament).filter(Tournament.title == new_title).first():
+        if (new_title != tour.title) and (
+                session.query(Tournament).filter(Tournament.title == new_title).first()):
             form.title.errors.append("Турнир с таким названием уже существует")
             return render_template("tournament_editor.html", form=form)
 
@@ -156,7 +175,7 @@ def team_request(tour_id: int):
         )
 
         for email in form.players.data:
-            user = session.query(User).filter(User.email==email).first()
+            user = session.query(User).filter(User.email == email).first()
             if not user:
                 return render_template("team_request.html", tour=tour, form=form)
             team.players.append(user)
@@ -178,7 +197,7 @@ def tournament_console(tour_id: int):
     # If user haven't access to tournament
     if not(current_user.id == 1 or tour.chief_id == current_user.id):
         abort(403)
-    
+
     return render_template("tournament_console.html", tour=tour)
 
 
@@ -190,10 +209,9 @@ def league_console(league_id: int):
     league = session.query(League).get(league_id)
     if not league:
         abort(404)
-        
+
     # If user haven't access to tournament
     if current_user.id not in (1, league.chief_id, league.tournament.chief_id):
         abort(403)
-    
-    return render_template("league_console.html", league=league)    
 
+    return render_template("league_console.html", league=league)

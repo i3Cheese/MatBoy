@@ -40,18 +40,10 @@ function addGameForm(game_id) {
 
 function fillGame(game, info, is_new=false){
     id = info["id"];
-    if (is_new){
-        game.attrPlus('id', id);
-    }
-    game.find(".game-status").text(
-        info["status"] == 2?"Игра успешно завершилась":"Игра планируется")
     let l_title = game.find(".game-title");
+    game.find(".game-status").text(
+        info["status"] == 2?"Игра успешно завершилась":"Игра планируется");
     l_title.text(`${info["team1"]["name"]} — ${info["team2"]["name"]}`);
-    if (is_new){
-        l_title.attrPlus("for", id);
-        game.find(".game-info").attrPlus("id", id);
-    }
-
     let l_judge = game.find(".game-judge");
     l_judge.text(info["judge"]["fullname"]);
     l_judge.attr("title", info["judge"]["email"]);
@@ -59,6 +51,14 @@ function fillGame(game, info, is_new=false){
 
     game.find(".game-start").text(info['start']?info['start']:'Не определенно');
     game.find(".game-place").text(info["place"]?info['place']:'Не определенно');
+    
+    if (is_new){
+        game.attrPlus('id', id);
+        l_title.attrPlus("for", id);
+        game.find(".game-info").attrPlus("id", id);
+        game.find(".game-manage").attrPlus("href", id)
+        game.find(".game-goto").attrPlus("href", id)
+    }
 }
 
 

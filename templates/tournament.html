@@ -7,6 +7,10 @@
     <h1 class="page_title">
       {{tour.title}}
     </h1>
+    {% from 'models_macroses.html' import tour_dates %}
+    <div class="dates">
+      {{tour_dates(tour)}}
+    </div>
     {% if current_user.id in (1, tour.chief_id,) %}
       <div class="link_menu">
         <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
@@ -18,6 +22,9 @@
         </a>
       </div>
     {% endif %}
+  </div>
+  <div class="page_description box">
+    {{tour.description}}
   </div>
   <div class="box_container">
     <div class="box box-large">

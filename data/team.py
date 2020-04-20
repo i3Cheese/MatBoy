@@ -13,9 +13,10 @@ users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
 
 
 class Team(BaseModel):
-    """Status: 0 - deleted
-               1 - waiting
-               2 - accepted"""
+    """
+    Represent Team module from db.
+    :status: 0-deleted 1-waiting 2-accepted
+    """
     __tablename__ = "teams"
     __repr_attrs__ = ["name", "tournament"]
     serialize_only = ("id",

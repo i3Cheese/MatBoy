@@ -16,19 +16,20 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     __abstract__ = True
     
     def fill(self, **kwargs):
+        """Set the attibutes. Equal to self.key = value.
+        It's raise AttributeError if key isn't class attribute"""
         for name in kwargs.keys():
             setattr(self, name, kwargs[name])
         return self
 
 
 def global_init() -> None:
+    """Connect to the database. If it alredy done - do nothong"""
     global __factory
     if __factory:
         return
 
     conn_str = config.DATA_BASE_URL
-    if not conn_str:
-        raise Exception("Необходимо указать файл базы данных")
     
     logging.info(f'Подключение к базе данных по адресу {repr(conn_str)}')
 
@@ -43,5 +44,6 @@ def global_init() -> None:
 
 
 def create_session() -> Session:
+    """Create the data base session. Previosly global_init() should be call"""
     global __factory
     return __factory()

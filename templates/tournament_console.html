@@ -36,6 +36,9 @@
               {{team.name}}
             </label>
             <div class="info_bar team-info hidden" id="team_info-{{team.id}}">
+              <label class="label-bold">
+                Девиз:
+              </label>
               <i class="team-motto like_list">{{team.motto}}</i>
               <label class="label-bold">
                 Заявку отправил:
@@ -143,9 +146,21 @@
 
           <template id="league_template">
             <div class="box_item league" id="league-">
+              <div class="link_menu">
+                <a class="link link-small league-manage" href='/league_console/'>
+                  управлять
+                </a>
+                |
+                <a class="link link-small league-goto" href='/league/'>
+                  перейти на страницу
+                </a>
+              </div>
               <label class="box_item-title league-title nested-toggler" for="league_info-">
               </label>
               <div class="info_bar league-info" id="league_info-">
+                <label class="label-bold">
+                  Описание:
+                </label>
                 <i class="league-description like_list">
                 </i>
                 <label class="label-bold">
@@ -210,7 +225,19 @@
               <label class="box_item-title league-title nested-toggler" for="league_info-{{league.id}}">
                 {{league.title}}
               </label>
+              <div class="link_menu">
+                <a class="link link-small league-manage" href='/league_console/{{league.id}}'>
+                  управлять
+                </a>
+                |
+                <a class="link link-small league-goto" href='/league/{{league.id}}'>
+                  перейти на страницу
+                </a>
+              </div>
               <div class="info_bar league-info hidden" id="league_info-{{league.id}}">
+                <label class="label-bold">
+                  Описание:
+                </label>
                 <i class="league-description like_list">
                   {{league.description}}
                 </i>

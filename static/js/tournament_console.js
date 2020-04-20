@@ -172,6 +172,9 @@ function sendLeagueForm(event) {
                 let l_label_teams = league.find(".league-label_teams");
                 l_label_teams.attr("for", l_label_teams.attr("for") + id);
 
+                league.find('.league-manage').attrPlus('href', id);
+                league.find('.league-goto').attrPlus('href', id);
+
                 let l_teams = league.find(".league-teams");
                 l_teams.attr("id", l_teams.attr('id')+id);
                 let base_team_temp = $(document.querySelector("#league_team_template").content);
