@@ -111,7 +111,7 @@ class TeamResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('name', type=str)
     put_pars.add_argument('motto', type=str)
-    put_pars.add_argument('accepted', type=boolean)
+    put_pars.add_argument('status', type=int)
     put_pars.add_argument('trainer.id', type=int)
     put_pars.add_argument('trainer.email', type=str)
     put_pars.add_argument('trainer', type=dict)
@@ -144,8 +144,8 @@ class TeamResource(Resource):
             team.name = args['name']
         if args['motto'] is not None:
             team.motto = args['motto']
-        if args['accepted'] is not None:
-            team.accepted = args['accepted']
+        if args['status'] is not None:
+            team.status = args['status']
         session.merge(team)
         session.commit()
         

@@ -21,7 +21,7 @@ class Team(BaseModel):
     serialize_only = ("id",
                       "name",
                       "motto",
-                      "accepted",
+                      "status",
                       "trainer.id",
                       "trainer.email",
                       "trainer.fullname",

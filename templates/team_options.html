@@ -1,0 +1,6 @@
+{% for team in league.teams %}
+    <option class="selector-option team_option"
+            value="{{team.id}}">
+      {{team.name}}
+    </option>
+{% endfor %}

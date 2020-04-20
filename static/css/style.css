@@ -417,11 +417,11 @@ button, input {
     border-style: solid;
 }
 
-.team-accepted{
+.border-success{
     border-color: green;
 }
 
-.team-waiting{
+.border-warning{
     border-color: orange;
 }
 
