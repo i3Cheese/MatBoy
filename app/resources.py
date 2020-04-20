@@ -2,13 +2,23 @@ from flask_restful import reqparse, abort, Resource, request
 from flask_restful.inputs import boolean
 from flask import jsonify
 from data import User, Team, Tournament, League, Game, create_session
-from datetime import date
+from datetime import date, datetime
 from config import config
 import logging
 
 
 def get_date_from_string(strdate: str) -> date:
+    if not strdate:
+        return None
     return date.fromisoformat('-'.join(reversed(strdate.split("."))))
+
+
+def get_datetime_from_string(strdatetime: str) -> datetime:
+    if not strdatetime:
+        return None
+    dt, tm = strdatetime.split(' ')
+    dt = '-'.join(reversed(dt))
+    return datetime.fromisoformat(dt + ' ' + tm)
 
 
 def get_user(session, user_id=None, email=None, do_abort=True) -> User:
@@ -51,6 +61,14 @@ def get_league(session, league_id, do_abort=True) -> League:
     if do_abort and not league:
         abort(404, message=f"League #{league_id} not found")
     return league
+
+
+def get_game(session, game_id, do_abort=True) -> Game:
+    """Get Game from database, abort(404) if do_abort==True and game not found"""
+    game = session.query(Game).get(game_id)
+    if do_abort and not game:
+        abort(404, message=f"Game #{game_id} not found")
+    return game
 
 
 def abort_if_email_exist(session, email):
@@ -148,7 +166,7 @@ class TeamResource(Resource):
             team.status = args['status']
         session.merge(team)
         session.commit()
-        
+
         response = {'success': 'ok'}
         if args['send_info']:
             response['team'] = team.to_dict()
@@ -181,7 +199,7 @@ class LeagueResource(Resource):
         """Handle request to change league."""
         args = self.put_pars.parse_args()
         logging.info(f"League put request with args {args}")
-        
+
         session = create_session()
         league = get_league(session, league_id)
         if not(args['chief.id'] is None and args['chief.email'] is None):
@@ -200,7 +218,7 @@ class LeagueResource(Resource):
             league.description = args['description']
         session.merge(league)
         session.commit()
-        
+
         response = {"success": "ok"}
         if args['send_info']:
             response["league"] = league.to_dict()
@@ -217,17 +235,18 @@ class LeagueResource(Resource):
 class LeaguesResource(Resource):
     post_pars = LeagueResource.put_pars.copy()
     post_pars.replace_argument('title', type=str, required=True)
-    post_pars.add_argument('tournament.id', type=int, required=True)
+    post_pars.replace_argument('tournament.id', type=int, required=True)
 
     def post(self):
         """Handle request to create league."""
         args = self.post_pars.parse_args()
         logging.info(f"League post request with args {args}")
-        
+
         session = create_session()
         league = League()
         if args['chief.id'] is None and args['chief.email'] is None:
-            abort(400, message={"chief": "Missing required parameter in the JSON body."})
+            abort(400, message={
+                  "chief": "Missing required parameter in the JSON body."})
         else:
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
@@ -238,8 +257,97 @@ class LeaguesResource(Resource):
             league.description = args['description']
         session.add(league)
         session.commit()
-        
+
         response = {"success": "ok"}
         if args['send_info']:
             response["league"] = league.to_dict()
+        return jsonify(response)
+
+
+class GameResource(Resource):
+    put_pars = reqparse.RequestParser()
+    put_pars.add_argument('place', type=str)
+    put_pars.add_argument('start', type=get_datetime_from_string) # Empty string == None
+    put_pars.add_argument('protocol', type=dict)
+    put_pars.add_argument('status', type=int)
+    put_pars.add_argument('judge.id', type=int)
+    put_pars.add_argument('judge.email', type=str)
+    put_pars.add_argument('league.id', type=int)
+    put_pars.add_argument('send_info', type=boolean, default=False)
+
+    def get(self, game_id):
+        session = create_session()
+        game = get_game(session, game_id)
+        return jsonify({'game': game.to_dict()})
+
+    def put(self, game_id):
+        """Handle request to change game."""
+        args = self.put_pars.parse_args()
+        logging.info(f"Game put request with args {args}")
+
+        session = create_session()
+        game = get_game(session, game_id)
+        if args['place'] is not None:
+            game.description = args['place']
+        if args['start'] is not None:
+            game.start = args['start']
+        if args['protocol'] is not None:
+            game.protocol = args['protocol']
+        if args['status'] is not None:
+            game.status = args['status']
+        if not(args['judge.id'] is None and args['judge.email'] is None):
+            game.judge = get_user(session,
+                                  user_id=args['judge.id'],
+                                  email=args['judge.email'],)
+        if args['team1'] is not None:
+            game.team1 = get_team(session, args['team1'])
+        if args['team2'] is not None:
+            game.team1 = get_team(session, args['team2'])
+        if args['league.id'] is not None:
+            game.league = get_league(session, args['league.id'])
+            
+        session.merge(game)
+        session.commit()
+
+        response = {"success": "ok"}
+        if args['send_info']:
+            response["game"] = game.to_dict()
+        return jsonify(response)
+
+
+class GamesResource(Resource):
+    post_pars = GameResource.put_pars.copy()
+    post_pars.replace_argument('status', type=int, default=1)
+    post_pars.replace_argument('league.id', type=int, required=True)
+
+    def post(self, game_id):
+        """Handle request to change game."""
+        args = self.post_pars.parse_args()
+        logging.info(f"Game post request with args {args}")
+
+        session = create_session()
+        game = Game()
+        if args['place'] is not None:
+            game.description = args['place']
+        if args['start'] is not None:
+            game.start = args['start']
+        if args['protocol'] is not None:
+            game.protocol = args['protocol']
+        game.status = args['status']
+        if not(args['judge.id'] is None and args['judge.email'] is None):
+            game.judge = get_user(session,
+                                  user_id=args['judge.id'],
+                                  email=args['judge.email'],)
+        else:
+            abort(400, message={"judge": "Missing required parameter in the JSON body."})
+        game.team1 = get_team(session, args['team1'])
+        game.team1 = get_team(session, args['team2'])
+        game.league = get_league(session, args['league.id'])
+            
+        session.add(game)
+        session.commit()
+
+        response = {"success": "ok"}
+        if args['send_info']:
+            response["game"] = game.to_dict()
         return jsonify(response)
