@@ -15,11 +15,11 @@ class Game(BaseModel):
                       "judge.email",
                       "judge.fullname",
                       "team1.id",
-                      "team1.name"
+                      "team1.name",
                       "team2.id",
                       "team2.name",
                       "league.id",
-                      "league.title"
+                      "league.title",
                       )
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)

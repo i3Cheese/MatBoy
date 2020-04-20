@@ -245,7 +245,6 @@ function deleteLeague(league_id){
         type: "DELETE",
         url: API_URL + "league/" + league_id,
         success: function () {
-            $("#league-" + league_id).remove();
             location.reload();
         },
     });

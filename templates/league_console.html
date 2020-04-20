@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block main %}
-  <div class="hidden" id="tour-id">{{league.id}}</div>
+  <div class="hidden" id="league_id">{{league.id}}</div>
   <main class="container-xl" role="main">
     <div class="title_container">
       <h3 class="page_title">
@@ -54,7 +54,7 @@
       </div>
 
       <div class="box box-middle">
-        <div id="leagues">
+        <div id="games">
           <label class="box-label">
             Игры
           </label>
@@ -62,29 +62,35 @@
           <template id="game_form_template">
             <form class="box_item game_form"
                   id="game_form-"
-                  accept-charset="utf-8">
+                  accept-charset="utf-8"
+                  autocomplete="off">
               <label class="label-bold">Место проведения:</label>
-              <input class="input-wide game-place editor-place"
+              <input class="input-wide game-place editor-text"
                     type="text"
                     name="place"
               />
               <label class="label-bold">Время начала:</label>
-              <input class="input-wide game-start editor-start datepicker-here"
-                    type="text"
-                    name="start"
+              <input class="input-wide game-start editor-time datepicker-here"
+                     type="text"
+                     name="start"
+                     data-timepicker="true"
+                     data-position="right top"
               />
               <label class="label-bold">Команды:</label>
-              <fieldset class="input-wide">
-                <select class="selector team_selector" name="team1">
+              <fieldset class="input-wide" name="teams">
+                <select class="selector game-team1 team_selector" name="team1">
                   {% include 'team_options.html' %}
                 </select>
                 -
-                <select class="selector team_selector" name="team2">
+                <select class="selector game-team2 team_selector" name="team2">
                   {% include 'team_options.html' %}
                 </select>
               </fieldset>
               <label class="label-bold">Судья:</label>
-              <input class="input-wide editor-email" name="judge_email" type="email" required/>
+              <input class="input-wide game-judge editor-email" 
+                     name="judge_email"
+                     type="email" 
+                     required/>
 
               <div class="buttons-menu">
                 <button class="button button_success" type="submit" name="submit">
@@ -125,13 +131,21 @@
                 <p class="game-place info_value">
 
                 </p>
+                <div class="buttons-menu">
+                  <button class="button button_warning game-edit">
+                    Редактировать
+                  </button>
+                  <button class="button button_danger game-delete">
+                    Удалить
+                  </button>
+                </div>
               </div>
             </div>
           </template>
 
           {% for game in league.games | selectattr("status")
                                       | sort(attribute="status")
-                                      | sort(reverse=true, attribute="start") %}
+                                      | sort(reverse=true, attribute="updated_at") %}
             {% if game.status == 2 %}
             <div class="box_item game border-success" id="game-{{game.id}}">
               <span class="status game-status">
@@ -152,26 +166,40 @@
                 </label>
                 <a class="game-judge link link-shadow info_value like_list"
                     href="/profile/" 
-                    title="{{game.judje.email}}">
-                  {{game.judje.fullname}}
+                    title="{{game.judge.email}}">
+                  {{game.judge.fullname}}
                 </a>
                 <label class="label-bold">
-                  Дата начала
+                  Дата начала:
                 </label>
-                <p class="game-start info_value">
-                  {{game.start}}
+                <p class="game-start info_value like_list">
+                  {{game.start if game.start else "Не определенно"}}
                 </p>
                 <label class="label-bold">
-                  Место проведения
+                  Место проведения:
                 </label>
-                <p class="game-place info_value">
-                  {{game.place}}
+                <p class="game-place info_value like_list">
+                  {{game.place if game.place else "Не определенно"}}
                 </p>
+                <div class="buttons-menu">
+                  <button class="button button_warning game-edit">
+                    Редактировать
+                  </button>
+                  <button class="button button_danger game-delete">
+                    Удалить
+                  </button>
+                </div>
               </div>
+            </div>
           {% endfor %}
+        </div>
+        <div class="buttons-menu">
+          <button class="button button_success game-add">
+            Добавить игру
+          </button>
         </div>
       </div>
     </div>
-    <script src="{{url_for('static', filename='js/tournament_console.js')}}"></script>
+    <script src="{{url_for('static', filename='js/league_console.js')}}"></script>
   </main>
 {% endblock main %}

@@ -17,7 +17,7 @@ def get_datetime_from_string(strdatetime: str) -> datetime:
     if not strdatetime:
         return None
     dt, tm = strdatetime.split(' ')
-    dt = '-'.join(reversed(dt))
+    dt = '-'.join(reversed(dt.split('.')))
     return datetime.fromisoformat(dt + ' ' + tm)
 
 
@@ -273,6 +273,8 @@ class GameResource(Resource):
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
     put_pars.add_argument('league.id', type=int)
+    put_pars.add_argument('team1.id', type=int)
+    put_pars.add_argument('team2.id', type=int)
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, game_id):
@@ -283,12 +285,12 @@ class GameResource(Resource):
     def put(self, game_id):
         """Handle request to change game."""
         args = self.put_pars.parse_args()
-        logging.info(f"Game put request with args {args}")
+        logging.info(f"Game put request: {args}")
 
         session = create_session()
         game = get_game(session, game_id)
         if args['place'] is not None:
-            game.description = args['place']
+            game.place = args['place']
         if args['start'] is not None:
             game.start = args['start']
         if args['protocol'] is not None:
@@ -299,10 +301,10 @@ class GameResource(Resource):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
                                   email=args['judge.email'],)
-        if args['team1'] is not None:
-            game.team1 = get_team(session, args['team1'])
-        if args['team2'] is not None:
-            game.team1 = get_team(session, args['team2'])
+        if args['team1.id'] is not None:
+            game.team1 = get_team(session, args['team1.id'])
+        if args['team2.id'] is not None:
+            game.team2 = get_team(session, args['team2.id'])
         if args['league.id'] is not None:
             game.league = get_league(session, args['league.id'])
             
@@ -312,6 +314,7 @@ class GameResource(Resource):
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()
+        logging.info(f"Game put response: {response}")
         return jsonify(response)
 
 
@@ -319,30 +322,32 @@ class GamesResource(Resource):
     post_pars = GameResource.put_pars.copy()
     post_pars.replace_argument('status', type=int, default=1)
     post_pars.replace_argument('league.id', type=int, required=True)
+    post_pars.replace_argument('team1.id', type=int, required=True)
+    post_pars.replace_argument('team2.id', type=int, required=True)
 
-    def post(self, game_id):
+    def post(self):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
-        logging.info(f"Game post request with args {args}")
+        logging.info(f"Game post request: {args}")
 
         session = create_session()
         game = Game()
         if args['place'] is not None:
-            game.description = args['place']
+            game.place = args['place']
         if args['start'] is not None:
             game.start = args['start']
         if args['protocol'] is not None:
             game.protocol = args['protocol']
-        game.status = args['status']
         if not(args['judge.id'] is None and args['judge.email'] is None):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
                                   email=args['judge.email'],)
         else:
             abort(400, message={"judge": "Missing required parameter in the JSON body."})
-        game.team1 = get_team(session, args['team1'])
-        game.team1 = get_team(session, args['team2'])
+        game.team1 = get_team(session, args['team1.id'])
+        game.team2 = get_team(session, args['team2.id'])
         game.league = get_league(session, args['league.id'])
+        game.status = args['status']
             
         session.add(game)
         session.commit()
@@ -350,4 +355,5 @@ class GamesResource(Resource):
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()
+        logging.info(f"Game post response: {response}")
         return jsonify(response)
