@@ -30,7 +30,7 @@
 
 {% macro team_league(team) %}
   {% if team.league %}
-    {{team.league.title}}
+    <a href="/league/{{team.league.id}}">{{team.league.title}}
   {% else %}
     Не назначена.
   {% endif %}

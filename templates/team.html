@@ -48,7 +48,11 @@
       <dd class="col-sm-3">Статус:</dd>
       <dt class="col-sm-9">{{team_status(team)}}</dt>
       <dd class="col-sm-3">Турнир:</dd>
-      <dt class="col-sm-9">{{team.tournament.title}}</dt>
+      <dt class="col-sm-9">
+        <a href="/tournament/{{team.tournament.id}}">
+          {{team.tournament.title}}
+        </a>
+      </dt>
       <dd class="col-sm-3">Лига:</dd>
       <dt class="col-sm-9">{{team_league(team)}}</dt>
     </dl>
