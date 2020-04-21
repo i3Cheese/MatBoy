@@ -71,8 +71,8 @@ function sendGameForm(event) {
     let request = {
         "start": form.start.value,
         "place": form.place.value,
-        "judge_email": form.judge_email.value,
-        "league_id": Number($("#league_id").text()),
+        "judge.email": form.judge_email.value,
+        "league.id": Number($("#league_id").text()),
         "team1.id": form.team1.value,
         "team2.id": form.team2.value,
         "send_info": true,}

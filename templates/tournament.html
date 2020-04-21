@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% from 'models_macroses.html' import formated_date %}
 {% block content %}
 
 <div class="layout">
@@ -7,21 +7,27 @@
     <h1 class="page_title">
       {{tour.title}}
     </h1>
-    {% from 'models_macroses.html' import tour_dates %}
-    <div class="dates">
-      {{tour_dates(tour)}}
-    </div>
-    {% if current_user.id in (1, tour.chief_id,) %}
-      <div class="link_menu">
-        <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
+    <div class="link_menu">
+      <a class="link link-small" 
+         onclick="redirectWithStep(event)"
+         href="/team_request/{{tour.id}}"
+      >
+        подать заявку
+      </a>
+      {% if current_user.id in (1, tour.chief_id,) %}
+        |
+        <a class="link link-small" 
+           onclick="redirectWithStep(event)" 
+           href="/edit_tournament/{{tour.id}}"
+        >
           редактировать
         </a>
         |
         <a class="link link-small" href='/tournament_console/{{tour.id}}'>
           управлять
         </a>
-      </div>
-    {% endif %}
+      {% endif %}
+    </div>
   </div>
   <div class="page_description box">
     {{tour.description}}
@@ -31,14 +37,30 @@
       <div class="shadow-box__title">
         Лиги
       </div>
-      {% for league in tour.leagues %}
-        <div class="centered_block block_link" onclick="redirectWithStep('/league/{{league.id}}')">
+      {% for league in tour.leagues | sort(reverse=True, attribute="created_at") %}
+        <div class="centered_block block_link" 
+             onclick="redirect(event)" 
+             href="/league/{{league.id}}"
+        >
           <h2 class="item_title">{{league.title}}</h2>
           <div class="description">
             {{league.description}}
           </div>
         </div>
       {% endfor %}
+    </div>
+    <div class="box square-tiny">
+      <div class="shadow-box__title">
+        Информация
+      </div>
+      <dl class="row info_in_box">
+        <dd class="col-sm-6">Место проведения:</dd>
+        <dt class="col-sm-6">{{tour.place}}</dt>
+        <dd class="col-sm-6">Дата начала:</dd>
+        <dt class="col-sm-6">{{formated_date(tour.start)}}</dt>
+        <dd class="col-sm-6">Дата оканчания:</dd>
+        <dt class="col-sm-6">{{formated_date(tour.end)}}</dt>
+      </dl>
     </div>
   </div>
 </div>

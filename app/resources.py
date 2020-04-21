@@ -120,6 +120,8 @@ class UsersResource(Resource):
             "id",
             "name",
             "surname",
+            "patronymic",
+            "fullname",
             "email",
         )) for user in users]}
         return jsonify(json_resp)
@@ -316,6 +318,15 @@ class GameResource(Resource):
             response["game"] = game.to_dict()
         logging.info(f"Game put response: {response}")
         return jsonify(response)
+    
+    def delete(self, game_id):
+        """Sets the status of game to zero. Thats mean that the game is canceled"""
+        session = create_session()
+        game = get_game(session, game_id)
+        game.status = 0
+        session.merge(game)
+        session.commit()
+        return jsonify({"success": "ok"})
 
 
 class GamesResource(Resource):

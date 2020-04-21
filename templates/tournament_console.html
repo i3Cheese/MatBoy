@@ -11,7 +11,10 @@
       <h3 class="page_title">
         {{tour.title}}
       </h3>
-      <a class="link link-small" onclick="redirectWithStep('/edit_tournament/{{tour.id}}')">
+      <a class="link link-small"
+         onclick="redirectWithStep(event);" 
+         href="/edit_tournament/{{tour.id}}"
+      >
         редактировать
       </a>
     </div>

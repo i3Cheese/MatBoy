@@ -25,13 +25,21 @@ function logData(data){
     console.log(data);
 }
 
+function getHref(target){
+    let href = target.attr("href")
+    if (typeof(href) === 'undefined'){
+        return target.parents("[href]").attr("href")
+    } else {
+        return href
+    }
+}
 
-function redirectWithStep(path){
-    window.location.href = path;
+function redirectWithStep(event){
+    window.location.href = getHref($(event.target));
     // window.location.search = "?" + "return_to=" + window.location.pathname;
 }
-function redirect(path){
-    window.location.href = path;
+function redirect(event){
+    window.location.href = getHref($(event.target));
 }
 
 

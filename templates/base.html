@@ -51,14 +51,18 @@
               <a 
                 class="navbar-brand"  
                 href="/profile/{{current_user.id}}"
-              >{{ current_user.name }}</a>
-              <a class="btn button_primary" onclick="redirectWithStep('/logout');">Выйти</a>
+              >
+                {{ current_user.name }}
+              </a>
+              <a class="btn button_primary" onclick="redirectWithStep(event);" href="/logout">
+                Выйти
+              </a>
             {% else %}
-              <a class="btn button_success" onclick="redirectWithStep('/register');">
-                  Зарегистрироваться
+              <a class="btn button_success" onclick="redirectWithStep(event);" href="/register">
+                Зарегистрироваться
               </a>
               <a class="btn button_primary" onclick="redirectWithStep('/login');">
-                  Войти
+                Войти
               </a>
             {% endif %}
         </div>

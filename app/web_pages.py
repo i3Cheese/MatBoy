@@ -55,6 +55,15 @@ def team_page(team_id):
     return render_template("team.html", team=team)
 
 
+@blueprint.route("/profile/<int:user_id>")
+def user_page(user_id):
+    session = create_session()
+    user = session.query(User).get(user_id)
+    if not user:
+        abort(404)
+    return render_template("profile.html", user=user)
+
+
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()

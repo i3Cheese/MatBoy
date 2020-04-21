@@ -1,34 +1,57 @@
 {% extends 'base.html' %}
+{% from 'models_macroses.html' import team_status, team_league %}
 
+{% block title %}
+  Команда - {{team.name}}
+{% endblock title %}
 {% block content %}
 
-<div class="layout">
-  <div class="title_container">
-    <h1 class="page_title">
-      {{team.name}}
-    </h1>
-  </div>
-  <div class="page_description box">
-    {{team.motto}}
-  </div>
-  <div class="box_container">
-    <div class="box box-large">
-      <div class="shadow-box__title">
-        Игры
-      </div>
-      {% for game in team.games %}
-        <!-- TODO: do teams -->
-      {% endfor %}
+<div class="title_container">
+  <h1 class="page_title">
+    {{team.name}}
+  </h1>
+</div>
+<div class="page_description box">
+  {{team.motto}}
+</div>
+<div class="box_container">
+  <div class="box">
+    <div class="shadow-box__title">
+      Игры
     </div>
-    {% set border_class =  ".border-success" 
-                           if team.status == 2 else 
-                           ".border-warning"
-                           if team.status == 1 else ".border-danger" %}
-    <div class="box square-tiny {{border_class}}">
-      <div class="shadow-box__title">
-        Информация
-      </div>
+    {% for game in team.games %}
+      <!-- TODO: do games -->
+    {% endfor %}
+  </div>
+  <div class="box box-tiny">
+    <div class="shadow-box__title">
+      Игроки
     </div>
+    {% for player in team.players %}
+      <div class="centered_block block_link" 
+           onclick="redirect(event)" 
+           href="/profile/{{player.id}}"
+      >
+        <h5 class="item_title">{{player.fullname}}</h5>
+      </div>
+    {% endfor %}
+  </div>
+  {% set border_class =  "border-success" 
+                          if team.status == 2 else 
+                          "border-warning"
+                          if team.status == 1 else "border-danger" %}
+  <div class="box square-tiny {{border_class}} border-lg">
+    <div class="shadow-box__title">
+      Информация
+    </div>
+    <dl class="row info_in_box">
+      <dd class="col-sm-3">Статус:</dd>
+      <dt class="col-sm-9">{{team_status(team)}}</dt>
+      <dd class="col-sm-3">Турнир:</dd>
+      <dt class="col-sm-9">{{team.tournament.title}}</dt>
+      <dd class="col-sm-3">Лига:</dd>
+      <dt class="col-sm-9">{{team_league(team)}}</dt>
+    </dl>
   </div>
 </div>
 

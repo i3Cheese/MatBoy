@@ -1,11 +1,46 @@
 {% set format = "%d %B %Y" %}
 
+{% macro formated_date(date) %}
+  {% if date %}
+    {{date.strftime(format)}}
+  {% else %}
+    Не известно
+  {% endif %}
+{% endmacro %}
+
 {% macro tour_dates(tour) %}
   {% if tour.start and tour.end %}
-    {{tour.start.strftime(format)}} — {{tour.end.strftime(format)}}
+    {{formated_date(tour.start)}} — {{formated_date(tour.end)}}
   {% elif tour.start %}
-    {{tour.start.strftime(format)}}
+    {{formated_date(tour.start)}}
   {% else %}
     Даты проведения не известны.
   {% endif %}
 {% endmacro %}
+
+{% macro team_status(team) %}
+  {% if team.status == 2 %}
+    Заявка одобрена
+  {% elif team.status == 1 %}
+    Заявка находится на рассмотрении
+  {% else %}
+    Заявка отклонена
+  {% endif %}
+{% endmacro %}
+
+{% macro team_league(team) %}
+  {% if team.league %}
+    {{team.league.title}}
+  {% else %}
+    Не назначена.
+  {% endif %}
+{% endmacro %}
+
+{% macro check_specified(data)%}
+  {% if data %}
+    {{data}}
+  {% else %}
+    Не указано
+  {% endif %}
+{% endmacro %}
+

@@ -45,3 +45,12 @@ class User(BaseModel, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
+    
+    @property
+    def years_old(self):
+        today = datetime.date.today()
+        birth = self.birthday
+        years = today.year - birth.year
+        if int(today.strftime("%j")) < int(birth.strftime("%j")):
+            years -= 1
+        return years

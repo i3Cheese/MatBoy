@@ -74,7 +74,6 @@
                      type="text"
                      name="start"
                      data-timepicker="true"
-                     data-position="right top"
               />
               <label class="label-bold">Команды:</label>
               <fieldset class="input-wide" name="teams">
@@ -103,7 +102,7 @@
             </form>
           </template>
           <template id="game_template">
-            <div class="box_item game" id="game-">
+            <div class="box_item game border-warnig" id="game-">
               <span class="status game-status">
                   
               </span>
@@ -183,7 +182,7 @@
                   Судья:
                 </label>
                 <a class="game-judge link link-shadow info_value like_list"
-                    href="/profile/" 
+                    href="/profile/{{game.judge.id}}" 
                     title="{{game.judge.email}}">
                   {{game.judge.fullname}}
                 </a>

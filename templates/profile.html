@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% from 'models_macroses.html' import team_status, team_league, check_specified %}
+
+{% block title %}
+  Профиль - {{user.fullname}}
+{% endblock title %}
+
+{% block content %}
+
+<div class="box_container">
+  <div class="box">
+    <div class="shadow-box__title">
+      Команды
+    </div>
+    {% for team in user.teams | sort(reverse=True, attribute="created_at")%}
+      <div class="centered_block block_link" onclick="redirect(event);" href="/team/{{team.id}}">
+        <h5 class="item_title">{{team.name}}</h5>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="box square-tiny">
+    <div class="shadow-box__title">
+      {{user.fullname}}
+    </div>
+    <dl class="row info_in_box">
+      <dd class="col-sm-3">Город:</dd>
+      <dt class="col-sm-9">{{check_specified(user.place)}}</dt>
+      <dd class="col-sm-3">Возраст:</dd>
+      <dt class="col-sm-9">{{user.years_old}}</dt>
+    </dl>
+  </div>
+</div>
+
+{% endblock content %}
