@@ -1,5 +1,5 @@
 from app import login_manager
-from flask import Blueprint, render_template, redirect, abort
+from flask import Blueprint, render_template, redirect, abort, request
 from flask_login import login_user, logout_user, login_required, current_user
 from data import User, Tournament, League, Team, Game, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm
@@ -12,6 +12,14 @@ blueprint = Blueprint('web_pages',
                       template_folder=config.TEMPLATES_FOLDER,
                       static_folder=config.STATIC_FOLDER,
                       )
+
+
+def back_redirect(reserve_path='/'):
+    path = request.args.get("comefrom")
+    if not path:
+        path = reserve_path
+        
+    return redirect(path)
 
 
 @login_manager.user_loader
@@ -78,7 +86,7 @@ def login_page():
             form.password.errors.append("Неправильный пароль")
         else:
             login_user(user, remember=True)
-            return redirect("/")
+            return back_redirect()
     return render_template("login.html", form=form)
 
 
@@ -104,7 +112,7 @@ def register_page():
 @login_required
 def logout_page():
     logout_user()
-    return redirect("/")
+    return back_redirect("/login")
 
 
 @blueprint.route("/new_tournament", methods=["POST", "GET"])
@@ -126,7 +134,7 @@ def tournament_creator_page():
         session.merge(current_user)
         session.commit()
 
-        return redirect("/")
+        return redirect(f"/tournament_console/{tournament.id}")
     return render_template("tournament_editor.html", form=form)
 
 
@@ -155,7 +163,7 @@ def tournament_edit_page(tour_id: int):
         session.merge(tour)
         session.commit()
 
-        return redirect("/")
+        return back_redirect(f"/tournament_console/{tour_id}")
 
     elif not form.is_submitted():
         form.title.data = tour.title
@@ -190,7 +198,7 @@ def team_request(tour_id: int):
             team.players.append(user)
         session.add(team)
         session.commit()
-        return redirect(f"/tournament/{tour_id}")
+        return redirect(f"/team/{team.id}")
 
     return render_template("team_request.html", tour=tour, form=form)
 
@@ -252,8 +260,9 @@ def forbidden(error):
 
 @blueprint.errorhandler(404)
 def not_found(error):
+    message="Мы не нашли то что вы искали. Или вы искали то чего у нас нет."
     return render_template("errors/error.html", 
                            error=error, 
-                           message="Мы не нашли то что вы искали. Или вы искали то чего у нас нет.")
+                           message=message)
     
 

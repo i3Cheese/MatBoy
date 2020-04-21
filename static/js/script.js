@@ -35,8 +35,12 @@ function getHref(target){
 }
 
 function redirectWithStep(event){
-    window.location.href = getHref($(event.target));
-    // window.location.search = "?" + "return_to=" + window.location.pathname;
+    event.preventDefault();
+    let path = getHref($(event.target));
+    let url = new URL(document.location.href);
+    url.pathname = path;
+    url.searchParams.set("comefrom", document.location.pathname);
+    window.location.href = url;
 }
 function redirect(event){
     window.location.href = getHref($(event.target));
