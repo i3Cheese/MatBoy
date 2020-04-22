@@ -1,4 +1,3 @@
-from multiprocessing import Process
 from config import config
 import app
 

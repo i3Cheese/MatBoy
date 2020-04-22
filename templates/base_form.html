@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% from "form_macroses.html" import form_field, field_errors %}
+
+{% block content %}
+<div class="layout">
+  <div class="layout__page layout__page_middle">
+    <div class="shadow-box">
+      {% block form %}        
+      
+      {% endblock form %}
+    </div>
+    <div class="horizontal-spacer"></div>
+  </div>
+</div>
+{% endblock content %}

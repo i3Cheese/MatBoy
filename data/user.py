@@ -19,6 +19,11 @@ class User(BaseModel, UserMixin):
                       "email",
                       "is_creator",
                       )
+    
+    short_serialize_only = ("id",
+                            "fullname",
+                            "email"
+                            )
 
     surname = sa.Column(sa.String, nullable=False)
     name = sa.Column(sa.String, nullable=False)
@@ -44,7 +49,7 @@ class User(BaseModel, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
-    
+
     @property
     def years_old(self):
         today = datetime.date.today()
@@ -53,7 +58,8 @@ class User(BaseModel, UserMixin):
         if int(today.strftime("%j")) < int(birth.strftime("%j")):
             years -= 1
         return years
-    
+
     @property
     def is_admin(self):
         return self.id == 1
+    

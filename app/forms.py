@@ -1,10 +1,10 @@
 from wtforms import StringField, PasswordField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
-from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList
+from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms.fields.html5 import EmailField, IntegerField
 from flask_wtf import FlaskForm
 import datetime
-from data import User, Tournament, create_session
+from data import User, Game, Tournament, create_session
 from config import config
 
 DATE_FORMAT = config.DATE_FORMAT
@@ -111,3 +111,53 @@ class TeamForm(FlaskForm):
                         min_entries=4,
                         max_entries=8,)
     submit = SubmitField("Подтвердить")
+
+
+class PlayerBooleanField(BooleanField):
+    def __init__(self, *args, player_id, **kwargs):
+        super(PlayerBooleanField, self).__init__(*args, **kwargs)
+        self.player_id = player_id
+
+
+
+def PrepareToGameForm(game: Game):
+    """Generate form fields"""
+    
+    class PrepareToGameForm(FlaskForm):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            for team in self.teams.values():
+                team['players'] = []
+                for field_name in team['_players']:
+                    team['players'].append(getattr(self, field_name))
+                
+                team['captain'] = getattr(self, team['_captain'])
+                team['deputy'] = getattr(self, team['_deputy'])
+    
+    teams = {}
+    for i, team in enumerate((game.team1, game.team2,), 1):
+        teams[i] = dict()
+        teams[i]['team'] = team
+        teams[i]['_players'] = []
+        choices = []
+        
+        for player in team.players:
+            field = PlayerBooleanField(player.fullname, default="checked", player_id=player.id)
+            field_name = f"team{i}_player-{player.id}"
+            teams[i]['_players'].append(field_name)
+            setattr(PrepareToGameForm, field_name, field)
+            choices.append((player.id, player.fullname))
+        
+        cap = SelectField(u"Капитан", coerce=int, choices=choices)
+        deputy = SelectField(u"Заместитель капитана", coerce=int, choices=choices)
+        teams[i]['_captain'] = f'team{i}_captain'
+        teams[i]['_deputy'] = f'team{i}_deputy'
+        setattr(PrepareToGameForm, teams[i]['_captain'], cap)
+        setattr(PrepareToGameForm, teams[i]['_deputy'], deputy)
+        
+    PrepareToGameForm.teams = teams
+    PrepareToGameForm.submit = SubmitField("Далее")
+
+    return PrepareToGameForm()
+        
+        

@@ -377,6 +377,13 @@ button, input {
     align-self: flex-end;
 }
 
+.box-non_flex{
+    width: 100%;
+    flex-shrink: unset;
+    flex-grow: unset;
+    align-self: none;
+}
+
 @media (max-width: 1000px){
     .box{
         max-width: none !important;
@@ -501,3 +508,10 @@ textarea.input-wide{
     margin-bottom: 3px;
 }
 
+fieldset{
+    border-width: 0;
+}
+
+input[type='checkbox']{
+    cursor: pointer;
+}

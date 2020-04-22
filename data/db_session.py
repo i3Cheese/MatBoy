@@ -15,6 +15,8 @@ __factory = None
 class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     __abstract__ = True
     
+    short_serialize_only = ('id',)
+    
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     
     def fill(self, **kwargs):
@@ -26,6 +28,12 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     
     def __eq__(self, other):
         return self.id == other.id
+    
+    def __hash__(self):
+        return hash(self.id)
+    
+    def to_short_dict(self):
+       return self.to_dict(only=self.short_serialize_only)
 
 
 def global_init() -> None:

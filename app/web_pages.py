@@ -2,8 +2,9 @@ from app import login_manager
 from flask import Blueprint, render_template, redirect, abort, request
 from flask_login import login_user, logout_user, login_required, current_user
 from data import User, Tournament, League, Team, Game, create_session
-from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm
+from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
 from config import config
+from wtforms import ValidationError
 import logging
 
 
@@ -143,7 +144,7 @@ def tournament_creator_page():
 def tournament_edit_page(tour_id: int):
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
-    if not (current_user.id == 1 or tour.chief_id == current_user.id):
+    if not tour.have_permission(current_user):
         abort(403)
     form = TournamentInfoForm()
     if form.validate_on_submit():
@@ -212,7 +213,7 @@ def tournament_console(tour_id: int):
     if not tour:
         abort(404)
     # If user haven't access to tournament
-    if not(current_user.id == 1 or tour.chief_id == current_user.id):
+    if not tour.have_permission(current_user):
         abort(403)
 
     return render_template("tournament_console.html", tour=tour)
@@ -227,11 +228,64 @@ def league_console(league_id: int):
     if not league:
         abort(404)
 
-    # If user haven't access to tournament
-    if current_user.id not in (1, league.chief_id, league.tournament.chief_id):
+    if league.have_permission(current_user):
         abort(403)
 
     return render_template("league_console.html", league=league)
+
+
+@blueprint.route("/prepare_to_game/<int:game_id>", methods=["GET", "POST"])
+@login_required
+def prepare_to_game(game_id):
+    session = create_session()
+    game = session.query(Game).get(game_id)
+    if not game:
+        abort(404)
+
+    if game.have_permission(current_user):
+        abort(403)
+
+    form = PrepareToGameForm(game)
+    
+    if form.validate_on_submit():
+        try:
+            if game.protocol is None:
+                game.protocol = {'teams': []}
+            
+            game.protocol['teams'] = []
+            
+            for t_d in form.teams.values():
+                team_json = {}
+                
+                cap = session.query(User).get(t_d['captain'].data)
+                if not cap:
+                    t_d['captain'].errors.append("Не найден")
+                    raise ValidationError
+                    
+                deputy = session.query(User).get(t_d['deputy'].data)
+                if not deputy:
+                    t_d['deputy'].errors.append("Не найден")
+                    raise ValidationError
+                    
+                team_json['captain'] = cap.to_short_dict()
+                team_json['deputy'] = deputy.to_short_dict()
+                team_json['players'] = []
+                for player_field in t_d['players']:
+                    if player_field.data:
+                        player = session.query(User).get(player_field.player_id)
+                        if not player:
+                            player_field.errors.append("Не найден")
+                            raise ValidationError
+                        team_json['players'].append(player.to_short_dict())
+                game.protocol['teams'].append(team_json)
+            session.merge(game)
+            session.commit()
+            return redirect("/")
+        except ValidationError:
+            return render_template("prepare_to_game.html", game=game, form=form)
+                
+        
+    return render_template("prepare_to_game.html", game=game, form=form)
 
 
 @blueprint.errorhandler(400)

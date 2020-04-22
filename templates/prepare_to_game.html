@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% from 'form_macroses.html' import form_field, field_errors %}
+
+{% block title %}
+  {{game.title}}
+{% endblock title %}
+
+{% block content %}
+
+<div class="title_container">
+  <h1 class="page_title">
+    Подготовка к игре
+  </h1>
+</div>
+
+<div class="box_container">
+  <form class="box box-non_flex"
+        method="post"
+        autocomplete="off">
+    {{form.hidden_tag()}}
+    <div class="d-flex flex-wrap">
+      {% for t_d in form.teams.values() %}
+        {% set team = t_d['team'] %}
+        <fieldset class="border-dark border rounded flex-grow-1 m-2">
+          <h4 class="">
+            {{team.name}}
+          </h4>
+          <div class="shadow-box__title">
+            {{game.team1.title}}
+          </div>
+          {% for field in (t_d['captain'], t_d['deputy'],) %}
+            {{form_field(field)}}
+              {{field.label(class="form__field-label")}}
+              {{field(class="form__field-input",)}}
+              {{field_errors(field)}}
+            </div>
+          {% endfor %}
+          <div class="form__field">
+            <label class="form__field-label">Состав команды</label>
+            <ul class="shadow_list">
+              {% for field in t_d['players'] %}
+                <li>
+                  {{field()}}
+                  {{field.label()}}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </fieldset>
+      {% endfor %}
+    </div>
+    <div class="buttons-menu">
+      {{form.submit(class="btn button_primary")}}
+    </div>
+  </form>
+</div>
+
+{% endblock content %}

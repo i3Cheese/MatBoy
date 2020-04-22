@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.db_session import BaseModel
+from sqlalchemy_json import MutableJson
 
 
 class Game(BaseModel):
@@ -25,7 +26,7 @@ class Game(BaseModel):
 
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
-    protocol = sa.Column(sa.JSON, nullable=True)
+    protocol = sa.Column(MutableJson)
     status = sa.Column(sa.Boolean, default=1)
     judge_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"))
@@ -41,6 +42,7 @@ class Game(BaseModel):
     def title(self):
         return f"{self.team1.name} — {self.team2.name}"
 
-    def have_permision(self, user) -> bool:
+    def have_permission(self, user) -> bool:
         """Check if user has access to this game"""
-        return user.is_admin or self.judge == user or self.league.have_permision(user)
+        return user.is_admin or self.judge == user or self.league.have_permission(user)
+    
