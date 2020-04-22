@@ -32,7 +32,6 @@ class Team(BaseModel):
                       "league.title",
                       )
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
     status = sa.Column(sa.Integer, default=1)
@@ -48,3 +47,14 @@ class Team(BaseModel):
     
     def __str__(self):
         return self.name
+    
+    def have_permission(self, user):
+        if user.is_admin or self.trainer == user:
+            return True
+        elif self.league and self.league.have_permission(user):
+            return True
+        elif self.tournament.have_permission(user):
+            return True
+        else:
+            return False
+            

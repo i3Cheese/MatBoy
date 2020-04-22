@@ -15,12 +15,17 @@ __factory = None
 class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     __abstract__ = True
     
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    
     def fill(self, **kwargs):
         """Set the attibutes. Equal to self.key = value.
         It's raise AttributeError if key isn't class attribute"""
         for name in kwargs.keys():
             setattr(self, name, kwargs[name])
         return self
+    
+    def __eq__(self, other):
+        return self.id == other.id
 
 
 def global_init() -> None:

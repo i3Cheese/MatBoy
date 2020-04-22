@@ -7,6 +7,7 @@ class Game(BaseModel):
     __tablename__ = "games"
     __repr_attrs__ = ["team1", "team2", "league", "start"]
     serialize_only = ("id",
+                      "title",
                       "place",
                       "start",
                       "protocol",
@@ -22,7 +23,6 @@ class Game(BaseModel):
                       "league.title",
                       )
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
     protocol = sa.Column(sa.JSON, nullable=True)
@@ -36,3 +36,11 @@ class Game(BaseModel):
     team1 = orm.relationship("Team", backref="games_1", foreign_keys=[team1_id, ])
     team2 = orm.relationship("Team", backref="games_2", foreign_keys=[team2_id, ])
     league = orm.relationship("League", backref="games")
+    
+    @property
+    def title(self):
+        return f"{self.team1.name} — {self.team2.name}"
+
+    def have_permision(self, user) -> bool:
+        """Check if user has access to this game"""
+        return user.is_admin or self.judge == user or self.league.have_permision(user)

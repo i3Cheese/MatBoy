@@ -20,7 +20,6 @@ class User(BaseModel, UserMixin):
                       "is_creator",
                       )
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     surname = sa.Column(sa.String, nullable=False)
     name = sa.Column(sa.String, nullable=False)
     patronymic = sa.Column(sa.String, nullable=True)
@@ -54,3 +53,7 @@ class User(BaseModel, UserMixin):
         if int(today.strftime("%j")) < int(birth.strftime("%j")):
             years -= 1
         return years
+    
+    @property
+    def is_admin(self):
+        return self.id == 1

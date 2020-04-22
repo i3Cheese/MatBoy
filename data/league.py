@@ -19,7 +19,6 @@ class League(BaseModel):
                       "teams.name",
                       )
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     title = sa.Column(sa.String, unique=False)
     description = sa.Column(sa.Text, nullable=True)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
@@ -27,3 +26,11 @@ class League(BaseModel):
 
     chief = orm.relationship("User", backref="leagues")
     tournament = orm.relationship("Tournament", backref="leagues")
+    
+    def have_permission(self, user) -> bool:
+        if user.is_admin or self.chief == user:
+            return True
+        elif self.tournament.have_permission(user):
+            return True
+        else:
+            return False

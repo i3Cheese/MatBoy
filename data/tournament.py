@@ -8,7 +8,6 @@ class Tournament(BaseModel):
     __tablename__ = "tournaments"
     __repr_attrs__ = ["title", "chief"]
 
-    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     title = sa.Column(sa.String, unique=True)
     description = sa.Column(sa.Text, nullable=True)
     place = sa.Column(sa.String, nullable=True)
@@ -18,3 +17,5 @@ class Tournament(BaseModel):
 
     chief = orm.relationship("User", backref="tournaments")
     
+    def have_permission(self, user):
+        return user.is_admin or self.chief == user
