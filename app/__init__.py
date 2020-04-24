@@ -14,11 +14,13 @@ app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+from . import errorhandlers
 from . import web_pages
 app.register_blueprint(web_pages.blueprint)
 
 
 api = Api(app)
+
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
 from .resources import GameResource, GamesResource, ProtocolResource
 api.add_resource(UserResource, '/api/user/<int:user_id>')
