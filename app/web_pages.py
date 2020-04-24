@@ -73,6 +73,15 @@ def user_page(user_id):
     return render_template("profile.html", user=user)
 
 
+@blueprint.route("/game/<int:game_id>")
+def game_page(game_id):
+    session = create_session()
+    game = session.query(Game).get(game_id)
+    if not game:
+        abort(404)
+    return render_template("game.html", game=game)
+
+
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
@@ -242,13 +251,13 @@ def prepare_to_game(game_id):
     if not game:
         abort(404)
 
-    if game.have_permission(current_user):
+    if not game.have_permission(current_user):
         abort(403)
 
     form = PrepareToGameForm(game)
     
     if form.validate_on_submit():
-        try:
+        try:  # Convert form to json
             if game.protocol is None:
                 game.protocol = {'teams': []}
             
@@ -280,12 +289,24 @@ def prepare_to_game(game_id):
                 game.protocol['teams'].append(team_json)
             session.merge(game)
             session.commit()
-            return redirect("/")
+            return redirect(f"/game_console/{game.id}")
         except ValidationError:
             return render_template("prepare_to_game.html", game=game, form=form)
                 
         
     return render_template("prepare_to_game.html", game=game, form=form)
+
+
+@blueprint.route("/game_console/<int:game_id>")
+@login_required
+def game_console(game_id):
+    session = create_session()
+    game = session.query(Game).get(game_id)
+    if not game:
+        abort(404)
+    if not game.have_permission(current_user):
+        abort(403)
+    return render_template("game_console.html", game=game)
 
 
 @blueprint.errorhandler(400)
@@ -318,5 +339,3 @@ def not_found(error):
     return render_template("errors/error.html", 
                            error=error, 
                            message=message)
-    
-

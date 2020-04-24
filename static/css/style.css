@@ -485,6 +485,43 @@ button, input {
     display: inline;
 }
 
+.protocol-table{
+    text-align: center;
+}
+
+.protocol-table, .protocol-table td, .protocol-table th{
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.protocol-table td{
+    height: 30px;
+}
+
+.protocol-table input, .protocol-table select, .protocol-table textarea{
+    height: 100%;
+    border: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.protocol-table textarea{
+    margin-top: 3px;
+}
+
+.protocol-table input[type="number"], 
+.protocol-table .row_number, 
+.protocol-table .points, 
+.protocol-table .type{
+    width: 50px;
+    font-size: 25px;
+    text-align: center;
+}
+
+.protocol-table .player{
+    width: 300px;
+}
+
+
 .shadow_list{
     list-style-type: none;
     padding: 0 20px;

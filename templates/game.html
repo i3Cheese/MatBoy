@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% from 'models_macroses.html' import formated_datetime %}
+{% block title %}
+  {{game.title}}
+{% endblock title %}
+
+{% block content %}
+<div class="hidden" id="game_id">{{game.id}}</div>
+
+<div class="box d-flex flex-wrap justify-content-between">
+  <div class="mdr-2">
+    <a class="btn button_primary" href="/league/{{game.league.id}}">
+      <– Лига
+    </a>
+  </div>
+  <div class="mdlr-2 h4">
+    {{game.title}}
+  </div>
+  <div class="mdl-2 h6">
+    {{formated_datetime(game.start)}}
+  </div>
+</div>
+
+<div class="box_container">
+  <div class="box">
+    {% if game.protocol['rounds'] %}
+      <div class="d-flex flex-wrap">
+        {% for team in (game.team1, game.team2) %}
+        {% set t_d = game.protocol['teams'][loop.index0] %}
+        <div class="border-dark border rounded flex-grow-1 m-2 p-2">
+          <h4>
+            {{team.name}}
+          </h4>
+          <label class="form__field-label">Состав команды</label>
+          <ul class="shadow_list">
+            {% for player in t_d['players'] %}
+              <li>
+                {{player['surname'] + player['name']}}
+                {% if player['id'] == t_d['captain']['id'] %}
+                  — <b>Капитан</b>
+                {% elif player['id'] == t_d['deputy']['id'] %}
+                  — <b>Заместитель</b>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      </div>
+      {% set rounds = game.protocol['rounds'] %}
+      {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
+      <table class="protocol-table m-2 rounded" id="protocol">
+        <tr class="table_header">
+          <th>№</th>
+          <th>Команда</th>
+          <th>Баллы</th>
+          <th>Задача</th>
+          <th>Вызов</th>
+          <th>Баллы</th>
+          <th>Команда</th>
+          <th>Жюри</th>
+          <th>Дополнительная информация</th>
+        </tr>
+        {% for round in rounds %}
+          <tr class="round_form">
+            <td class="row_number">{{loop.index}}</td>
+            <td class="player">
+              {{round['teams'][0]['player']['fullname']}}
+            </td>
+            <td class="points">
+              {{round['teams'][0]['points']}}
+            </td>
+            <td>
+              <input type="number" name="problem" value="{{round['problem']}}">
+            </td>
+            <td class="type">
+              {{round_types[round['type'] - 1][1]}}
+            </td>
+            <td class="points">
+              {{round['teams'][1]['points']}}
+            </td>
+            <td class="player">
+              {{round['teams'][1]['player']['fullname']}}
+            </td>
+            <td class="points judge_points">
+              {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
+            </td>
+            <td><textarea name="additional" disabled>{{round['additional']}}</textarea></td>
+          </tr>
+        {% endfor %}
+        <tr class="round_form">
+          <td class="row_number">Итого</td>
+          <td>
+          </td>
+          <td class="points">
+            {{game.protocol['points'][0]}}
+          </td>
+          <td>
+            
+          </td>
+          <td class="type">
+            
+          </td>
+          <td class="points">
+            {{game.protocol['points'][1]}}
+          </td>
+          <td>
+          </td>
+          <td class="points judge_points">
+            {{game.protocol['points'][2]}}
+          </td>
+          <td></td>
+        </tr>
+      </table>
+  {% else %}
+    <div class="box">
+      <h4 style="color: red;">Игра ещё не началась</h4>
+    </div>
+  {% endif %}
+  </div>
+</div>
+
+
+<script src="{{url_for('static', filename='js/game_console.js')}}"></script>
+{% endblock content %}

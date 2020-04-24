@@ -20,7 +20,7 @@ app.register_blueprint(web_pages.blueprint)
 
 api = Api(app)
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
-from .resources import GameResource, GamesResource
+from .resources import GameResource, GamesResource, ProtocolResource
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/users')
 api.add_resource(TeamResource, '/api/team/<int:team_id>')
@@ -28,6 +28,7 @@ api.add_resource(LeagueResource, '/api/league/<int:league_id>')
 api.add_resource(LeaguesResource, '/api/league')
 api.add_resource(GameResource, '/api/game/<int:game_id>')
 api.add_resource(GamesResource, '/api/game')
+api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
 
 
 def run():

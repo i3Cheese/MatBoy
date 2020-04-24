@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'models_macroses.html' import formated_datetime %}
 
 {% block title %}
   Лига - {{league.title}}
@@ -35,7 +36,7 @@
     </div>
     {% for team in league.teams | sort(reverse=True, attribute="created_at") if team.status == 2 %}
       <div class="centered_block block_link" 
-            onclick="redirectWithStep(event)" 
+            onclick="redirect(event)" 
             href="/team/{{team.id}}"
       >
         <h2 class="item_title">{{team.name}}</h2>
@@ -50,7 +51,15 @@
       Игры
     </div>
     {% for game in league.games %}
-      <!-- TODO: do games -->
+      <div class="centered_block block_link" 
+           onclick="redirect(event)" 
+           href="/game/{{game.id}}"
+      >
+        <h2 class="item_title">{{game.title}}</h2>
+        <div class="description">
+          {{formated_datetime(game.start)}}
+        </div>
+      </div>
     {% endfor %}
   </div>
 </div>

@@ -21,6 +21,8 @@ class User(BaseModel, UserMixin):
                       )
     
     short_serialize_only = ("id",
+                            'name',
+                            'surname',
                             "fullname",
                             "email"
                             )

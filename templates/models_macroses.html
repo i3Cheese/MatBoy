@@ -8,6 +8,15 @@
   {% endif %}
 {% endmacro %}
 
+{% set with_time_format = "%d %B %Y %H:%M"%}
+{% macro formated_datetime(datetime) %}
+  {% if datetime %}
+    {{datetime.strftime(with_time_format)}}
+  {% else %}
+    Не известно
+  {% endif %}
+{% endmacro %}
+
 {% macro tour_dates(tour) %}
   {% if tour.start and tour.end %}
     {{formated_date(tour.start)}} — {{formated_date(tour.end)}}

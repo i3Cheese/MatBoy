@@ -11,7 +11,6 @@ class Game(BaseModel):
                       "title",
                       "place",
                       "start",
-                      "protocol",
                       "status",
                       "judge.id",
                       "judge.email",
@@ -46,3 +45,13 @@ class Game(BaseModel):
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)
     
+    @staticmethod
+    def default_round():
+        return {'teams': [{'player': 0,
+                           'points': 0},
+                          {'player': 0,
+                           'points': 0,}],
+                'problem': 0,
+                'type': 1,
+                'additional': "",
+                }
