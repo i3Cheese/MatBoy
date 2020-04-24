@@ -7,6 +7,9 @@ from data import global_init
 from data.user import AnonymousUser
 from config import config
 
+config.setup()
+global_init()
+
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 for key, value in config.APP_CONFIG.items():
     app.config[key] = value
@@ -33,12 +36,3 @@ api.add_resource(LeaguesResource, '/api/league')
 api.add_resource(GameResource, '/api/game/<int:game_id>')
 api.add_resource(GamesResource, '/api/game')
 api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
-
-
-def run():
-    global_init()
-    app.run(host=config.HOST, port=config.APP_PORT, debug=config.DEBUG)
-
-
-if __name__ == "__main__":
-    run()
