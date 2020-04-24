@@ -3,7 +3,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 from data.db_session import BaseModel
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 
 
 class User(BaseModel, UserMixin):
@@ -65,3 +65,7 @@ class User(BaseModel, UserMixin):
     def is_admin(self):
         return self.id == 1
     
+    
+class AnonymousUser(AnonymousUserMixin):
+    id = 0
+    is_admin = False

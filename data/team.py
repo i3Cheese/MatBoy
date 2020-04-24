@@ -57,4 +57,8 @@ class Team(BaseModel):
             return True
         else:
             return False
+        
+    @property
+    def games(self):
+        return sorted(self.games_1 + self.games_2, key=lambda game: game.created_at)
             

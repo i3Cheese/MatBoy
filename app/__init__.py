@@ -4,6 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_login import login_required
 from flask_restful import Api
 from data import global_init
+from data.user import AnonymousUser
 from config import config
 
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
@@ -13,6 +14,7 @@ app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
     
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.anonymous_user = AnonymousUser
 
 from . import errorhandlers
 from . import web_pages

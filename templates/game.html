@@ -12,6 +12,11 @@
     <a class="btn button_primary" href="/league/{{game.league.id}}">
       <– Лига
     </a>
+    {% if game.have_permission(current_user) %}
+      <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
+        Судить
+      </a>
+    {% endif %}
   </div>
   <div class="mdlr-2 h4">
     {{game.title}}
@@ -113,9 +118,7 @@
         </tr>
       </table>
   {% else %}
-    <div class="box">
-      <h4 style="color: red;">Игра ещё не началась</h4>
-    </div>
+    <h4 style="color: red;">Игра ещё не началась</h4>
   {% endif %}
   </div>
 </div>
