@@ -6,7 +6,6 @@ function addGameForm(game_id) {
     form.find('.game-start').datepicker();
 
     if (game_id === undefined) {
-        console.log(form);
         if ($("#game_form-new").length) {
             return;
         }
@@ -68,7 +67,7 @@ function sendGameForm(event) {
     
     let id = form.getAttribute("id");
     let game_id = id.slice(id.indexOf("-") + 1);
-    let request = {
+    let data = {
         "start": form.start.value,
         "place": form.place.value,
         "judge.email": form.judge_email.value,
@@ -80,7 +79,8 @@ function sendGameForm(event) {
         $.ajax({
             type: "POST",
             url: API_URL + "game",
-            data: request,
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify(data),
             dataType: "json",
             success: function (data) {
                 let game_temp = $(document.querySelector("#game_template").content).clone();
@@ -99,7 +99,7 @@ function sendGameForm(event) {
         $.ajax({
             type: "PUT",
             url: API_URL + "game/" + game_id,
-            data: request,
+            data: data,
             dataType: "json",
             success: function (data) {
                 let game = $("#game-"+game_id);

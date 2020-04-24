@@ -237,7 +237,7 @@ def league_console(league_id: int):
     if not league:
         abort(404)
 
-    if league.have_permission(current_user):
+    if not league.have_permission(current_user):
         abort(403)
 
     return render_template("league_console.html", league=league)
@@ -292,7 +292,6 @@ def prepare_to_game(game_id):
             return redirect(f"/game_console/{game.id}")
         except ValidationError:
             return render_template("prepare_to_game.html", game=game, form=form)
-                
         
     return render_template("prepare_to_game.html", game=game, form=form)
 

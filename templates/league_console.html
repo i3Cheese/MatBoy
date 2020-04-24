@@ -102,7 +102,7 @@
             </form>
           </template>
           <template id="game_template">
-            <div class="box_item game border-warnig" id="game-">
+            <div class="box_item game" id="game-">
               <span class="status game-status">
                   
               </span>
@@ -154,25 +154,11 @@
           {% for game in league.games | selectattr("status")
                                       | sort(attribute="status")
                                       | sort(reverse=true, attribute="updated_at") %}
-            {% if game.status == 2 %}
-            <div class="box_item game border-success" id="game-{{game.id}}">
-              <span class="status game-status">
-                Игра успешно завершилась
-              </span>
-            {% else %}
-            <div class="box_item game border-warning" id="game-{{game.id}}">
-              <span class="status game-status">
-                Игра планируется
-              </span>
-            {% endif %}
+            <div class="box_item game" id="game-{{game.id}}">
               <label class="box_item-title game-title nested-toggler" for="game_info-{{game.id}}">
                 {{game.team1.name}} — {{game.team2.name}}
               </label>
               <div class="link_menu">
-                <a class="link link-small game-manage" href='/game_console/{{game.id}}'>
-                  управлять
-                </a>
-                |
                 <a class="link link-small game-goto" href='/game/{{game.id}}'>
                   перейти на страницу
                 </a>

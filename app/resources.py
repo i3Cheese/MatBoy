@@ -337,29 +337,28 @@ class GamesResource(Resource):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
-
-        session = create_session()
-        game = Game()
-        if args['place'] is not None:
-            game.place = args['place']
-        if args['start'] is not None:
-            game.start = args['start']
-        if args['protocol'] is not None:
-            game.protocol = args['protocol']
-        if not(args['judge.id'] is None and args['judge.email'] is None):
-            game.judge = get_user(session,
-                                  user_id=args['judge.id'],
-                                  email=args['judge.email'],)
-        else:
-            abort(400, message={"judge": "Missing required parameter in the JSON body."})
-        game.team1 = get_team(session, args['team1.id'])
-        game.team2 = get_team(session, args['team2.id'])
-        game.league = get_league(session, args['league.id'])
-        game.status = args['status']
-            
-        session.add(game)
-        session.commit()
-
+        try:
+            session = create_session()
+            game = Game()
+            if args['place'] is not None:
+                game.place = args['place']
+            if args['start'] is not None:
+                game.start = args['start']
+            if not(args['judge.id'] is None and args['judge.email'] is None):
+                game.judge = get_user(session,
+                                    user_id=args['judge.id'],
+                                    email=args['judge.email'],)
+            else:
+                abort(400, message={"judge": "Missing required parameter in the JSON body."})
+            game.team1 = get_team(session, args['team1.id'])
+            game.team2 = get_team(session, args['team2.id'])
+            game.league = get_league(session, args['league.id'])
+            game.status = args['status']
+                
+            session.add(game)
+            session.commit()
+        except Exception as e:
+            print(e)
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()
