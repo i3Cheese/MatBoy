@@ -144,7 +144,7 @@ def tournament_creator_page():
         session.merge(current_user)
         session.commit()
 
-        return redirect(f"/tournament_console/{tournament.id}")
+        return redirect("/")
     return render_template("tournament_editor.html", form=form)
 
 
