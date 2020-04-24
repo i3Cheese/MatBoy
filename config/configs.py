@@ -15,8 +15,6 @@ class BaseConfig:
     
     APP_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy'}
     APP_PORT = 5000
-    API_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy'}
-    API_PORT = 5001
     HOST = '127.0.0.1'
 
     TEMPLATES_FOLDER = os.path.abspath("templates")

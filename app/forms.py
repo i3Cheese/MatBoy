@@ -121,10 +121,11 @@ class PlayerBooleanField(BooleanField):
 
 
 def PrepareToGameForm(game: Game):
-    """Generate form fields"""
+    """Generate FlaskForm"""
     
     class PrepareToGameForm(FlaskForm):
         def __init__(self, *args, **kwargs):
+            """Add fields to lists"""
             super().__init__(*args, **kwargs)
             for team in self.teams.values():
                 team['players'] = []
@@ -134,6 +135,9 @@ def PrepareToGameForm(game: Game):
                 team['captain'] = getattr(self, team['_captain'])
                 team['deputy'] = getattr(self, team['_deputy'])
     
+    # All operations with the protocol assume that it may be empty or incomplete
+    teams_json = (game.protocol or {}).get('teams', [{}, {}])
+    
     teams = {}
     for i, team in enumerate((game.team1, game.team2,), 1):
         teams[i] = dict()
@@ -141,15 +145,36 @@ def PrepareToGameForm(game: Game):
         teams[i]['_players'] = []
         choices = []
         
+        selected_players = teams_json[i - 1].get('players', None)
+        if selected_players is None:
+            selected_ids = None
+        else:
+            selected_ids = [p['id'] for p in selected_players] 
+            
         for player in team.players:
-            field = PlayerBooleanField(player.fullname, default="checked", player_id=player.id)
+            # Only previosly selected players are checked
+            # If it's the first time all players are checked
+            checked = ""
+            if selected_ids is None or player.id in selected_ids:
+                checked = "checked"
+                
+            field = PlayerBooleanField(player.fullname, 
+                                       default=checked,
+                                       player_id=player.id)
             field_name = f"team{i}_player-{player.id}"
             teams[i]['_players'].append(field_name)
             setattr(PrepareToGameForm, field_name, field)
             choices.append((player.id, player.fullname))
         
-        cap = SelectField(u"Капитан", coerce=int, choices=choices)
-        deputy = SelectField(u"Заместитель капитана", coerce=int, choices=choices)
+        selected_cap = teams_json[i-1].get('captain', {}).get('id', -1)
+        selected_deputy = teams_json[i-1].get('deputy', {}).get('id', -1)
+        
+        # Choisen on the first place
+        cap_choices = sorted(choices, reverse=True, key=lambda p: p[0] == selected_cap)
+        deputy_choices = sorted(choices, reverse=True, key=lambda p: p[0] == selected_deputy)
+        
+        cap = SelectField(u"Капитан", coerce=int, choices=cap_choices)  
+        deputy = SelectField(u"Заместитель капитана", coerce=int, choices=deputy_choices)
         teams[i]['_captain'] = f'team{i}_captain'
         teams[i]['_deputy'] = f'team{i}_deputy'
         setattr(PrepareToGameForm, teams[i]['_captain'], cap)

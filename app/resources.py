@@ -22,10 +22,12 @@ def get_datetime_from_string(strdatetime: str) -> datetime:
 
 
 def get_user(session, user_id=None, email=None, do_abort=True) -> User:
-    """Get User from database, abort(404) if do_abort==True and user not found
+    """
+    Get User from database, abort(404) if do_abort==True and user not found
 
-       If user.id and user.email specified in the same time
-       user was looking by user.id"""
+    If user.id and user.email specified in the same time
+    user was looking by user.id
+    """
     if user_id:
         user = session.query(User).get(user_id)
         if do_abort and not user:
