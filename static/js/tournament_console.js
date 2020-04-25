@@ -22,7 +22,7 @@ function declineTeam(team_id) {
             team.find(".team-decline").addClass("hidden");
             team.find(".team-accept").removeClass("hidden");
             team.find(".team-delete").removeClass("hidden");
-            
+
             team.find(".status").text("Ожидает подтверждения");
 
             // Возвращаем возможность выбирать лигу
@@ -148,7 +148,7 @@ function addLeagueForm(league_id) {
     }
 }
 
-function fillLeague(league, info, is_new=false){
+function fillLeague(league, info, is_new = false) {
     id = info["id"];
     league.find(".league-description").text(info['description']);
 
@@ -160,11 +160,11 @@ function fillLeague(league, info, is_new=false){
 
     let l_title = league.find(".league-title");
     l_title.text(info["title"]);
-    if (is_new){
+    if (is_new) {
         league.attrPlus('id', id);
 
         // Настраиваем тоглеры
-        l_title.attr("for", l_title.attr("for") + id);        
+        l_title.attr("for", l_title.attr("for") + id);
         league.find(".league-info").attrPlus("id", id);
         league.find(".league-label_teams").attrPlus("for", id);
         league.find(".league-teams").attrPlus("id", id);
@@ -174,8 +174,8 @@ function fillLeague(league, info, is_new=false){
         league.find('.league-goto').attrPlus('href', id);
 
         // Подключаем кнопки
-        league.find(".league-edit").attrPlus("for",id);
-        league.find(".league-delete").attrPlus("for",id);
+        league.find(".league-edit").attrPlus("for", id);
+        league.find(".league-delete").attrPlus("for", id);
     }
 }
 
@@ -213,7 +213,8 @@ function sendLeagueForm(event) {
                 fillLeague(league, info, true);
 
                 // Добавляем возможность выбрать лигу у команд
-                let l_option_temp = $(document.querySelector("#league_option_template").content).clone();
+                let l_option_temp = $(document.querySelector("#league_option_template").content
+                                      ).clone();
                 let l_option = l_option_temp.find("option");
                 l_option.attr("value", id);
                 l_option.text(info['title']);
@@ -237,7 +238,7 @@ function sendLeagueForm(event) {
             },
             dataType: "json",
             success: function (data) {
-                let league = $("#league-"+id);
+                let league = $("#league-" + id);
                 let info = data["league"];
                 fillLeague(league, info, false);
 
@@ -257,13 +258,13 @@ function removeLeagueForm(event) {
     event.preventDefault();
     let form = event.target;
     let id = getId($(form));
-    if (id != 'new'){
+    if (id != 'new') {
         $("#league-" + id).removeClass("hidden");
     }
     form.remove();
 }
 
-function deleteLeague(league_id){
+function deleteLeague(league_id) {
     $.ajax({
         type: "DELETE",
         url: API_URL + "league/" + league_id,

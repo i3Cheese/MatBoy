@@ -26,6 +26,7 @@ function logData(data){
 }
 
 function getHref(target){
+    // Находит href в элементе или его родителях
     let href = target.attr("href")
     if (typeof(href) === 'undefined'){
         return target.parents("[href]").attr("href")
@@ -35,6 +36,7 @@ function getHref(target){
 }
 
 function redirectWithStep(event){
+    // Передают в параметрах текущую страницу
     event.preventDefault();
     let path = getHref($(event.target));
     let url = new URL(document.location.href);
@@ -42,6 +44,7 @@ function redirectWithStep(event){
     url.searchParams.set("comefrom", document.location.pathname);
     window.location.href = url;
 }
+
 function redirect(event){
     window.location.href = getHref($(event.target));
 }

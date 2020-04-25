@@ -7,7 +7,7 @@ function addGameForm(game_id) {
 
     if (game_id === undefined) {
         if ($("#game_form-new").length) {
-            return;
+            return;  // Нельзя добавить вторую форму для новой игры
         }
         form.attrPlus("id", 'new');
         games.append(form);
@@ -18,7 +18,7 @@ function addGameForm(game_id) {
             url: API_URL + "game/"+game_id,
             dataType: "json",
             success: function(data){
-                console.log(data);
+                // Заполняем форму получеными данными
                 let info = data['game'];
                 form.find(".game-start").attr("value", info["start"]);
                 form.find(".game-place").attr("value", info["place"]);
@@ -28,6 +28,8 @@ function addGameForm(game_id) {
                 form.find(`.game-team2 option[value='${info['team2']['id']}']`
                           ).attr("selected", "selected");
                 form.attrPlus("id", game_id);
+
+                // Добавляем форму вместо информации о ней
                 let game = games.find(`#game-${game_id}`);
                 game.after(form);
                 game.addClass("hidden");
@@ -39,8 +41,12 @@ function addGameForm(game_id) {
 
 function fillGame(game, info, is_new=false){
     id = info["id"];
+
+    // Устанавливаем заголовок
     let l_title = game.find(".game-title");
     l_title.text(`${info["team1"]["name"]} — ${info["team2"]["name"]}`);
+
+    // Заполняем информацию о судье
     let l_judge = game.find(".game-judge");
     l_judge.text(info["judge"]["fullname"]);
     l_judge.attr("title", info["judge"]["email"]);
@@ -51,9 +57,11 @@ function fillGame(game, info, is_new=false){
     
     if (is_new){
         game.attrPlus('id', id);
+        game.find(".game-goto").attrPlus("href", id)  // Устанавливаем ссылку на игру
+
+        // Настраиваем тоглер
         l_title.attrPlus("for", id);
         game.find(".game-info").attrPlus("id", id);
-        game.find(".game-goto").attrPlus("href", id)
     }
 }
 
@@ -82,8 +90,7 @@ function sendGameForm(event) {
             success: function (data) {
                 let game_temp = $(document.querySelector("#game_template").content).clone();
                 let game = game_temp.find(".game");
-                let info = data["game"];
-                fillGame(game, info, true);
+                fillGame(game, data["game"], true);
 
                 form.remove();
                 $("#games").append(game);
@@ -100,7 +107,6 @@ function sendGameForm(event) {
             dataType: "json",
             success: function (data) {
                 let game = $("#game-"+game_id);
-                
                 fillGame(game, data['game']);
 
                 form.remove();
@@ -113,7 +119,7 @@ function sendGameForm(event) {
 
 
 function removeGameForm(event) {
-    console.log(event);
+    // Убираем форму и показываем информацию о игре если она была
     event.preventDefault();
     let form = event.target;
     let id = getId($(form));

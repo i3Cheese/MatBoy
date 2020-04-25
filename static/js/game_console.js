@@ -4,6 +4,7 @@ function gameId(){
 
 
 function saveGame(redirect=false){
+    // Собираем данные
     let rounds_json = [];
     $("#protocol").find(".round_form").each(function(index){
         let form = $(this);
@@ -18,6 +19,8 @@ function saveGame(redirect=false){
         rounds_json.push(round); 
     });
     let data = {rounds: rounds_json};
+
+    // Отправляем данные
     $.ajax({
         type: "PUT",
         url: API_URL + `game/${gameId()}/protocol`,
@@ -34,6 +37,7 @@ function saveGame(redirect=false){
 }
 
 function rowCount(){
+    // Кол-во раундов
     return Number($("#protocol").find(".row_number:last").text())
 }
 
@@ -44,6 +48,7 @@ function addRow(){
 }
 
 function recountPoints(event){
+    // Устанавливаем кол-во баллов судье
     let row = $(event.target).parents(".round_form");
     let sum = 0;
     row.find(".points_input").each(function(){
@@ -51,7 +56,6 @@ function recountPoints(event){
     })
     row.find(".judge_points").text(12-sum);
 }
-
 
 $(document).on('click', '.add_round', function(){
     saveGame();
