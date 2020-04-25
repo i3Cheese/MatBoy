@@ -228,6 +228,7 @@ class LeagueResource(Resource):
         return jsonify(response)
 
     def delete(self, league_id):
+        """Delete this league and set league.teams.status to <=1"""
         session = create_session()
         league = get_league(session, league_id, do_abort=False)
         if not league:
@@ -279,8 +280,7 @@ class LeaguesResource(Resource):
 class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)
-    # Empty string == None
-    put_pars.add_argument('start', type=get_datetime_from_string)
+    put_pars.add_argument('start', type=get_datetime_from_string)  # Empty string == None
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
