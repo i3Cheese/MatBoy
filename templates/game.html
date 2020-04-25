@@ -68,50 +68,50 @@
         </tr>
         {% for round in rounds %}
           <tr class="round_form">
-            <td class="row_number">{{loop.index}}</td>
+            <td class="row_number symbols">{{loop.index}}</td>
             <td class="player">
               {{round['teams'][0]['player']['fullname']}}
             </td>
-            <td class="points">
+            <td class="points symbols">
               {{round['teams'][0]['points']}}
             </td>
-            <td>
-              <input type="number" name="problem" value="{{round['problem']}}">
+            <td class="symbols">
+              {{round['problem']}}
             </td>
-            <td class="type">
+            <td class="type symbols">
               {{round_types[round['type'] - 1][1]}}
             </td>
-            <td class="points">
+            <td class="points symbols">
               {{round['teams'][1]['points']}}
             </td>
             <td class="player">
               {{round['teams'][1]['player']['fullname']}}
             </td>
-            <td class="points judge_points">
+            <td class="points judge_points symbols">
               {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
             </td>
             <td><textarea name="additional" disabled>{{round['additional']}}</textarea></td>
           </tr>
         {% endfor %}
         <tr class="round_form">
-          <td class="row_number">Итого</td>
+          <td class="row_number symbols">Итого</td>
           <td>
           </td>
-          <td class="points">
+          <td class="points symbols">
             {{game.protocol['points'][0]}}
           </td>
           <td>
-            
+
           </td>
-          <td class="type">
-            
+          <td class="type symbols">
+
           </td>
-          <td class="points">
+          <td class="points symbols">
             {{game.protocol['points'][1]}}
           </td>
           <td>
           </td>
-          <td class="points judge_points">
+          <td class="points judge_points symbols">
             {{game.protocol['points'][2]}}
           </td>
           <td></td>

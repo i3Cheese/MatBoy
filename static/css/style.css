@@ -327,8 +327,8 @@ button, input {
     background: #fff;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
     border-radius: 4px;
-    flex-grow: 1;   
-    
+    flex-grow: 1;
+
     padding: 10px;
     align-items: center;
     box-sizing: border-box;
@@ -502,16 +502,18 @@ button, input {
     border: none;
     width: 100%;
     box-sizing: border-box;
+    font: inherit;
+}
+
+textarea:disabled, .protocol-table select:not(.custom-select){
+    background: #fff;
 }
 
 .protocol-table textarea{
     margin-top: 3px;
 }
 
-.protocol-table input[type="number"], 
-.protocol-table .row_number, 
-.protocol-table .points, 
-.protocol-table .type{
+.protocol-table .symbols{
     width: 50px;
     font-size: 25px;
     text-align: center;

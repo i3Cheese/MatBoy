@@ -17,8 +17,8 @@
       {% endif %}
       {% from 'models_macroses.html' import tour_dates %}
       {% for tour in tournaments | sort(reverse=True, attribute="created_at")%}
-        <div class="centered_block block_link" 
-             onclick="redirect(event);" 
+        <div class="centered_block block_link"
+             onclick="redirect(event);"
              href="/tournament/{{tour.id}}"
         >
           <h2 class="item_title">{{tour.title}}</h2>
