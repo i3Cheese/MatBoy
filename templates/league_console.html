@@ -144,8 +144,7 @@
             </div>
           </template>
 
-          {% for game in league.games | selectattr("status")
-                                      | sort(attribute="status")
+          {% for game in league.games | selectattr("is_deleted", "false")
                                       | sort(reverse=true, attribute="updated_at") %}
             <div class="box_item game" id="game-{{game.id}}">
               <label class="box_item-title game-title nested-toggler" for="game_info-{{game.id}}">

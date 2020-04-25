@@ -55,3 +55,7 @@ class Game(BaseModel):
                 'type': 1,
                 'additional': "",
                 }
+
+    @property
+    def is_deleted(self):
+        return self.status == 0

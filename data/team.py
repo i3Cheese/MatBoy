@@ -60,5 +60,5 @@ class Team(BaseModel):
         
     @property
     def games(self):
-        return sorted(self.games_1 + self.games_2, key=lambda game: game.created_at)
+        return sorted(set(self.games_1 + self.games_2), key=lambda game: game.created_at)
             

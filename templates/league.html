@@ -50,7 +50,8 @@
     <div class="shadow-box__title">
       Игры
     </div>
-    {% for game in league.games | sort(reverse=true, attribute="created_at") %}
+    {% for game in league.games | selectattr("is_deleted", "false")
+                                | sort(reverse=true, attribute="created_at") %}
       <div class="centered_block block_link" 
            onclick="redirect(event)" 
            href="/game/{{game.id}}"

@@ -19,7 +19,8 @@
     <div class="shadow-box__title">
       Игры
     </div>
-    {% for game in team.games %}
+    {% for game in team.games | selectattr("is_deleted", "false") 
+                              | sort(reversed=True, attribute="updated_at") %}
     <div class="centered_block block_link" 
          onclick="redirect(event)" 
          href="/game/{{game.id}}"

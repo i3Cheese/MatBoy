@@ -12,7 +12,7 @@
     <a class="btn button_primary" href="/league/{{game.league.id}}">
       <– Лига
     </a>
-    {% if game.have_permission(current_user) %}
+    {% if game.have_permission(current_user) and not game.is_deleted %}
       <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
         Судить
       </a>
@@ -28,7 +28,7 @@
 
 <div class="box_container">
   <div class="box">
-    {% if game.protocol['rounds'] %}
+    {% if game.protocol['rounds'] and not game.deleted %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
         {% set t_d = game.protocol['teams'][loop.index0] %}
@@ -117,6 +117,8 @@
           <td></td>
         </tr>
       </table>
+  {% elif game.is_deleted %}
+  <h4 style="color: red;">Игра удаленна</h4>
   {% else %}
     <h4 style="color: red;">Игра ещё не началась</h4>
   {% endif %}
