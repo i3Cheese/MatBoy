@@ -20,7 +20,7 @@
       Игры
     </div>
     {% for game in team.games | selectattr("is_deleted", "false") 
-                              | sort(reversed=True, attribute="updated_at") %}
+                              | sort(reverse=True, attribute="created_at") %}
     <div class="centered_block block_link" 
          onclick="redirect(event)" 
          href="/game/{{game.id}}"
