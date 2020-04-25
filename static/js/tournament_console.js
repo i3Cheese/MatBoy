@@ -13,14 +13,23 @@ function declineTeam(team_id) {
         dataType: 'json',
         success: function () {
             let team = $("#team-" + team_id);
+
+            // меняем цвет границы
             team.removeClass("border-success");
             team.addClass("border-warning");
+
+            // изменяем кнопки контроля
             team.find(".team-decline").addClass("hidden");
             team.find(".team-accept").removeClass("hidden");
             team.find(".team-delete").removeClass("hidden");
+            
             team.find(".status").text("Ожидает подтверждения");
+
+            // Возвращаем возможность выбирать лигу
             team.find(".league_selector").removeClass('hidden');
+
             team.find(".team-league_title").addClass('hidden');
+
             deleteTeamFromLeagues(team_id);
         },
     });
@@ -40,19 +49,27 @@ function acceptTeam(team_id) {
         },
         dataType: 'json',
         success: function (data) {
+            // меняем цвет границы
             team.addClass("border-success");
             team.removeClass("border-warning");
+
+            // меняем кнопки контроля
             team.find(".team-decline").removeClass("hidden");
             team.find(".team-accept").addClass("hidden");
             team.find(".team-delete").addClass("hidden");
+
             team.find(".status").text("Учавствует в турнире");
 
+            // убираем возможность выбирать лигу
             league_selector.addClass('hidden');
+
+            // показываем выбранную лигу
             let team_league_title = team.find(".team-league_title");
             team_league_title.removeClass('hidden');
             team_league_title.text(data["team"]["league"]["title"])
             team_league_title.attr("value", data['team']['league']['id'])
 
+            // Добаляем команду в список лиги
             let team_temp = $(document.querySelector("#league_team_template").content).clone();
             let team_li = team_temp.find("li");
             team_li.attr("id", team_li.attr("id") + team_id);
@@ -76,17 +93,16 @@ function deleteTeam(team_id) {
     });
 }
 
+// биндим команды к кнопкам контроля команд
 $(document).on('click', ".team-decline", function (event) {
     declineTeam(getForId($(event.target)));
 });
-
 $(document).on('click', ".team-accept", function (event) {
     acceptTeam(getForId($(event.target)));
 });
 $(document).on('click', ".team-delete", function (event) {
     deleteTeam(getForId($(event.target)));
 });
-
 
 
 
@@ -97,12 +113,15 @@ function addLeagueForm(league_id) {
             return;
         }
     }
+
+    // информация о лиги
     let title = "";
     let description = "";
     let chief_email = "";
     let id = "league_form-";
     let league = undefined;
     if (!(league_id === undefined)) {
+        // достаём информацию о лиги из элементов
         league = $("#league-" + league_id);
         title = league.find(".league-title").text().strip();
         description = league.find(".league-description").text().strip();
@@ -111,30 +130,71 @@ function addLeagueForm(league_id) {
     } else {
         id = id + "new";
     }
+
     let temp_form = $(document.querySelector("#league_form_template").content).clone();
     let form = temp_form.find("form");
+    // заполняем существующие данные в форму
     form.find(".editor-title").attr("value", title);
     form.find(".editor-textarea").text(description);
     form.find(".editor-email").attr("value", chief_email);
     form.attr("id", id);
     if (!(league_id === undefined)) {
+        // Вставляем форму на место её информации
         league.after(form);
         league.addClass("hidden");
     } else {
+        // Добавляем форму в конец списка
         $("#leagues").append(form);
     }
 }
 
+function fillLeague(league, info, is_new=false){
+    id = info["id"];
+    league.find(".league-description").text(info['description']);
+
+    // Заполняем информацию о старшем по лиге
+    let l_chief = league.find(".league-chief");
+    l_chief.text(info["chief"]["fullname"]);
+    l_chief.attr("title", info["chief"]["email"]);
+    l_chief.attr("href", `/profile/${info["chief"]["id"]}`)
+
+    let l_title = league.find(".league-title");
+    l_title.text(info["title"]);
+    if (is_new){
+        league.attrPlus('id', id);
+
+        // Настраиваем тоглеры
+        l_title.attr("for", l_title.attr("for") + id);        
+        league.find(".league-info").attrPlus("id", id);
+        league.find(".league-label_teams").attrPlus("for", id);
+        league.find(".league-teams").attrPlus("id", id);
+
+        // Дополняем ссылки
+        league.find('.league-manage').attrPlus('href', id);
+        league.find('.league-goto').attrPlus('href', id);
+
+        // Подключаем кнопки
+        league.find(".league-edit").attrPlus("for",id);
+        league.find(".league-delete").attrPlus("for",id);
+    }
+}
+
+
 function sendLeagueForm(event) {
-    let form = event.target;
     event.preventDefault();
+
+    // Получаем данные из формы
+    let form = event.target;
     let title = form.title.value;
     let description = form.description.value;
     let chief_email = form.chief_email.value;
+
+    // Получаем id лиги и турнира
+    let form_id = form.getAttribute("id");
+    let id = form_id.slice(form_id.indexOf("-") + 1);
     let tour_id = Number($("#tour-id").text());
-    let id = form.getAttribute("id");
-    let league_id = id.slice(id.indexOf("-") + 1);
-    if (league_id == "new") {
+
+    if (id == "new") {
         $.ajax({
             type: "POST",
             url: API_URL + "league",
@@ -149,51 +209,15 @@ function sendLeagueForm(event) {
             success: function (data) {
                 let league_temp = $(document.querySelector("#league_template").content).clone();
                 let league = league_temp.find(".league");
-                let league_data = data["league"];
-                id = league_data["id"];
-                league.attr('id', league.attr("id") + id);
+                let info = data["league"];
+                fillLeague(league, info, true);
 
-                league.find(".league-description").text(league_data['description']);
-
-                let l_chief = league.find(".league-chief");
-                l_chief.text(league_data["chief"]["fullname"]);
-                l_chief.attr("title", league_data["chief"]["email"]);
-                l_chief.attr("href", l_chief.attr("href")+league_data["chief"]["id"])
-
-                let l_title = league.find(".league-title");
-                l_title.text(league_data["title"]);
-                l_title.attr("for", l_title.attr("for") + id);
-
-                let l_info = league.find(".league-info");
-                l_info.attr("id", l_info.attr("id") + id);
-
-                let l_label_teams = league.find(".league-label_teams");
-                l_label_teams.attr("for", l_label_teams.attr("for") + id);
-
-                league.find('.league-manage').attrPlus('href', id);
-                league.find('.league-goto').attrPlus('href', id);
-
-                let l_teams = league.find(".league-teams");
-                l_teams.attr("id", l_teams.attr('id')+id);
-                let base_team_temp = $(document.querySelector("#league_team_template").content);
-                let base_team = base_team_temp.find("li");
-                league_data['teams'].forEach(function (team_data) {
-                    let team = base_team.clone();
-                    team.attr("id", team.attr("id")+team_data["id"]);
-                    t_a = team.find('a');
-                    t_a.attr('href', t_a.attr('href')+id);
-                    t_a.text(team_data["name"]);
-                    l_teams.append(t_a);
-                });
-                
+                // Добавляем возможность выбрать лигу у команд
                 let l_option_temp = $(document.querySelector("#league_option_template").content).clone();
                 let l_option = l_option_temp.find("option");
                 l_option.attr("value", id);
-                l_option.text(league_data['title']);
-                $(".league_selector").append(l_option);
-
-                league.find(".league-edit").attrPlus("for",id);
-                league.find(".league-delete").attrPlus("for",id);
+                l_option.text(info['title']);
+                $(".league_selector").prepend(l_option);
 
                 form.remove();
                 $("#leagues").append(league);
@@ -201,11 +225,10 @@ function sendLeagueForm(event) {
             error: logData,
         })
     } else {
-        console.log(league_id);
-        let id = Number(league_id);
+        id = Number(id);
         $.ajax({
             type: "PUT",
-            url: API_URL + "league/" + league_id,
+            url: API_URL + "league/" + id,
             data: {
                 "title": title,
                 "description": description,
@@ -214,19 +237,12 @@ function sendLeagueForm(event) {
             },
             dataType: "json",
             success: function (data) {
-                let league = $("#league-"+league_id);
-                let league_data = data["league"];
+                let league = $("#league-"+id);
+                let info = data["league"];
+                fillLeague(league, info, false);
 
-                league.find(".league-description").text(league_data['description']);
-
-                let l_chief = league.find(".league-chief");
-                l_chief.text(league_data["chief"]["fullname"]);
-                l_chief.attr("title", league_data["chief"]["email"]);
-                l_chief.attr("href", l_chief.attr("href")+league_data["chief"]["id"])
-
-                let l_title = league.find(".league-title");
-                l_title.text(league_data["title"]);
-                $(`.league_in[value='${league_id}']`).text(league_data['title'])
+                // Изменяем название в командах где эта лига выбрана
+                $(`.league_in[value='${id}']`).text(info['title'])
 
                 form.remove();
                 league.removeClass('hidden');
