@@ -40,8 +40,6 @@ function addGameForm(game_id) {
 function fillGame(game, info, is_new=false){
     id = info["id"];
     let l_title = game.find(".game-title");
-    game.find(".game-status").text(
-        info["status"] == 2?"Игра успешно завершилась":"Игра планируется");
     l_title.text(`${info["team1"]["name"]} — ${info["team2"]["name"]}`);
     let l_judge = game.find(".game-judge");
     l_judge.text(info["judge"]["fullname"]);
@@ -55,7 +53,6 @@ function fillGame(game, info, is_new=false){
         game.attrPlus('id', id);
         l_title.attrPlus("for", id);
         game.find(".game-info").attrPlus("id", id);
-        game.find(".game-manage").attrPlus("href", id)
         game.find(".game-goto").attrPlus("href", id)
     }
 }
@@ -86,7 +83,7 @@ function sendGameForm(event) {
                 let game_temp = $(document.querySelector("#game_template").content).clone();
                 let game = game_temp.find(".game");
                 let info = data["game"];
-                fillGame(game, info);
+                fillGame(game, info, true);
 
                 form.remove();
                 $("#games").append(game);

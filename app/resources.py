@@ -3,7 +3,6 @@ from flask_restful.inputs import boolean
 from flask import jsonify
 from data import User, Team, Tournament, League, Game, create_session
 from datetime import date, datetime
-from config import config
 import logging
 
 
@@ -271,7 +270,8 @@ class LeaguesResource(Resource):
 class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)
-    put_pars.add_argument('start', type=get_datetime_from_string) # Empty string == None
+    # Empty string == None
+    put_pars.add_argument('start', type=get_datetime_from_string)
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
@@ -308,7 +308,7 @@ class GameResource(Resource):
             game.team2 = get_team(session, args['team2.id'])
         if args['league.id'] is not None:
             game.league = get_league(session, args['league.id'])
-            
+
         session.merge(game)
         session.commit()
 
@@ -317,7 +317,7 @@ class GameResource(Resource):
             response["game"] = game.to_dict()
         logging.info(f"Game put response: {response}")
         return jsonify(response)
-    
+
     def delete(self, game_id):
         """Sets the status of game to zero. Thats mean that the game is canceled"""
         session = create_session()
@@ -339,28 +339,28 @@ class GamesResource(Resource):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
-        try:
-            session = create_session()
-            game = Game()
-            if args['place'] is not None:
-                game.place = args['place']
-            if args['start'] is not None:
-                game.start = args['start']
-            if not(args['judge.id'] is None and args['judge.email'] is None):
-                game.judge = get_user(session,
+        
+        session = create_session()
+        game = Game()
+        if args['place'] is not None:
+            game.place = args['place']
+        if args['start'] is not None:
+            game.start = args['start']
+        if not(args['judge.id'] is None and args['judge.email'] is None):
+            game.judge = get_user(session,
                                     user_id=args['judge.id'],
                                     email=args['judge.email'],)
-            else:
-                abort(400, message={"judge": "Missing required parameter in the JSON body."})
-            game.team1 = get_team(session, args['team1.id'])
-            game.team2 = get_team(session, args['team2.id'])
-            game.league = get_league(session, args['league.id'])
-            game.status = args['status']
-                
-            session.add(game)
-            session.commit()
-        except Exception as e:
-            print(e)
+        else:
+            abort(400, message={
+                    "judge": "Missing required parameter in the JSON body."})
+        game.team1 = get_team(session, args['team1.id'])
+        game.team2 = get_team(session, args['team2.id'])
+        game.league = get_league(session, args['league.id'])
+        game.status = args['status']
+
+        session.add(game)
+        session.commit()
+        
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()
@@ -376,10 +376,10 @@ class ProtocolResource(Resource):
         logging.info(f"Protocol put with json {request.json}")
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
-            
+
         if 'rounds' in request.json:
             rounds = request.json['rounds']
-            teams_points=[0, 0]
+            teams_points = [0, 0]
             for round in rounds:
                 for i, team in enumerate(round['teams']):
                     team['points'] = int(team.get('points', 0))
@@ -387,20 +387,23 @@ class ProtocolResource(Resource):
                     if 'player' in team:
                         player = None
                         if isinstance(team['player'], int):
-                            player = get_user(session, team['player'], do_abort=False)
+                            player = get_user(
+                                session, team['player'], do_abort=False)
                         elif isinstance(team['player'], dict):
-                            player = get_user(session, team['player'].get('id', 0), do_abort=False)
+                            player = get_user(session, team['player'].get(
+                                'id', 0), do_abort=False)
                         if player:
                             team['player'] = player.to_short_dict()
                         else:
                             del team['player']
             game.protocol['rounds'] = rounds
-            game.protocol['points'] = teams_points + [len(rounds)*12 - sum(teams_points),]
-            
+            game.protocol['points'] = teams_points + \
+                [len(rounds)*12 - sum(teams_points), ]
+
         session.merge(game)
         session.commit()
         return jsonify({"success": "ok"})
-    
+
     def get(self, game_id):
         session = create_session()
         game = get_game(session, game_id)

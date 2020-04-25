@@ -19,7 +19,7 @@ def back_redirect(reserve_path='/'):
     path = request.args.get("comefrom")
     if not path:
         path = reserve_path
-        
+
     return redirect(path)
 
 
@@ -139,9 +139,9 @@ def tournament_creator_page():
                                        description=form.description.data,
                                        place=form.place.data,
                                        start=form.start.data,
-                                       end=form.end.data,)
-        current_user.tournaments.append(tournament)
-        session.merge(current_user)
+                                       end=form.end.data,
+                                       chief_id = current_user.id,)
+        session.add(tournament)
         session.commit()
 
         return redirect("/")
@@ -255,27 +255,27 @@ def prepare_to_game(game_id):
         abort(403)
 
     form = PrepareToGameForm(game)
-    
+
     if form.validate_on_submit():
         try:  # Convert form to json
             if game.protocol is None:
                 game.protocol = {'teams': []}
-            
+
             game.protocol['teams'] = []
-            
+
             for t_d in form.teams.values():
                 team_json = {}
-                
+
                 cap = session.query(User).get(t_d['captain'].data)
                 if not cap:
                     t_d['captain'].errors.append("Не найден")
                     raise ValidationError
-                    
+
                 deputy = session.query(User).get(t_d['deputy'].data)
                 if not deputy:
                     t_d['deputy'].errors.append("Не найден")
                     raise ValidationError
-                    
+
                 team_json['captain'] = cap.to_short_dict()
                 team_json['deputy'] = deputy.to_short_dict()
                 team_json['players'] = []
@@ -292,7 +292,7 @@ def prepare_to_game(game_id):
             return redirect(f"/game_console/{game.id}")
         except ValidationError:
             return render_template("prepare_to_game.html", game=game, form=form)
-        
+
     return render_template("prepare_to_game.html", game=game, form=form)
 
 

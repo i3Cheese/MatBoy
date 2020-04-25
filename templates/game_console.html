@@ -35,7 +35,7 @@
           <ul class="shadow_list">
             {% for player in t_d['players'] %}
               <li>
-                {{player['surname'] + player['name']}}
+                {{player['surname'] + ' ' + player['name']}}
                 {% if player['id'] == t_d['captain']['id'] %}
                   — <b>Капитан</b>
                 {% elif player['id'] == t_d['deputy']['id'] %}

@@ -103,18 +103,11 @@
           </template>
           <template id="game_template">
             <div class="box_item game" id="game-">
-              <span class="status game-status">
-                  
-              </span>
               <label class="box_item-title game-title nested-toggler" for="game_info-">
 
               </label>
               <div class="link_menu">
-                <a class="link link-small" href='/game_console/'>
-                  управлять
-                </a>
-                |
-                <a class="link link-small" href='/game/'>
+                <a class="link link-small game-goto" href='/game/'>
                   перейти на страницу
                 </a>
               </div>
@@ -163,7 +156,7 @@
                   перейти на страницу
                 </a>
               </div>
-              <div class="info_bar game-info" id="game_info-{{game.id}}">
+              <div class="info_bar game-info hidden" id="game_info-{{game.id}}">
                 <label class="label-bold">
                   Судья:
                 </label>
