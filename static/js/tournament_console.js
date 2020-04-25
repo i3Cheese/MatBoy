@@ -13,7 +13,6 @@ function declineTeam(team_id) {
         dataType: 'json',
         success: function () {
             let team = $("#team-" + team_id);
-            console.log(team);
             team.removeClass("border-success");
             team.addClass("border-warning");
             team.find(".team-decline").addClass("hidden");
@@ -127,7 +126,6 @@ function addLeagueForm(league_id) {
 }
 
 function sendLeagueForm(event) {
-    console.log(event);
     let form = event.target;
     event.preventDefault();
     let title = form.title.value;
@@ -187,6 +185,12 @@ function sendLeagueForm(event) {
                     t_a.text(team_data["name"]);
                     l_teams.append(t_a);
                 });
+                
+                let l_option_temp = $(document.querySelector("#league_option_template").content).clone();
+                let l_option = l_option_temp.find("option");
+                l_option.attr("value", id);
+                l_option.text(league_data['title']);
+                $(".league_selector").append(l_option);
 
                 league.find(".league-edit").attrPlus("for",id);
                 league.find(".league-delete").attrPlus("for",id);

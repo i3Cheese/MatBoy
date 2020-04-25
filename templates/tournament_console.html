@@ -23,6 +23,11 @@
         <label class="box-label">
           Команды
         </label>
+        <template id="league_option_template">
+          <option class="league_in"
+                  value="">
+          </option>
+        </template>
         {% for team in tour.teams if team.status %}
           {% if team.status == 2 %}
           <div class="box_item team border-success" id="team-{{team.id}}">
@@ -85,24 +90,24 @@
                       id="team_league-{{team.id}}">
                 {% for league in tour.leagues %}
                   {% if team.league_id == league.id %}
-                    <option class="selector-option league_option league_in"
+                    <option class="league_in"
                             value="{{league.id}}"
                             selected>
                       {{league.title}}
                     </option>
                   {% else %}
-                    <option class="selector-option league_option league_in"
+                    <option class="league_in"
                             value="{{league.id}}">
                       {{league.title}}
                     </option>
                   {% endif %}
                 {% endfor %}
                 {% if not team.league_id %}
-                  <option class="selecor-option league_in" value="null">
+                  <option class="league_in" value="null">
                     Не выбрано
                   </option>
                 {% else %}
-                  <option class="selecor-option league_in" value="null" selected>
+                  <option class="league_in" value="null" selected>
                     Не выбрано
                   </option>
                 {% endif %}

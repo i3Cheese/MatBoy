@@ -229,7 +229,16 @@ class LeagueResource(Resource):
 
     def delete(self, league_id):
         session = create_session()
-        league = get_league(session, league_id)
+        league = get_league(session, league_id, do_abort=False)
+        if not league:
+            return jsonify({'success': 'ok'})
+        
+        for team in league.teams:
+            team.league_id = None
+            if team.status != 0:
+                team.status = 1
+            session.merge(team)
+            
         session.delete(league)
         session.commit()
         return jsonify({'success': 'ok'})
