@@ -32,6 +32,7 @@ function declineTeam(team_id) {
 
             deleteTeamFromLeagues(team_id);
         },
+        error: holdErrorResponse,
     });
 }
 
@@ -78,7 +79,8 @@ function acceptTeam(team_id) {
             team_li_a.text(data["team"]["name"]);
             teams_list = $("#league_teams-" + league_id);
             teams_list.append(team_li);
-        }
+        },
+        error: holdErrorResponse,
     });
 }
 
@@ -90,6 +92,7 @@ function deleteTeam(team_id) {
             deleteTeamFromLeagues(team_id);
             $("#team-" + team_id).remove();
         },
+        error: holdErrorResponse,
     });
 }
 
@@ -223,7 +226,7 @@ function sendLeagueForm(event) {
                 form.remove();
                 $("#leagues").append(league);
             },
-            error: logData,
+            error: holdErrorResponse,
         })
     } else {
         id = Number(id);
@@ -248,7 +251,7 @@ function sendLeagueForm(event) {
                 form.remove();
                 league.removeClass('hidden');
             },
-            error: logData,
+            error: holdErrorResponse,
         })
     }
 }
@@ -271,6 +274,7 @@ function deleteLeague(league_id) {
         success: function () {
             location.reload();
         },
+        error: holdErrorResponse,
     });
 }
 

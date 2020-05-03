@@ -30,11 +30,11 @@ def get_user(session, user_id=None, email=None, do_abort=True) -> User:
     if user_id:
         user = session.query(User).get(user_id)
         if do_abort and not user:
-            abort(404, message=f"User #{user_id} not found")
+            abort(404, message=f"Пользователь #{user_id} не найден")
     elif email:
         user = session.query(User).filter(User.email == email.lower()).first()
         if do_abort and not user:
-            abort(404, message=f"User with email {email} not found")
+            abort(404, message=f"Пользователь с e-mail {email} не найден")
     else:
         return None
     return user
@@ -74,7 +74,7 @@ def get_game(session, game_id, do_abort=True) -> Game:
 
 def abort_if_email_exist(session, email):
     if session.query(User).filter(User.email == email).first():
-        abort(409, message=f"User wiht email {repr(email)} alredy exist")
+        abort(409, message=f"Пользователь с e-mail {repr(email)} уже зарегестрирован")
 
 
 class UserResource(Resource):
@@ -157,16 +157,20 @@ class TeamResource(Resource):
                                     email=args['trainer']['email'],
                                     )
         if args['league.id'] is not None:
-            if args['league.id'] == 0:
+            if args['league.id'] == 0 :
                 team.league = None
             else:
                 team.league = get_league(session, args['league.id'])
+        if args['status'] is not None:
+            team.status = args['status']
+        if team.status >= 2 and team.league is None:
+            abort(400, message="Принятая команда должна быть привязана к лиге")
         if args['name'] is not None:
+            if not args['name']:
+                abort(400, message="Название не может быть пустым")
             team.name = args['name']
         if args['motto'] is not None:
             team.motto = args['motto']
-        if args['status'] is not None:
-            team.status = args['status']
         session.merge(team)
         session.commit()
 
@@ -190,7 +194,7 @@ class LeagueResource(Resource):
     put_pars.add_argument('description', type=str)
     put_pars.add_argument('chief.id', type=int)
     put_pars.add_argument('chief.email', type=str)
-    put_pars.add_argument('tournament.id', type=int)  # 0 == None
+    put_pars.add_argument('tournament.id', type=int)
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, league_id: int):
@@ -211,11 +215,10 @@ class LeagueResource(Resource):
                                     email=args['chief.email'],
                                     )
         if args['tournament.id'] is not None:
-            if args['tournament.id'] == 0:
-                league.tournament = None
-            else:
-                league.tournament = get_tour(session, args['tournament.id'])
+            league.tournament = get_tour(session, args['tournament.id'])
         if args['title'] is not None:
+            if not args['title']:
+                abort(400, message="Название не может быть пустым")
             league.title = args['title']
         if args['description'] is not None:
             league.description = args['description']
@@ -233,13 +236,13 @@ class LeagueResource(Resource):
         league = get_league(session, league_id, do_abort=False)
         if not league:
             return jsonify({'success': 'ok'})
-        
+
         for team in league.teams:
             team.league_id = None
             if team.status != 0:
                 team.status = 1
             session.merge(team)
-            
+
         session.delete(league)
         session.commit()
         return jsonify({'success': 'ok'})
@@ -247,7 +250,7 @@ class LeagueResource(Resource):
 
 class LeaguesResource(Resource):
     post_pars = LeagueResource.put_pars.copy()
-    post_pars.replace_argument('title', type=str, required=True)
+    post_pars.replace_argument('title', type=str, required=True, help="Необходимо указать название")
     post_pars.replace_argument('tournament.id', type=int, required=True)
 
     def post(self):
@@ -259,7 +262,7 @@ class LeaguesResource(Resource):
         league = League()
         if args['chief.id'] is None and args['chief.email'] is None:
             abort(400, message={
-                  "chief": "Missing required parameter in the JSON body."})
+                  "chief": "Не указана информация о главном по лиге"})
         else:
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
@@ -280,7 +283,8 @@ class LeaguesResource(Resource):
 class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)
-    put_pars.add_argument('start', type=get_datetime_from_string)  # Empty string == None
+    # Empty string == None
+    put_pars.add_argument('start', type=get_datetime_from_string, help="Неверный формат даты")
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
@@ -315,6 +319,8 @@ class GameResource(Resource):
             game.team1 = get_team(session, args['team1.id'])
         if args['team2.id'] is not None:
             game.team2 = get_team(session, args['team2.id'])
+        if game.team1 == game.team2:
+            abort(400, message="Команды должны быть различны")
         if args['league.id'] is not None:
             game.league = get_league(session, args['league.id'])
 
@@ -348,7 +354,7 @@ class GamesResource(Resource):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
-        
+
         session = create_session()
         game = Game()
         if args['place'] is not None:
@@ -357,11 +363,10 @@ class GamesResource(Resource):
             game.start = args['start']
         if not(args['judge.id'] is None and args['judge.email'] is None):
             game.judge = get_user(session,
-                                    user_id=args['judge.id'],
-                                    email=args['judge.email'],)
+                                  user_id=args['judge.id'],
+                                  email=args['judge.email'],)
         else:
-            abort(400, message={
-                    "judge": "Missing required parameter in the JSON body."})
+            abort(400, message="Не указана информация о судье")
         game.team1 = get_team(session, args['team1.id'])
         game.team2 = get_team(session, args['team2.id'])
         game.league = get_league(session, args['league.id'])
@@ -369,7 +374,7 @@ class GamesResource(Resource):
 
         session.add(game)
         session.commit()
-        
+
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()

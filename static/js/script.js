@@ -60,9 +60,27 @@ function getId(target){
     return id.slice(id.indexOf("-") + 1);
 }
 
+function makeErrorToast(message){
+    let toast = $(document.querySelector("#error_toast_template").content).clone().find(".toast");
+    toast.find(".message").text(message);
+    toast.toast('show');
+    $("#toasts").append(toast);
+}
+
+function holdErrorResponse(data){
+    console.error(data);
+    message = data.responseJSON.message;
+    if (typeof(message) == "string"){
+        makeErrorToast(message);
+    } else if (typeof(message) == "object"){
+        for (key in message){
+            makeErrorToast(message[key]);
+        }
+    }
+}
+
 
 $(document).on('click', ".nested-toggler", function(event){
     target = $(`#${$(event.target).attr("for")}`);
     target.toggleClass('hidden');
 });
-

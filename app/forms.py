@@ -66,19 +66,19 @@ def password_secure_validator(form, field):
 
 class RegisterForm(FlaskForm):
     email = EmailField(
-        'E-mail', validators=[field_data_lower, Email(),  DataRequired(), unique_email_validator])
-    password = PasswordField('Пароль', validators=[password_secure_validator])
+        'E-mail *', validators=[field_data_lower, Email(),  DataRequired(), unique_email_validator])
+    password = PasswordField('Пароль *', validators=[password_secure_validator])
     password_again = PasswordField(
-        'Повторите пароль', validators=[EqualTo("password", message="Пароли должны совпадать")])
-    surname = StringField('Фамилия', validators=[
+        'Повторите пароль *', validators=[EqualTo("password", message="Пароли должны совпадать")])
+    surname = StringField('Фамилия *', validators=[
                           field_data_capitalizer, DataRequired()])
-    name = StringField('Имя', validators=[
+    name = StringField('Имя *', validators=[
                        field_data_capitalizer, DataRequired()])
     patronymic = StringField("Отчество (если есть)", validators=[
                              field_data_capitalizer])
-    city = StringField("Город", validators=[
+    city = StringField("Город *", validators=[
                        field_data_capitalizer, DataRequired()])
-    birthday = DateField("Дата рождения", format=DATE_FORMAT,
+    birthday = DateField("Дата рождения *", format=DATE_FORMAT,
                          validators=[DataRequired()])
     submit = SubmitField('Зарегистрироваться')
 
@@ -91,7 +91,7 @@ class LoginForm(FlaskForm):
 
 
 class TournamentInfoForm(FlaskForm):
-    title = StringField("Название", validators=[DataRequired()])
+    title = StringField("Название *", validators=[DataRequired()])
     description = TextAreaField("Дополнительная информация")
     place = StringField("Местро проведения")
     start = NullableDateField("Начало турнира", format=DATE_FORMAT)
@@ -100,9 +100,9 @@ class TournamentInfoForm(FlaskForm):
 
 
 class TeamForm(FlaskForm):
-    name = StringField("Название команды", validators=[DataRequired()])
+    name = StringField("Название команды *", validators=[DataRequired()])
     motto = TextAreaField("Девиз команды")
-    players = FieldList(EmailField(label="E-mail участника",
+    players = FieldList(EmailField(label="E-mail участника *",
                                    validators=[DataRequired(),
                                                field_data_lower,
                                                exist_email_validator]

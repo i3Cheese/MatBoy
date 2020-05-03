@@ -193,22 +193,32 @@ def team_request(tour_id: int):
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
-    if form.validate_on_submit():
-        team = Team().fill(
-            name=form.name.data,
-            motto=form.motto.data,
-            trainer_id=current_user.id,
-            tournament_id=tour.id,
-        )
-
-        for email in form.players.data:
-            user = session.query(User).filter(User.email == email).first()
-            if not user:
-                return render_template("team_request.html", tour=tour, form=form)
-            team.players.append(user)
-        session.add(team)
-        session.commit()
-        return redirect(f"/team/{team.id}")
+    try:
+        if form.validate_on_submit():
+            team = Team().fill(
+                name=form.name.data,
+                motto=form.motto.data,
+                trainer_id=current_user.id,
+                tournament_id=tour.id,
+            )
+            
+            emails = set()
+            for field in form.players.entries:
+                email = field.data.lower()
+                if email in emails:
+                    field.errors.append("Участник указан несколько раза")
+                    raise ValidationError
+                emails.add(email)
+                user = session.query(User).filter(User.email == email).first()
+                if not user:
+                    field.errors.append("Пользователь не найден.")
+                    raise ValidationError
+                team.players.append(user)
+            session.add(team)
+            session.commit()
+            return redirect(f"/team/{team.id}")
+    except ValidationError:
+        pass
 
     return render_template("team_request.html", tour=tour, form=form)
 

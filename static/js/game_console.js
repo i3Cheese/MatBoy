@@ -32,7 +32,8 @@ function saveGame(redirect=false){
             if (redirect){
                 window.location.href=`/game/${gameId()}`
             }
-        }
+        },
+        error: holdErrorResponse,
     })
 }
 

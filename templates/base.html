@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     {% block head %}
     <meta charset="utf-8" />
@@ -76,5 +76,32 @@
       {% endblock content%}
     </main>
     {% endblock main %}
+    
+    {% block toasts %}
+      <template id="error_toast_template">
+        <div role="alert" 
+              aria-live="assertive" 
+              aria-atomic="true" 
+              class="toast" 
+              data-autohide="true"
+              data-delay="4096">
+          <div class="toast-header bg-danger">
+            <strong class="mr-auto text-white">Ошибка!</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">
+            <span class="message"></span>
+          </div>
+        </div>
+      </template>
+      <div aria-live="polite" 
+            aria-atomic="true" 
+            class="toast_holder" 
+            id="toasts">
+
+      </div>
+    {% endblock toasts %}
   </body>
 </html>

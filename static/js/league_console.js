@@ -33,7 +33,8 @@ function addGameForm(game_id) {
                 let game = games.find(`#game-${game_id}`);
                 game.after(form);
                 game.addClass("hidden");
-            }
+            },
+            error: holdErrorResponse,
         });
     }
 }
@@ -95,7 +96,7 @@ function sendGameForm(event) {
                 form.remove();
                 $("#games").append(game);
             },
-            error: logData,
+            error: holdErrorResponse,
         })
     } else {
         console.log(game_id);
@@ -112,7 +113,7 @@ function sendGameForm(event) {
                 form.remove();
                 game.removeClass('hidden');
             },
-            error: logData,
+            error: holdErrorResponse,
         })
     }
 }
@@ -136,6 +137,7 @@ function deleteGame(game_id){
         success: function () {
             location.reload();
         },
+        error: holdErrorResponse,
     });
 }
 

@@ -44,9 +44,9 @@
                  type="e-m-a-i-l" value="">
         </li>
       </template>
-      {{form_field(form.players)}}
+      <div>
         {{form.players.label(class="form__field-label")}}
-        <ul class="form__field-list shadow_list" autocomplete="offf" id={{form.players.id}}>
+        <ul class="form__field-list shadow_list"id={{form.players.id}}>
           {% for subfield in form.players %}
               {% if subfield.errors %}
                 <li class="form__field s-with-error">
@@ -56,7 +56,7 @@
               {{subfield(
                 class="form__field-input",
                 autocomplete="offfff",
-                type="e-m-a-i-l"
+                type="email"
               )}}
               {{field_errors(subfield)}}
             </li>
