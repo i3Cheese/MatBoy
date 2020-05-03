@@ -22,7 +22,7 @@
 </div>
 
 <div class="box_container">
-  <div class="box">
+  <div class="box w-100">
     {% if game.protocol['teams'] %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
@@ -98,61 +98,63 @@
           <td><textarea name="additional"></textarea></td>
         </tr>
       </template>
-      <table class="protocol-table m-2 rounded" id="protocol">
-        <tr class="table_header">
-          <th>№</th>
-          <th>Команда</th>
-          <th>Баллы</th>
-          <th>Задача</th>
-          <th>Вызов</th>
-          <th>Баллы</th>
-          <th>Команда</th>
-          <th>Жюри</th>
-          <th>Дополнительная информация</th>
-        </tr>
-        {% if 'rounds' in game.protocol %}
-          {% set rounds = game.protocol['rounds'] %}
-        {% else %}
-          {% set rounds = [game.default_round(),] %}
-        {% endif %}
-        {% for round in rounds %}
-          <tr class="round_form">
-            <td class="row_number symbols">{{loop.index}}</td>
-            <td class="player">
-              {{select_players(game.protocol['teams'][0]['players'], 1,
-                               round['teams'][0]['player']['id'])}}
-            </td>
-            <td class="points symbols">
-              {{input_points(1, round['teams'][0]['points'])}}
-            </td>
-            <td class="symbols">
-              <input type="number" name="problem" value="{{round['problem']}}">
-            </td>
-            <td class="type symbols">
-              <select name="type">
-                {% for val, type in round_types %}
-                  {% if val == round['type'] %}
-                    <option value="{{val}}" selected>{{type}}</option>
-                  {% else %}
-                    <option value="{{val}}">{{type}}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-            </td>
-            <td class="points symbols">
-              {{input_points(2, round['teams'][1]['points'])}}
-            </td>
-            <td class="player">
-              {{select_players(game.protocol['teams'][1]['players'], 2,
-                                round['teams'][1]['player']['id'])}}
-            </td>
-            <td class="points judge_points symbols">
-              {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
-            </td>
-            <td><textarea name="additional">{{round['additional']}}</textarea></td>
+      <div class="protocol_in">
+        <table class="protocol-table m-2 rounded" id="protocol">
+          <tr class="table_header">
+            <th>№</th>
+            <th>Команда</th>
+            <th>Баллы</th>
+            <th>Задача</th>
+            <th>Вызов</th>
+            <th>Баллы</th>
+            <th>Команда</th>
+            <th>Жюри</th>
+            <th>Дополнительная информация</th>
           </tr>
-        {% endfor %}
-      </table>
+          {% if 'rounds' in game.protocol %}
+            {% set rounds = game.protocol['rounds'] %}
+          {% else %}
+            {% set rounds = [game.default_round(),] %}
+          {% endif %}
+          {% for round in rounds %}
+            <tr class="round_form">
+              <td class="row_number symbols">{{loop.index}}</td>
+              <td class="player">
+                {{select_players(game.protocol['teams'][0]['players'], 1,
+                                round['teams'][0]['player']['id'])}}
+              </td>
+              <td class="points symbols">
+                {{input_points(1, round['teams'][0]['points'])}}
+              </td>
+              <td class="symbols">
+                <input type="number" name="problem" value="{{round['problem']}}">
+              </td>
+              <td class="type symbols">
+                <select name="type">
+                  {% for val, type in round_types %}
+                    {% if val == round['type'] %}
+                      <option value="{{val}}" selected>{{type}}</option>
+                    {% else %}
+                      <option value="{{val}}">{{type}}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </td>
+              <td class="points symbols">
+                {{input_points(2, round['teams'][1]['points'])}}
+              </td>
+              <td class="player">
+                {{select_players(game.protocol['teams'][1]['players'], 2,
+                                  round['teams'][1]['player']['id'])}}
+              </td>
+              <td class="points judge_points symbols">
+                {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
+              </td>
+              <td><textarea name="additional">{{round['additional']}}</textarea></td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
       <div class="d-flex flex-wrap justify-content-between">
         <div class="buttons-menu">
           <button class="btn button_primary add_round">

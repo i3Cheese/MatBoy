@@ -26,7 +26,9 @@ function declineTeam(team_id) {
             team.find(".status").text("Ожидает подтверждения");
 
             // Возвращаем возможность выбирать лигу
-            team.find(".league_selector").removeClass('hidden');
+            let l_selector = team.find(".league_selector");
+            l_selector.removeClass('hidden');
+            l_selector.find('option[value="0"]').prop('selected', true);
 
             team.find(".team-league_title").addClass('hidden');
 

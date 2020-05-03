@@ -79,7 +79,6 @@ function holdErrorResponse(data){
     }
 }
 
-
 $(document).on('click', ".nested-toggler", function(event){
     target = $(`#${$(event.target).attr("for")}`);
     target.toggleClass('hidden');

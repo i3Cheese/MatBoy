@@ -363,7 +363,7 @@ button, input {
     flex-wrap: wrap-reverse;
     flex-direction: row;
     margin: 60px 0px 10px 0px;
-    padding: 0;
+    padding: 0 5px;
 }
 
 /* Сохраняет расстояние между элементами */
@@ -371,16 +371,6 @@ button, input {
     justify-content: space-between;
 }
 
-@media only screen and (max-width: 700px){
-    .box_container{
-        justify-content: center;
-        margin-top: 0px;
-        padding: 0px 5px;
-    }
-    .box_container > div{
-        width: 100%;
-    }
-}
 
 .box-label{
     font-size: 3em;
@@ -405,12 +395,6 @@ button, input {
     flex-grow: unset;
     align-self: none;
     margin: 60px 10px 10px 10px;
-}
-
-@media (max-width: 1000px){
-    .box{
-        max-width: none !important;
-    }
 }
 
 .box-tiny{
@@ -443,6 +427,25 @@ button, input {
     width: 100%;
     padding: 20px 0;
     height: 100%;
+}
+
+@media (max-width: 1000px){
+    .box{
+        max-width: none !important;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    .box_container{
+        justify-content: center;
+        margin-top: 0px;
+    }
+    .box_container > div{
+        width: 100%;
+    }
+    .non_space_box{
+        padding: 2px;
+    }
 }
 
 @media (min-width: 300px){
@@ -511,6 +514,10 @@ button, input {
 .protocol-table{
     text-align: center;
 }
+.protocol_in{
+    overflow: auto;
+    width: 100%;
+}
 
 .protocol-table, .protocol-table td, .protocol-table th{
     border: 1px solid rgba(0, 0, 0, 0.5);
@@ -518,6 +525,9 @@ button, input {
 
 .protocol-table td{
     height: 30px;
+}
+.protocol-table th{
+    padding: 0 5px;
 }
 
 .protocol-table input, .protocol-table select, .protocol-table textarea{
@@ -542,10 +552,13 @@ textarea:disabled, .protocol-table select:not(.custom-select){
     text-align: center;
 }
 
-.protocol-table .player{
-    width: 300px;
+.protocol-table .player select{
+    width: auto;
 }
-
+.protocol-table .player{
+    white-space: nowrap;
+    padding: 5px;
+}
 
 .shadow_list{
     list-style-type: none;

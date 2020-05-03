@@ -102,12 +102,12 @@
                     </option>
                   {% endif %}
                 {% endfor %}
-                {% if not team.league_id %}
-                  <option class="league_in" value="null">
+                {% if team.league_id %}
+                  <option class="league_in" value="0">
                     Не выбрано
                   </option>
                 {% else %}
-                  <option class="league_in" value="null" selected>
+                  <option class="league_in" value="0" selected>
                     Не выбрано
                   </option>
                 {% endif %}
