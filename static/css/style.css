@@ -513,10 +513,11 @@ button, input {
 
 .protocol-table{
     text-align: center;
+    width: 98%;
 }
 .protocol_in{
     overflow: auto;
-    width: 100%;
+    align-content: center;
 }
 
 .protocol-table, .protocol-table td, .protocol-table th{
@@ -536,6 +537,11 @@ button, input {
     width: 100%;
     box-sizing: border-box;
     font: inherit;
+    text-align: inherit;
+}
+
+.protocol-table textarea{
+    text-align: left;
 }
 
 textarea:disabled, .protocol-table select:not(.custom-select){
@@ -555,9 +561,21 @@ textarea:disabled, .protocol-table select:not(.custom-select){
 .protocol-table .player select{
     width: auto;
 }
+
 .protocol-table .player{
     white-space: nowrap;
     padding: 5px;
+}
+
+.captain_winner_name{
+    font-size: 1.2em;
+    text-decoration: underline;
+    padding: 0 5px;
+}
+
+.captain_winner span{
+    vertical-align: middle;
+    line-height: 100%;
 }
 
 .shadow_list{

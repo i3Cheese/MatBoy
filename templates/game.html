@@ -54,6 +54,12 @@
       </div>
       {% set rounds = game.protocol['rounds'] %}
       {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
+      {% if game.captain_winner %}
+        <div class="w-100 m-2 captain_winner">
+          Победил капитан команды
+          <span class="captain_winner_name">{{game.captain_winner.name}}</span>
+        </div>
+      {% endif %}
       <div class="protocol_in">
         <table class="protocol-table m-2 rounded" id="protocol">
           <tr class="table_header">

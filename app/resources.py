@@ -390,6 +390,12 @@ class ProtocolResource(Resource):
         logging.info(f"Protocol put with json {request.json}")
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
+            
+        if 'captain_winner' in request.json:
+            try:
+                game.captain_winner = int(request.json['captain_winner'])
+            except ValueError as e:
+                abort(400, message=str(e))
 
         if 'rounds' in request.json:
             rounds = request.json['rounds']

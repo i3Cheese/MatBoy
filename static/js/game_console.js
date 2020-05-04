@@ -19,6 +19,7 @@ function saveGame(redirect=false){
         rounds_json.push(round); 
     });
     let data = {rounds: rounds_json};
+    data.captain_winner = $('[name="captain_winner"]').val();
 
     // Отправляем данные
     $.ajax({

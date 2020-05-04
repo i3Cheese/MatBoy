@@ -59,3 +59,34 @@ class Game(BaseModel):
     @property
     def is_deleted(self):
         return self.status == 0
+    
+    @property
+    def teams(self):
+        return [self.team1, self.team2]
+
+    @property
+    def captain_winner(self):
+        team_id = self.protocol.get('captain_winner', {'id': 0})['id']
+        for team in self.teams:
+            if team.id == team_id:
+                return team
+        return None
+    
+    @captain_winner.setter
+    def captain_winner(self, team_data):
+        """:team_data - Union[int, Team]"""
+        if isinstance(team_data, int):
+            if team_data == 0:
+                self.protocol.pop('captain_winner', None)
+                return
+            for team in self.teams:
+                if team.id == team_data:
+                    self.protocol['captain_winner'] = team.to_short_dict()
+                    return
+            raise ValueError("Team doesn't participate in this game")
+        else:
+            if (team_data in self.teams):
+                self.protocol['captain_winner'] = team_data.to_short_dict()
+                return
+            else:
+                raise ValueError("Team doesn't participate in this game")

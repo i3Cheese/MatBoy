@@ -31,6 +31,12 @@ class Team(BaseModel):
                       "league.id",
                       "league.title",
                       )
+    
+    short_serialize_only = ("id",
+                            'name',
+                            'motto',
+                            "status",
+                            )
 
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)

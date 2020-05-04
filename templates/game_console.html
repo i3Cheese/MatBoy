@@ -47,6 +47,20 @@
         </div>
         {% endfor %}
       </div>
+      <div class="w-100 m-2 captain_winner">
+        Победил капитан команды
+        <select class="ml-2 captain_winner_name" name="captain_winner">  
+          <option {{'selected' if game.captain_winner is none else ''}} value="0"></option>
+          <option {{'selected' if game.captain_winner == game.team1 else ''}}
+                  value="{{game.team1.id}}">
+            {{game.team1.name}}
+          </option>
+          <option {{'selected' if game.captain_winner == game.team2 else ''}}
+                  value="{{game.team2.id}}">
+            {{game.team2.name}}
+          </option>
+        </select>
+      </div>
 
       {% macro select_players(players, i, player_id=0) %}
         <select class="custom-select" name="team{{i}}_players">

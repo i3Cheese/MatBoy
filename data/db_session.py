@@ -27,7 +27,12 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
         return self
     
     def __eq__(self, other):
-        return self.id == other.id
+        if other is None:
+            return False
+        elif type(self) == type(other):
+            return self.id == other.id
+        else:
+            raise TypeError
     
     def __hash__(self):
         return hash(self.id)
