@@ -48,9 +48,11 @@ class Game(BaseModel):
     @staticmethod
     def default_round():
         return {'teams': [{'player': 0,
-                           'points': 0},
+                           'points': 0,
+                           'stars': 0},
                           {'player': 0,
-                           'points': 0,}],
+                           'points': 0,
+                           'stars': 0}],
                 'problem': 0,
                 'type': 1,
                 'additional': "",

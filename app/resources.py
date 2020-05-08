@@ -400,10 +400,13 @@ class ProtocolResource(Resource):
         if 'rounds' in request.json:
             rounds = request.json['rounds']
             teams_points = [0, 0]
+            teams_stars = [0, 0]
             for round in rounds:
                 for i, team in enumerate(round['teams']):
                     team['points'] = int(team.get('points', 0))
+                    team['stars'] = int(team.get('stars', 0))
                     teams_points[i] += team['points']
+                    teams_stars[i] += team['stars']
                     if 'player' in team:
                         player = None
                         if isinstance(team['player'], int):
@@ -419,6 +422,7 @@ class ProtocolResource(Resource):
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
                 [len(rounds)*12 - sum(teams_points), ]
+            game.protocol['stars'] = teams_stars
 
         session.merge(game)
         session.commit()

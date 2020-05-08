@@ -559,11 +559,12 @@ textarea:disabled, .protocol-table select:not(.custom-select){
 }
 
 .protocol-table .player select{
-    width: auto;
+    width: 200px;
 }
 
 .protocol-table .player{
     white-space: nowrap;
+    position: relative;
     padding: 5px;
 }
 
@@ -576,6 +577,39 @@ textarea:disabled, .protocol-table select:not(.custom-select){
 .captain_winner span{
     vertical-align: middle;
     line-height: 100%;
+}
+
+.corner-lt{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.stars{
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    display: flex;
+    margin-top: -5px
+}
+
+.star{
+    font-size: 27px;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.star.enabled:hover{
+    cursor: pointer;
+}
+
+.star.add{
+    color: rgba(0, 0, 0, 0.5);
 }
 
 .shadow_list{

@@ -15,8 +15,10 @@ function saveGame(redirect=false){
         round.teams[1].points = Number(form.find('[name="team2_points"]').val());
         round.teams[0].player = Number(form.find('[name="team1_players"]').val());
         round.teams[1].player = Number(form.find('[name="team2_players"]').val());
+        round.teams[0].stars = form.find("[name='team1_stars']").find(".remove").length
+        round.teams[1].stars = form.find("[name='team2_stars']").find(".remove").length
         round.additional = form.find('[name="additional"]').val();
-        rounds_json.push(round); 
+        rounds_json.push(round);
     });
     let data = {rounds: rounds_json};
     data.captain_winner = $('[name="captain_winner"]').val();
@@ -59,6 +61,15 @@ function recountPoints(event){
     row.find(".judge_points").text(12-sum);
 }
 
+function addStar(event){
+    let stars = $(event.target).parents(".stars");
+    stars.append($(document.querySelector("#star_template").content).clone().find('.star'));
+}
+
+function removeStar(event){
+    $(event.target).remove();
+}
+
 $(document).on('click', '.add_round', function(){
     saveGame();
     addRow();
@@ -70,3 +81,5 @@ $(document).on('click', '.save_and_quit', function(){
     saveGame(redirect=true);
 });
 $(document).on('input keyup', '.points_input', recountPoints);
+$(document).on('click', '.star.add', addStar);
+$(document).on('click', '.star.remove', removeStar)

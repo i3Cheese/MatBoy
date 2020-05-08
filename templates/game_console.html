@@ -80,12 +80,21 @@
                max="12"
                >
       {% endmacro %}
+      {% macro stars_block(i, val=0) %}
+        <div class="corner-lt stars" name="team{{i}}_stars">
+          <div class="star enabled add">*</div>
+          {% for _ in range(val) %}
+            <div class="star enabled remove">*</div>
+          {% endfor %}
+        </div>
+      {% endmacro %}
       {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
       <template id="protocol_row_template">
         <tr class="round_form">
           <td class="row_number symbols">0</td>
           <td class="player">
             {{select_players(game.protocol['teams'][0]['players'], 1)}}
+            {{stars_block(1, 0)}}
           </td>
           <td class="points symbols">
             {{input_points(1)}}
@@ -105,12 +114,16 @@
           </td>
           <td class="player">
             {{select_players(game.protocol['teams'][1]['players'], 2)}}
+            {{stars_block(2, 0)}}
           </td>
           <td class="points judge_points symbols">
             12
           </td>
           <td><textarea name="additional"></textarea></td>
         </tr>
+      </template>
+      <template id="star_template">
+        <span class="star enabled remove">*</span>
       </template>
       <div class="protocol_in">
         <table class="protocol-table m-2 rounded" id="protocol">
@@ -136,6 +149,7 @@
               <td class="player">
                 {{select_players(game.protocol['teams'][0]['players'], 1,
                                 round['teams'][0]['player']['id'])}}
+                {{stars_block(1, round['teams'][0].get('stars', 0))}}
               </td>
               <td class="points symbols">
                 {{input_points(1, round['teams'][0]['points'])}}
@@ -160,6 +174,7 @@
               <td class="player">
                 {{select_players(game.protocol['teams'][1]['players'], 2,
                                   round['teams'][1]['player']['id'])}}
+                {{stars_block(2, round['teams'][1].get('stars', 0))}}
               </td>
               <td class="points judge_points symbols">
                 {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}

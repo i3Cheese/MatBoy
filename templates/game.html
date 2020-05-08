@@ -53,6 +53,13 @@
         {% endfor %}
       </div>
       {% set rounds = game.protocol['rounds'] %}
+      {% macro stars_block(i, val=0) %}
+        <div class="corner-lt stars" name="team{{i}}_stars">
+          {% for _ in range(val) %}
+            <div class="star disabled">*</div>
+          {% endfor %}
+        </div>
+      {% endmacro %}
       {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
       {% if game.captain_winner %}
         <div class="w-100 m-2 captain_winner">
@@ -78,6 +85,7 @@
               <td class="row_number symbols">{{loop.index}}</td>
               <td class="player">
                 {{round['teams'][0]['player']['fullname']}}
+                {{stars_block(1, round['teams'][0].get('stars', 0))}}
               </td>
               <td class="points symbols">
                 {{round['teams'][0]['points']}}
@@ -93,6 +101,7 @@
               </td>
               <td class="player">
                 {{round['teams'][1]['player']['fullname']}}
+                {{stars_block(2, round['teams'][1].get('stars', 0))}}
               </td>
               <td class="points judge_points symbols">
                 {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
