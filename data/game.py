@@ -45,4 +45,3 @@ class Game(BaseModel):
     def have_permission(self, user) -> bool:
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)
-    
