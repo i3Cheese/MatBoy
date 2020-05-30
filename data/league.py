@@ -2,7 +2,6 @@ import datetime
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.db_session import BaseModel
-from Typing import List
 
 
 class League(BaseModel):
@@ -20,7 +19,7 @@ class League(BaseModel):
                       "teams.name",
                       )
 
-    title = sa.Column(sa.Strindg, unique=False)
+    title = sa.Column(sa.String, unique=False)
     description = sa.Column(sa.Text, nullable=True)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"))
@@ -36,16 +35,23 @@ class League(BaseModel):
         else:
             return False
 
-    def get_table(self):
+    def get_table(self, non_ended=False):
         """
         Return matrix which represnt a tournament table.
-        :return Tuple[List[Team], List[List[List[Game]]]]
+        :return Tuple[List[Team], List[List[List[Tuple[int, Game]]]], List[int]]
         """
         teams = self.teams.copy()
         n = len(teams)
         indexes = {teams[i]: i for i in range(n)}
         table = [[[] for __ in range(n)] for _ in range(n)]
-        for game in games:
-            i, j = indexes[game.team1], indexes[game.team2]
-            table[]
-            
+        result = [0] * n
+        for game in self.games:
+            if non_ended or game.status >= 3:
+                i, j = indexes[game.team1], indexes[game.team2]
+                r1 = game.result_for_team(1, 1)
+                r2 = game.result_for_team(2, 1)
+                table[i][j].append((r1, game,))
+                table[j][i].append((r2, game,))
+                result[i] += r1
+                result[j] += r2
+        return (teams, table, result)

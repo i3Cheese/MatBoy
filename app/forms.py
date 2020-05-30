@@ -181,7 +181,7 @@ def PrepareToGameForm(game: Game):
         setattr(PrepareToGameForm, teams[i]['_deputy'], deputy)
         
     PrepareToGameForm.teams = teams
-    PrepareToGameForm.submit = SubmitField("Далее")
+    PrepareToGameForm.submit = SubmitField("Перейти к протоколу")
 
     return PrepareToGameForm()
         

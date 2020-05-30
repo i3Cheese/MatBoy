@@ -24,20 +24,21 @@ def give_creator(id=None, email=None):
     if user.is_creator:
         print(repr(user), "already is creator")
         return
-    user.is_creator = True
+    user.is_creator = Trueo
     session.merge(user)
     session.commit()
     print(repr(user), "now is creator")
-    
+
 
 @manager.command
 def make_robots():
     for i in range(10):
-        res = requests.post(config.APP_URL + "api/user", json={"surname": f"Иванов",
-                                        "name": f"Робот{i}",
-                                        "city": "Москва",
-                                        "birthday": "12.12.2012",
-                                        "password": f"31415926",
-                                        "email": f"robot{i}@factory.com"
-                                        })
+        res = requests.post(config.APP_URL + "api/user",
+                            json={"surname": f"Иванов",
+                                  "name": f"Робот{i}",
+                                  "city": "Москва",
+                                  "birthday": "12.12.2012",
+                                  "password": f"31415926",
+                                  "email": f"robot{i}@factory.com"
+                                  })
         pprint(res)

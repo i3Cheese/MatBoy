@@ -45,3 +45,4 @@ class BaseConfig:
 class DebugConfig(BaseConfig):
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
+    APP_URL = "http://127.0.0.1:5000/"

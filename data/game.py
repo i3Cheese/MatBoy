@@ -2,6 +2,7 @@ import sqlalchemy as sa
 from sqlalchemy import orm
 from data.db_session import BaseModel
 from sqlalchemy_json import MutableJson
+from data.exceptions import StatusError
 
 
 class Game(BaseModel):
@@ -26,7 +27,13 @@ class Game(BaseModel):
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
     protocol = sa.Column(MutableJson)
-    status = sa.Column(sa.Boolean, default=1)
+    status = sa.Column(sa.Integer, default=1)
+    """
+    0 - deleted
+    1 - created
+    2 - started
+    3 - finished
+    """
     judge_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"))
     team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"))
@@ -92,3 +99,37 @@ class Game(BaseModel):
                 return
             else:
                 raise ValueError("Team doesn't participate in this game")
+    
+    def result_for_team(self, num, first=0):
+        if self.status < 3:
+            raise StatusError
+        if 'result' not in self.protocol:
+            self.set_result()
+        num -= first
+        if num in (0, 1):
+            return self.protocol['result'][num]
+        else:
+            raise ValueError
+    
+    def set_result(self):
+        points = self.protocol['points']
+        if points[0] - points[1] > 3:
+            self.protocol['result'] = [2, 0]
+        elif points[1] - points[0] > 3:
+            self.protocol['result'] = [0, 2]
+        else:
+            self.protocol['result'] = [1, 1]
+
+    def delete(self):
+        self.status = 0
+    
+    def restore(self):
+        self.status = 1
+
+    def start_game(self):
+        self.status = 2
+
+    def finish(self):
+        self.set_result()
+        self.status = 3
+    

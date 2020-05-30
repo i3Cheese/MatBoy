@@ -1,9 +1,40 @@
+var stat, disabled;
+
 function gameId(){
     return Number($("#game_id").text());
 }
 
+function gameStatus(){
+    return Number($("#game_status").text());
+}
 
-function saveGame(redirect=false){
+function toggleProtocol(dis){
+    $("#protocol").find("select, input").prop("disabled", dis);
+    $("select[name=captain_winner]").prop("disabled", dis);
+    $("#protocol_buttons button ").prop("disabled", dis);
+    disabled = dis;
+}
+
+function changeStatus(st){
+    let data = {status: st};
+    $.ajax({
+        type: "PUT",
+        url: API_URL + `game/${gameId()}`,
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(data),
+        success: function(){
+            stat = st;
+            if (st == 3){
+                window.location.href=`/game/${gameId()}`;
+            } else if (st == 2){
+                toggleProtocol(0);
+            }
+        },
+        error: holdErrorResponse,
+    })
+}
+
+function saveGame(finish=false){
     // Собираем данные
     let rounds_json = [];
     $("#protocol").find(".round_form").each(function(index){
@@ -15,8 +46,8 @@ function saveGame(redirect=false){
         round.teams[1].points = Number(form.find('[name="team2_points"]').val());
         round.teams[0].player = Number(form.find('[name="team1_players"]').val());
         round.teams[1].player = Number(form.find('[name="team2_players"]').val());
-        round.teams[0].stars = form.find("[name='team1_stars']").find(".remove").length
-        round.teams[1].stars = form.find("[name='team2_stars']").find(".remove").length
+        round.teams[0].stars = form.find("[name='team1_stars']").find(".remove").length;
+        round.teams[1].stars = form.find("[name='team2_stars']").find(".remove").length;
         round.additional = form.find('[name="additional"]').val();
         rounds_json.push(round);
     });
@@ -30,13 +61,11 @@ function saveGame(redirect=false){
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(data),
         dataType: "json",
-        error: logData,
         success: function(){
-            if (redirect){
-                window.location.href=`/game/${gameId()}`
+            if (finish){
+                changeStatus(3);
             }
         },
-        error: holdErrorResponse,
     })
 }
 
@@ -62,11 +91,13 @@ function recountPoints(event){
 }
 
 function addStar(event){
+    if (disabled) return;
     let stars = $(event.target).parents(".stars");
     stars.append($(document.querySelector("#star_template").content).clone().find('.star'));
 }
 
 function removeStar(event){
+    if (disabled) return;
     $(event.target).remove();
 }
 
@@ -77,9 +108,27 @@ $(document).on('click', '.add_round', function(){
 $(document).on('click', '.save', function(){
     saveGame();
 });
-$(document).on('click', '.save_and_quit', function(){
-    saveGame(redirect=true);
+$(document).on('click', '.end_editing', function(){
+    saveGame(stat !== 3);
 });
+$(document).on('click', '.start_editing', function(){
+    if (stat == 1){
+        changeStatus(2);
+    } else {
+        toggleProtocol(0);
+    }
+})
 $(document).on('input keyup', '.points_input', recountPoints);
 $(document).on('click', '.star.add', addStar);
 $(document).on('click', '.star.remove', removeStar)
+
+$(document).ready(function(jqs){
+    stat = gameStatus();
+    switch(stat){
+        case 1:
+            toggleProtocol(1);
+            break;
+        case 3:
+            toggleProtocol(1);
+    }
+});

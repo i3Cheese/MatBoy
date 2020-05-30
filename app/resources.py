@@ -73,7 +73,9 @@ def get_game(session, game_id, do_abort=True) -> Game:
 
 
 def abort_if_email_exist(session, email):
-    if session.query(User).filter(User.email == email).first():
+    user = session.query(User).filter(User.email == email).first()
+    logging.info(repr(user))
+    if user is not None:
         abort(409, message=f"Пользователь с e-mail {repr(email)} уже зарегестрирован")
 
 
@@ -310,7 +312,18 @@ class GameResource(Resource):
         if args['start'] is not None:
             game.start = args['start']
         if args['status'] is not None:
-            game.status = args['status']
+            s = args['status']
+            if s == 3:
+                game.finish()
+            elif s == 2:
+                game.start_game()
+            elif s == 1:
+                game.restore()
+            elif s == 0:
+                game.delete()
+            else:
+                abort(400, message="Wrong status value")
+                
         if not(args['judge.id'] is None and args['judge.email'] is None):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
@@ -345,7 +358,6 @@ class GameResource(Resource):
 
 class GamesResource(Resource):
     post_pars = GameResource.put_pars.copy()
-    post_pars.replace_argument('status', type=int, default=1)
     post_pars.replace_argument('league.id', type=int, required=True)
     post_pars.replace_argument('team1.id', type=int, required=True)
     post_pars.replace_argument('team2.id', type=int, required=True)
@@ -370,7 +382,6 @@ class GamesResource(Resource):
         game.team1 = get_team(session, args['team1.id'])
         game.team2 = get_team(session, args['team2.id'])
         game.league = get_league(session, args['league.id'])
-        game.status = args['status']
 
         session.add(game)
         session.commit()
