@@ -15,7 +15,7 @@ function toggleProtocol(dis){
     disabled = dis;
 }
 
-function changeStatus(st){
+function changeStatus(st, func){
     let data = {status: st};
     $.ajax({
         type: "PUT",
@@ -24,14 +24,10 @@ function changeStatus(st){
         data: JSON.stringify(data),
         success: function(){
             stat = st;
-            if (st == 3){
-                window.location.href=`/game/${gameId()}`;
-            } else if (st == 2){
-                toggleProtocol(0);
-            }
+            func();
         },
         error: holdErrorResponse,
-    })
+    });
 }
 
 function saveGame(finish=false){
@@ -63,7 +59,7 @@ function saveGame(finish=false){
         dataType: "json",
         success: function(){
             if (finish){
-                changeStatus(3);
+                changeStatus(3, function(){window.location.href=`/game/${gameId()}`;});
             }
         },
     })
@@ -111,9 +107,12 @@ $(document).on('click', '.save', function(){
 $(document).on('click', '.end_editing', function(){
     saveGame(stat !== 3);
 });
-$(document).on('click', '.start_editing', function(){
+$(document).on('click', '.start_editing', function(e){
     if (stat == 1){
-        changeStatus(2);
+        changeStatus(2, function(){
+            $(event.target).remove();
+            toggleProtocol(0);
+        });
     } else {
         toggleProtocol(0);
     }
