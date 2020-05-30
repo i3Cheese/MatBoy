@@ -105,7 +105,10 @@ $(document).on('click', '.save', function(){
     saveGame();
 });
 $(document).on('click', '.end_editing', function(){
-    saveGame(stat !== 3);
+    if (stat == 3)
+        saveGame(redirect=true);
+    else
+        saveGame(st=3, redirect=true)
 });
 $(document).on('click', '.start_editing', function(e){
     if (stat == 1){

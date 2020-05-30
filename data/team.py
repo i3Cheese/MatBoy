@@ -64,6 +64,9 @@ class Team(BaseModel):
         else:
             return False
         
+    def link(self):
+        return '/team/{0}'.format(self.id)
+
     @property
     def games(self):
         return sorted(set(self.games_1 + self.games_2), key=lambda game: game.created_at)

@@ -52,6 +52,9 @@ class Game(BaseModel):
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)
     
+    def link(self):
+        return "/game/{0}".format(self.id)
+
     @staticmethod
     def default_round():
         return {'teams': [{'player': 0,
@@ -65,10 +68,6 @@ class Game(BaseModel):
                 'additional': "",
                 }
 
-    @property
-    def is_deleted(self):
-        return self.status == 0
-    
     @property
     def teams(self):
         return [self.team1, self.team2]
@@ -133,3 +132,15 @@ class Game(BaseModel):
         self.set_result()
         self.status = 3
     
+    @property
+    def is_deleted(self):
+        return self.status == 0
+    
+    def started(self):
+        return self.status >= 2
+
+    def finished(self):
+        return self.status >= 3
+
+    def deleted(self):
+        return self.status <= 0

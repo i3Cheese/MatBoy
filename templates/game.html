@@ -13,9 +13,15 @@
       <– Лига
     </a>
     {% if game.have_permission(current_user) and not game.is_deleted %}
+      {% if game.started %}
       <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
-        Судить
+        Редактировать протокол
       </a>
+      {% else %}
+      <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
+        Подготовка к игре
+      </a>
+      {% endif %}
     {% endif %}
   </div>
   <div class="mdlr-2 h4">
@@ -28,7 +34,7 @@
 
 <div class="box_container protocol_in">
   <div class="box w-100">
-    {% if game.protocol['rounds'] and not game.deleted %}
+    {% if game.started %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
         {% set t_d = game.protocol['teams'][loop.index0] %}
@@ -67,8 +73,8 @@
           <span class="captain_winner_name">{{game.captain_winner.name}}</span>
         </div>
       {% endif %}
-      <div class="protocol_in">
-        <table class="protocol-table m-2 rounded" id="protocol">
+      <div class="protocol_in big_table_container">
+        <table class="info_table protocol-table m-2 rounded" id="protocol">
           <tr class="table_header">
             <th>№</th>
             <th>Команда</th>

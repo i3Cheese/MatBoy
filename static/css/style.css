@@ -511,23 +511,23 @@ button, input {
     display: inline;
 }
 
-.protocol-table{
+.info_table{
     text-align: center;
     width: 98%;
 }
-.protocol_in{
+.protocol_in, .big_table_container{
     overflow: auto;
     align-content: center;
 }
 
-.protocol-table, .protocol-table td, .protocol-table th{
+.info_table, .info_table td, .info_table th{
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.protocol-table td{
+.info_table td{
     height: 30px;
 }
-.protocol-table th{
+.info_table th{
     padding: 0 5px;
 }
 
@@ -566,6 +566,10 @@ textarea:disabled, .protocol-table select:not(.custom-select){
     white-space: nowrap;
     position: relative;
     padding: 5px;
+}
+
+.shadow_link{
+    color: inherit;
 }
 
 .captain_winner_name{
