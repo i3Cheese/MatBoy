@@ -59,9 +59,7 @@ function saveGame(finish=false){
         dataType: "json",
         success: function(){
             if (finish){
-                changeStatus(3, function(){
-                    window.location.href=window.location.href.strip('/console');
-                });
+                changeStatus(3, function(){window.location.href=`/game/${gameId()}`;});
             }
         },
     })
@@ -120,7 +118,6 @@ $(document).on('click', '.start_editing', function(e){
         });
     } else {
         toggleProtocol(0);
-        $(event.target).remove();
     }
 })
 $(document).on('input keyup', '.points_input', recountPoints);

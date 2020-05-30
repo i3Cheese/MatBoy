@@ -13,7 +13,7 @@
       </h3>
       <a class="link link-small"
          onclick="redirectWithStep(event);" 
-         href="{{tour.link}}/edit"
+         href="/edit_tournament/{{tour.id}}"
       >
         редактировать
       </a>
@@ -51,7 +51,7 @@
               <label class="label-bold">
                 Заявку отправил:
               </label>
-              <a class="team-sender link link-shadow like_list" href="{{team.trainer.link}}">
+              <a class="team-sender link link-shadow like_list" href="/profile/{{team.trainer.id}}">
                 {{team.trainer}}
               </a>
               <label class="label-bold">
@@ -66,7 +66,7 @@
               <ul class="team-players shadow_list">
                 {% for player in team.players %}
                   <li>
-                    <a class="link link-shadow team-player" href="{{player.link}}">
+                    <a class="link link-shadow team-player" href="/profile/{{player.id}}">
                       {{player}}
                     </a>
                   </li>
@@ -155,11 +155,11 @@
           <template id="league_template">
             <div class="box_item league" id="league-">
               <div class="link_menu">
-                <a class="link link-small league-manage" href='{{tour.link}}/league/{{"{0}"}}/console'>
+                <a class="link link-small league-manage" href='/league_console/'>
                   управлять
                 </a>
                 |
-                <a class="link link-small league-goto" href='{{tour.link}}/league/{{"{0}"}}'>
+                <a class="link link-small league-goto" href='/league/'>
                   перейти на страницу
                 </a>
               </div>
@@ -175,7 +175,7 @@
                   Главный по лиге:
                 </label>
                 <a class="league-chief link link-shadow chief like_list"
-                    href='/profile/{{"{0}"}}'
+                    href="/profile/" 
                     title="">
                 </a>
                 <label class="label-bold league-label_teams" for="league_teams-">
@@ -198,7 +198,7 @@
           </template>
           <template id="league_team_template">
             <li id="league_team-">
-              <a class="link" href='{{tour.link}}/team/{{"{0}"}}'>
+              <a class="link" href="/team/">
                 Безымянная команда
               </a>
             </li>
@@ -234,11 +234,11 @@
                 {{league.title}}
               </label>
               <div class="link_menu">
-                <a class="link link-small league-manage" href='{{league.link}}/console'>
+                <a class="link link-small league-manage" href='/league_console/{{league.id}}'>
                   управлять
                 </a>
                 |
-                <a class="link link-small league-goto" href='{{league.link}}'>
+                <a class="link link-small league-goto" href='/league/{{league.id}}'>
                   перейти на страницу
                 </a>
               </div>
@@ -253,7 +253,7 @@
                   Главный по лиге:
                 </label>
                 <a class="league-chief link link-shadow chief like_list"
-                    href="{{league.chief.link}}" 
+                    href="/profile/{{league.chief.id}}" 
                     title="{{league.chief.email}}">
                   {{league.chief}}
                 </a>
@@ -263,7 +263,7 @@
                 <ul class="league-teams shadow_list" id="league_teams-{{league.id}}">
                   {% for team in league.teams if team.status == 2 %}
                     <li id="league_team-{{team.id}}">
-                      <a class="link" href="{{team.link}}">
+                      <a class="link" href="/team/{{team.id}}">
                         {{team.name}}
                       </a>
                     </li>

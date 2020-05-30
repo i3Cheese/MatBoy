@@ -39,7 +39,7 @@
 
 {% macro team_league(team) %}
   {% if team.league %}
-    <a href="{{team.league.link}}">{{team.league.title}}</a>
+    <a href="/league/{{team.league.id}}">{{team.league.title}}
   {% else %}
     Не назначена.
   {% endif %}

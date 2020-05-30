@@ -17,7 +17,6 @@ class League(BaseModel):
                       "tournament.title",
                       "teams.id",
                       "teams.name",
-                      "link",
                       )
 
     title = sa.Column(sa.String, unique=False)
@@ -35,13 +34,6 @@ class League(BaseModel):
             return True
         else:
             return False
-
-    @property
-    def link(self) -> str:
-        return self.tournament.link + "/league/{0}".format(self.id)
-
-    def check_relation(self, tour_id) -> bool:
-        return self.tournament_id == tour_id
 
     def get_table(self, non_ended=False):
         """

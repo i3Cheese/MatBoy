@@ -37,6 +37,51 @@ def index_page():
     return render_template("index.html", tournaments=tournaments)
 
 
+@blueprint.route("/tournament/<int:tour_id>")
+def tournament_page(tour_id):
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not tour:
+        abort(404)
+    return render_template("tournament.html", tour=tour)
+
+
+@blueprint.route("/league/<int:league_id>")
+def league_page(league_id):
+    session = create_session()
+    league = session.query(League).get(league_id)
+    if not league:
+        abort(404)
+    return render_template("league.html", league=league)
+
+
+@blueprint.route("/team/<int:team_id>")
+def team_page(team_id):
+    session = create_session()
+    team = session.query(Team).get(team_id)
+    if not team:
+        abort(404)
+    return render_template("team.html", team=team)
+
+
+@blueprint.route("/profile/<int:user_id>")
+def user_page(user_id):
+    session = create_session()
+    user = session.query(User).get(user_id)
+    if not user:
+        abort(404)
+    return render_template("profile.html", user=user)
+
+
+@blueprint.route("/game/<int:game_id>")
+def game_page(game_id):
+    session = create_session()
+    game = session.query(Game).get(game_id)
+    if not game:
+        abort(404)
+    return render_template("game.html", game=game)
+
+
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
@@ -80,24 +125,6 @@ def logout_page():
     return back_redirect("/login")
 
 
-@blueprint.route("/profile/<int:user_id>")
-def user_page(user_id):
-    session = create_session()
-    user = session.query(User).get(user_id)
-    if not user:
-        abort(404)
-    return render_template("profile.html", user=user)
-
-
-@blueprint.route("/tournament/<int:tour_id>")
-def tournament_page(tour_id):
-    session = create_session()
-    tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
-    return render_template("tournament.html", tour=tour)
-
-
 @blueprint.route("/new_tournament", methods=["POST", "GET"])
 @login_required
 def tournament_creator_page():
@@ -113,7 +140,7 @@ def tournament_creator_page():
                                        place=form.place.data,
                                        start=form.start.data,
                                        end=form.end.data,
-                                       chief_id=current_user.id,)
+                                       chief_id = current_user.id,)
         session.add(tournament)
         session.commit()
 
@@ -121,13 +148,11 @@ def tournament_creator_page():
     return render_template("tournament_editor.html", form=form)
 
 
-@blueprint.route("/tournament/<int:tour_id>/edit", methods=["POST", "GET"])
+@blueprint.route("/edit_tournament/<int:tour_id>", methods=["POST", "GET"])
 @login_required
 def tournament_edit_page(tour_id: int):
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
     if not tour.have_permission(current_user):
         abort(403)
     form = TournamentInfoForm()
@@ -148,7 +173,7 @@ def tournament_edit_page(tour_id: int):
         session.merge(tour)
         session.commit()
 
-        return back_redirect("{0}/console".format(tour.link))
+        return back_redirect(f"/tournament_console/{tour_id}")
 
     elif not form.is_submitted():
         form.title.data = tour.title
@@ -160,22 +185,7 @@ def tournament_edit_page(tour_id: int):
     return render_template("tournament_editor.html", form=form)
 
 
-@blueprint.route("/tournament/<int:tour_id>/console")
-@login_required
-def tournament_console(tour_id: int):
-    """Web page for manage tournament"""
-    session = create_session()
-    tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
-    # If user haven't access to tournament
-    if not tour.have_permission(current_user):
-        abort(403)
-
-    return render_template("tournament_console.html", tour=tour)
-
-
-@blueprint.route("/tournament/<int:tour_id>/team_request", methods=["GET", "POST"])
+@blueprint.route("/team_request/<int:tour_id>", methods=["GET", "POST"])
 @login_required
 def team_request(tour_id: int):
     form = TeamForm()
@@ -191,7 +201,7 @@ def team_request(tour_id: int):
                 trainer_id=current_user.id,
                 tournament_id=tour.id,
             )
-
+            
             emails = set()
             for field in form.players.entries:
                 email = field.data.lower()
@@ -206,47 +216,35 @@ def team_request(tour_id: int):
                 team.players.append(user)
             session.add(team)
             session.commit()
-            return redirect(team.link)
+            return redirect(f"/team/{team.id}")
     except ValidationError:
         pass
 
     return render_template("team_request.html", tour=tour, form=form)
 
 
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")
-def league_page(tour_id, league_id):
-    session = create_session()
-    league = session.query(League).get(league_id)
-    if not (league and league.check_relation(tour_id)):
-        abort(404)
-    return render_template("league.html", league=league)
-
-
-@blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")
-def team_page(team_id, tour_id):
-    session = create_session()
-    team = session.query(Team).get(team_id)
-    if not (team and team.check_relation(tour_id)):
-        abort(404)
-    return render_template("team.html", team=team)
-
-
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>")
-def game_page(tour_id, league_id, game_id):
-    session = create_session()
-    game = session.query(Game).get(game_id)
-    if not (game and game.check_relation(tour_id, league_id)):
-        abort(404)
-    return render_template("game.html", game=game)
-
-
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/console")
+@blueprint.route("/tournament_console/<int:tour_id>")
 @login_required
-def league_console(tour_id: int, league_id: int):
+def tournament_console(tour_id: int):
+    """Web page for manage tournament"""
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if not tour:
+        abort(404)
+    # If user haven't access to tournament
+    if not tour.have_permission(current_user):
+        abort(403)
+
+    return render_template("tournament_console.html", tour=tour)
+
+
+@blueprint.route("/league_console/<int:league_id>")
+@login_required
+def league_console(league_id: int):
     """Web page for manage league"""
     session = create_session()
     league = session.query(League).get(league_id)
-    if not (league and league.check_relation(tour_id)):
+    if not league:
         abort(404)
 
     if not league.have_permission(current_user):
@@ -255,13 +253,12 @@ def league_console(tour_id: int, league_id: int):
     return render_template("league_console.html", league=league)
 
 
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>/prepare",
-                 methods=["GET", "POST"])
+@blueprint.route("/prepare_to_game/<int:game_id>", methods=["GET", "POST"])
 @login_required
-def prepare_to_game(tour_id, league_id, game_id):
+def prepare_to_game(game_id):
     session = create_session()
     game = session.query(Game).get(game_id)
-    if not (game and game.check_relation(tour_id, league_id)):
+    if not game:
         abort(404)
 
     if not game.have_permission(current_user):
@@ -294,8 +291,7 @@ def prepare_to_game(tour_id, league_id, game_id):
                 team_json['players'] = []
                 for player_field in t_d['players']:
                     if player_field.data:
-                        player = session.query(User).get(
-                            player_field.player_id)
+                        player = session.query(User).get(player_field.player_id)
                         if not player:
                             player_field.errors.append("Не найден")
                             raise ValidationError
@@ -303,19 +299,19 @@ def prepare_to_game(tour_id, league_id, game_id):
                 game.protocol['teams'].append(team_json)
             session.merge(game)
             session.commit()
-            return redirect("{0}/console".format(game.link))
+            return redirect(f"/game_console/{game.id}")
         except ValidationError:
             return render_template("prepare_to_game.html", game=game, form=form)
 
     return render_template("prepare_to_game.html", game=game, form=form)
 
 
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>/console")
+@blueprint.route("/game_console/<int:game_id>")
 @login_required
-def game_console(tour_id, league_id, game_id):
+def game_console(game_id):
     session = create_session()
     game = session.query(Game).get(game_id)
-    if not (game and game.check_relation(tour_id, league_id)):
+    if not game:
         abort(404)
     if not game.have_permission(current_user):
         abort(403)

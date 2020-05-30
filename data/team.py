@@ -30,7 +30,6 @@ class Team(BaseModel):
                       "tournament.title",
                       "league.id",
                       "league.title",
-                      "link",
                       )
     
     short_serialize_only = ("id",
@@ -65,14 +64,10 @@ class Team(BaseModel):
         else:
             return False
         
-    @property
-    def link(self) -> str:
-        return self.tournament.link + '/team/{0}'.format(self.id)
-
-    def check_relation(self, tour_id) -> bool:
-        return self.tournament_id == tour_id
+    def link(self):
+        return '/team/{0}'.format(self.id)
 
     @property
     def games(self):
         return sorted(set(self.games_1 + self.games_2), key=lambda game: game.created_at)
-
+            

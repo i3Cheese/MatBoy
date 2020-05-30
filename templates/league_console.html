@@ -27,7 +27,7 @@
               <label class="label-bold">
                 Заявку отправил:
               </label>
-              <a class="team-sender link link-shadow like_list" href="{{team.trainer.link}}">
+              <a class="team-sender link link-shadow like_list" href="/profile/{{team.trainer.id}}">
                 {{team.trainer}}
               </a>
               <label class="label-bold">
@@ -42,7 +42,7 @@
               <ul class="team-players shadow_list">
                 {% for player in team.players %}
                   <li>
-                    <a class="link link-shadow team-player" href="{{player.link}}">
+                    <a class="link link-shadow team-player" href="/profile/{{player.id}}">
                       {{player}}
                     </a>
                   </li>
@@ -107,7 +107,7 @@
 
               </label>
               <div class="link_menu">
-                <a class="link link-small game-goto" href="{{league.link}}/game/{{'{0}'}}">
+                <a class="link link-small game-goto" href='/game/'>
                   перейти на страницу
                 </a>
               </div>
@@ -116,7 +116,7 @@
                   Судья:
                 </label>
                 <a class="game-judge link link-shadow info_value like_list"
-                    href="/profile/{{'{0}'}}" 
+                    href="/profile/" 
                     title="">
 
                 </a>
@@ -151,7 +151,7 @@
                 {{game.team1.name}} — {{game.team2.name}}
               </label>
               <div class="link_menu">
-                <a class="link link-small game-goto" href="{{game.link}}">
+                <a class="link link-small game-goto" href='/game/{{game.id}}'>
                   перейти на страницу
                 </a>
               </div>

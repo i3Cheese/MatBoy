@@ -7,20 +7,6 @@ from data.db_session import BaseModel
 class Tournament(BaseModel):
     __tablename__ = "tournaments"
     __repr_attrs__ = ["title", "chief"]
-    serialize_only = ("id",
-                      "title",
-                      "chief.id",
-                      "chief.email",
-                      "chief.fullname",
-                      "place",
-                      "start",
-                      "end",
-                      "link",
-                      )
-
-    short_serialize_only = ("id",
-                            "title",
-                            )
 
     title = sa.Column(sa.String, unique=True)
     description = sa.Column(sa.Text, nullable=True)
@@ -30,10 +16,6 @@ class Tournament(BaseModel):
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
 
     chief = orm.relationship("User", backref="tournaments")
-
+    
     def have_permission(self, user):
         return user.is_admin or self.chief == user
-
-    @property
-    def link(self) -> str:
-        return "/tournament/{0}".format(self.id)

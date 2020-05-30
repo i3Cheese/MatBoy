@@ -9,7 +9,7 @@
   <div class="link_menu">
     <a class="link link-small" 
         onclick="redirectWithStep(event)"
-        href="{{tour.link}}/team_request"
+        href="/team_request/{{tour.id}}"
     >
       подать заявку
     </a>
@@ -17,12 +17,12 @@
       |
       <a class="link link-small" 
           onclick="redirectWithStep(event)" 
-          href="{{tour.link}}/edit"
+          href="/edit_tournament/{{tour.id}}"
       >
         редактировать
       </a>
       |
-      <a class="link link-small" href='{{tour.link}}/console'>
+      <a class="link link-small" href='/tournament_console/{{tour.id}}'>
         управлять
       </a>
     {% endif %}
@@ -39,7 +39,7 @@
     {% for league in tour.leagues | sort(reverse=True, attribute="created_at") %}
       <div class="centered_block block_link" 
             onclick="redirect(event)" 
-            href="{{league.link}}"
+            href="/league/{{league.id}}"
       >
         <h2 class="item_title">{{league.title}}</h2>
         <div class="description">

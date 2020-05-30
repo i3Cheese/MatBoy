@@ -9,18 +9,18 @@
 
 <div class="box d-flex flex-wrap justify-content-between">
   <div class="mdr-2">
-    <a class="btn button_primary" href="{{game.league.link}}">
+    <a class="btn button_primary" href="/league/{{game.league.id}}">
       <– Лига
     </a>
     {% if game.have_permission(current_user) and not game.is_deleted %}
-      {% if game.started() %}
-        <a class="btn button_primary" href="{{game.link}}/console">
-          Редактировать протокол
-        </a>
+      {% if game.started %}
+      <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
+        Редактировать протокол
+      </a>
       {% else %}
-        <a class="btn button_primary" href="{{game.link}}/prepare">
-          Подготовка к игре
-        </a>
+      <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
+        Подготовка к игре
+      </a>
       {% endif %}
     {% endif %}
   </div>
@@ -34,7 +34,7 @@
 
 <div class="box_container protocol_in">
   <div class="box w-100">
-    {% if game.started() %}
+    {% if game.started %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
         {% set t_d = game.protocol['teams'][loop.index0] %}

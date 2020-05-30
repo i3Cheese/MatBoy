@@ -18,7 +18,7 @@
   </h5>
   {% if current_user.id in (1, league.tournament.chief_id, league.chief_id,) %}
     <div class="link_menu">
-      <a class="link-small" href='{{league.link}}/console'>
+      <a class="link-small" href='/league_console/{{league.id}}'>
         управлять
       </a>
     </div>
@@ -35,7 +35,7 @@
 
 {% set teams, table, result = league.get_table() %}
 {% macro team_th(team) %}
-  <th class="team_name"><a class="shadow_link" href="{{team.link}}">{{team.name}}</a></th>
+  <th class="team_name"><a class="shadow_link" href="{{team.link()}}">{{team.name}}</a></th>
 {% endmacro %}
 <div class="box_container">
   <div class="box w-100">
@@ -57,7 +57,7 @@
             {% for cell in row %}
               <td class="game_cell">
                 {% for res, game in cell %}
-                  <a class="shadow_link" href="{{game.link}}">
+                  <a class="shadow_link" href="{{game.link()}}">
                     {{res}}{% if not loop.last %}, {% endif %}
                   </a>
                 {% endfor %}
@@ -79,7 +79,7 @@
     {% for team in league.teams | sort(reverse=True, attribute="created_at") if team.status == 2 %}
       <div class="centered_block block_link" 
             onclick="redirect(event)" 
-            href="{{team.link}}"
+            href="/team/{{team.id}}"
       >
         <h2 class="item_title">{{team.name}}</h2>
         <div class="description">
@@ -96,7 +96,7 @@
                                 | sort(reverse=true, attribute="created_at") %}
       <div class="centered_block block_link" 
            onclick="redirect(event)" 
-           href="{{game.link}}"
+           href="/game/{{game.id}}"
       >
         <h2 class="item_title">{{game.title}}</h2>
         <div class="description">

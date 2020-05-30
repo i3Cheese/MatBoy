@@ -51,14 +51,14 @@ function fillGame(game, info, is_new=false){
     let l_judge = game.find(".game-judge");
     l_judge.text(info["judge"]["fullname"]);
     l_judge.attr("title", info["judge"]["email"]);
-    l_judge.formatHref(info["judge"]["id"]);
+    l_judge.attrPlus("href", info["judge"]["id"]);
 
     game.find(".game-start").text(info['start']?info['start']:'Не определенно');
     game.find(".game-place").text(info["place"]?info['place']:'Не определенно');
     
     if (is_new){
         game.attrPlus('id', id);
-        game.find(".game-goto").formatHref(id)  // Устанавливаем ссылку на игру
+        game.find(".game-goto").attrPlus("href", id)  // Устанавливаем ссылку на игру
 
         // Настраиваем тоглер
         l_title.attrPlus("for", id);
