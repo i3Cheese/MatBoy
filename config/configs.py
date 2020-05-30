@@ -13,8 +13,11 @@ class BaseConfig:
     DATA_BASE = 'db/matboy.db'
     DATA_BASE_URL = 'sqlite:///'+os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
-    APP_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy'}
-    APP_URL = "http://i3cheese.pythonanywhere.com/"
+    SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
+    CLIENT_ID = '7491040'
+    ACCESS_TOKEN = '35e624fb35e624fb35e624fbd43594691b335e635e624fb6b344ab020ed07b7da1cb27f'
+
+    VK_GROUP_ID = '-193140435'
 
     TEMPLATES_FOLDER = os.path.abspath("templates")
     STATIC_FOLDER = os.path.abspath("static")
