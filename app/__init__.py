@@ -21,7 +21,6 @@ from . import errorhandlers
 from . import web_pages
 app.register_blueprint(web_pages.blueprint)
 
-
 api = Api(app)
 
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource

@@ -18,6 +18,7 @@ class User(BaseModel, UserMixin):
                       "birthday",
                       "email",
                       "is_creator",
+                      "link",
                       )
     
     short_serialize_only = ("id",
@@ -39,9 +40,13 @@ class User(BaseModel, UserMixin):
     @property
     def fullname(self):
         if self.patronymic:
-            return f"{self.surname} {self.name} {self.patronymic}"
+            return "{0} {1} {2}".format(self.surname, self.name, self.patronymic)
         else:
-            return f"{self.surname} {self.name}"
+            return "{0} {1}".format(self.surname, self.name)
+
+    @property
+    def link(self) -> str:
+        return "/profile/{0}".format(self.id)
 
     def __str__(self):
         return self.fullname

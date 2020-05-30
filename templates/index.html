@@ -19,7 +19,7 @@
       {% for tour in tournaments | sort(reverse=True, attribute="created_at")%}
         <div class="centered_block block_link"
              onclick="redirect(event);"
-             href="/tournament/{{tour.id}}"
+             href="{{tour.link}}"
         >
           <h2 class="item_title">{{tour.title}}</h2>
           <div class="dates">
