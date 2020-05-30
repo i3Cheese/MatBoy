@@ -15,9 +15,25 @@ if(typeof(String.prototype.strip) === "undefined")
     };
 }
 
+String.prototype.format = String.prototype.f = function(){
+    var args;
+    if (arguments[0] instanceof Object){
+        args = arguments[0];
+    } else {
+        args = arguments;
+    }
+	return this.replace(/\{(\d+)\}/g, function(m,n){
+		return args[n] ? args[n] : m;
+	});
+};
+
 
 $.fn.attrPlus = function(name, value){
     this.attr(name, this.attr(name)+value);
+}
+
+$.fn.formatHref = function(){
+    this.attr('href', this.attr('href').format(arguments))
 }
 
 

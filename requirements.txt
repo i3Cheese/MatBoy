@@ -10,3 +10,4 @@ Flask-RESTful==0.3.8
 alembic==1.4.2
 manage.py==0.2.10
 jinja2==2.11.1
+requests==2.22.0

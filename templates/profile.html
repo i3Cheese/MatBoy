@@ -13,7 +13,7 @@
       Команды
     </div>
     {% for team in user.teams | sort(reverse=True, attribute="created_at")%}
-      <div class="centered_block block_link" onclick="redirect(event);" href="/team/{{team.id}}">
+      <div class="centered_block block_link" onclick="redirect(event);" href="{{team.link}}">
         <h5 class="item_title">{{team.name}}</h5>
       </div>
     {% endfor %}

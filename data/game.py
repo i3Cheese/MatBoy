@@ -22,6 +22,7 @@ class Game(BaseModel):
                       "team2.name",
                       "league.id",
                       "league.title",
+                      "link",
                       )
 
     place = sa.Column(sa.String, nullable=True)
@@ -52,8 +53,12 @@ class Game(BaseModel):
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)
     
-    def link(self):
-        return "/game/{0}".format(self.id)
+    @property
+    def link(self) -> str:
+        return self.league.link + "/game/{0}".format(self.id)
+
+    def check_relation(self, tour_id, league_id) -> bool:
+        return league_id == self.league_id and self.league.check_relation(tour_id)
 
     @staticmethod
     def default_round():

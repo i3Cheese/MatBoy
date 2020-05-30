@@ -77,7 +77,7 @@ function acceptTeam(team_id) {
             let team_li = team_temp.find("li");
             team_li.attr("id", team_li.attr("id") + team_id);
             team_li_a = team_li.find("a");
-            team_li_a.attr("href", "/team/" + team_id);
+            team_li_a.formatHref(team_id);
             team_li_a.text(data["team"]["name"]);
             teams_list = $("#league_teams-" + league_id);
             teams_list.append(team_li);
@@ -161,7 +161,7 @@ function fillLeague(league, info, is_new = false) {
     let l_chief = league.find(".league-chief");
     l_chief.text(info["chief"]["fullname"]);
     l_chief.attr("title", info["chief"]["email"]);
-    l_chief.attr("href", `/profile/${info["chief"]["id"]}`)
+    l_chief.formatHref(info["chief"]["id"])
 
     let l_title = league.find(".league-title");
     l_title.text(info["title"]);
@@ -175,8 +175,8 @@ function fillLeague(league, info, is_new = false) {
         league.find(".league-teams").attrPlus("id", id);
 
         // Дополняем ссылки
-        league.find('.league-manage').attrPlus('href', id);
-        league.find('.league-goto').attrPlus('href', id);
+        league.find('.league-manage').formatHref(id);
+        league.find('.league-goto').formatHref(id);
 
         // Подключаем кнопки
         league.find(".league-edit").attrPlus("for", id);
