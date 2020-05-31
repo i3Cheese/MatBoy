@@ -1,12 +1,15 @@
-from app import login_manager
-from flask import Blueprint, render_template, redirect, abort, request
+from app import login_manager, send_message
+from flask import Blueprint, render_template, redirect, abort, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 from data import User, Tournament, League, Team, Game, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
+from app.token import generate_email_hash, confirm_data
 from config import config
 from wtforms import ValidationError
 from typing import List, Tuple
 import logging
+from threading import Thread
 
 
 blueprint = Blueprint('web_pages',
@@ -47,7 +50,7 @@ def make_menu(session=None, *,
         menu.append((now, request.path))
     return menu
 
- 
+
 @login_manager.user_loader
 def load_user(user_id) -> User:
     session = create_session()
@@ -111,8 +114,8 @@ def user_page(user_id):
     user = session.query(User).get(user_id)
     if not user:
         abort(404)
-    return render_template("profile.html", 
-                           user=user, 
+    return render_template("profile.html",
+                           user=user,
                            menu=make_menu(session, user_id=user_id))
 
 
@@ -122,7 +125,7 @@ def tournament_page(tour_id):
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
-    return render_template("tournament.html", 
+    return render_template("tournament.html",
                            tour=tour,
                            menu=make_menu(session, tour_id=tour_id))
 
@@ -152,7 +155,7 @@ def tournament_creator_page():
             return redirect("/")
     except ValidationError:
         pass
-    return render_template("tournament_editor.html", 
+    return render_template("tournament_editor.html",
                            form=form,
                            menu=make_menu(now="Новый турнир"))
 
@@ -193,7 +196,7 @@ def tournament_edit_page(tour_id: int):
         form.start.data = tour.start
         form.end.data = tour.end
 
-    return render_template("tournament_editor.html", 
+    return render_template("tournament_editor.html",
                            form=form,
                            menu=make_menu(session, tour_id=tour_id, now='Редактирование'))
 
@@ -210,7 +213,7 @@ def tournament_console(tour_id: int):
     if not tour.have_permission(current_user):
         abort(403)
 
-    return render_template("tournament_console.html", 
+    return render_template("tournament_console.html",
                            tour=tour,
                            menu=make_menu(session, tour_id=tour_id, now='Консоль'))
 
@@ -231,7 +234,6 @@ def team_request(tour_id: int):
                 trainer_id=current_user.id,
                 tournament_id=tour.id,
             )
-
             emails = set()
             for field in form.players.entries:
                 email = field.data.lower()
@@ -243,17 +245,56 @@ def team_request(tour_id: int):
                 if not user:
                     field.errors.append("Пользователь не найден.")
                     raise ValidationError
-                team.players.append(user)
             session.add(team)
             session.commit()
+            for email in emails:
+                url_hash = generate_email_hash(team.id, email)
+                invite_url = url_for('web_pages.invite_team', url_hash=url_hash, _external=True)
+                msg = Message(
+                    subject='Приглашение на участие в турнире MatBoy',
+                    recipients=[email],
+                    sender=config.MAIL_DEFAULT_SENDER,
+                    html=render_template('invite_team.html',
+                                         team=team, tour=tour, invite_url=invite_url)
+                )
+                thr = Thread(target=send_message, args=[msg])
+                thr.start()
             return redirect(team.link)
     except ValidationError:
-        pass
+        session.delete(team)
 
-    return render_template("team_request.html", 
-                           tour=tour, 
+    return render_template("team_request.html",
+                           tour=tour,
                            form=form,
                            menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
+
+
+@blueprint.route('/invite_team/<url_hash>')
+@login_required
+def invite_team(url_hash):
+    data = confirm_data(url_hash)
+    if data:
+        team_id = data['team_id']
+        email = data['email']
+        if email != current_user.email:
+            abort(403)
+        session = create_session()
+        user = session.query(User).get(int(current_user.id))
+        team = session.query(Team).get(int(team_id))
+        team.players.append(user)
+        session.merge(team)
+        session.commit()
+        flash('Вы вступили в команду {0}'.format(team.name), 'success')
+    return redirect(url_for('web_pages.index_page'))
+
+
+@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")
+def league_page(tour_id, league_id):
+    session = create_session()
+    league = session.query(League).get(league_id)
+    if not (league and league.check_relation(tour_id)):
+        abort(404)
+    return render_template("league.html", league=league)
 
 
 @blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")
@@ -262,10 +303,10 @@ def team_page(team_id, tour_id):
     team = session.query(Team).get(team_id)
     if not (team and team.check_relation(tour_id)):
         abort(404)
-    return render_template("team.html", 
+    return render_template("team.html",
                            team=team,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           team_id=team_id,))
 
 
@@ -275,10 +316,10 @@ def league_page(tour_id, league_id):
     league = session.query(League).get(league_id)
     if not (league and league.check_relation(tour_id)):
         abort(404)
-    return render_template("league.html", 
+    return render_template("league.html",
                            league=league,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           league_id=league_id))
 
 
@@ -294,10 +335,10 @@ def league_console(tour_id: int, league_id: int):
     if not league.have_permission(current_user):
         abort(403)
 
-    return render_template("league_console.html", 
+    return render_template("league_console.html",
                            league=league,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           league_id=league_id,
                                           now='Консоль'))
 
@@ -308,10 +349,10 @@ def game_page(tour_id, league_id, game_id):
     game = session.query(Game).get(game_id)
     if not (game and game.check_relation(tour_id, league_id)):
         abort(404)
-    return render_template("game.html", 
+    return render_template("game.html",
                            game=game,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           league_id=league_id,
                                           game_id=game_id))
 
@@ -368,11 +409,11 @@ def prepare_to_game(tour_id, league_id, game_id):
         except ValidationError:
             return render_template("prepare_to_game.html", game=game, form=form)
 
-    return render_template("prepare_to_game.html", 
-                           game=game, 
+    return render_template("prepare_to_game.html",
+                           game=game,
                            form=form,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           league_id=league_id,
                                           game_id=game_id,
                                           now="Участники"))
@@ -387,10 +428,10 @@ def game_console(tour_id, league_id, game_id):
         abort(404)
     if not game.have_permission(current_user):
         abort(403)
-    return render_template("game_console.html", 
+    return render_template("game_console.html",
                            game=game,
-                           menu=make_menu(session, 
-                                          tour_id=tour_id, 
+                           menu=make_menu(session,
+                                          tour_id=tour_id,
                                           league_id=league_id,
                                           game_id=game_id,
                                           now='Консоль'))
