@@ -1,4 +1,4 @@
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms.fields.html5 import EmailField, IntegerField
@@ -91,18 +91,17 @@ class RegisterForm(BaseForm):
                                 Email(message="Неправильный формат"),
                                 RuDataRequired(),
                                 unique_email_validator])
-    password = PasswordField(
-        'Пароль *', validators=[password_secure_validator])
+    password = PasswordField('Пароль *', validators=[password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[EqualTo("password", message="Пароли должны совпадать")])
+    vk_notifications = BooleanField('Уведомления через ВКонтакте')
+    email_notifications = BooleanField('Уведомления по почте')
     surname = StringField('Фамилия *', validators=[
                           field_data_capitalizer, RuDataRequired()])
     name = StringField('Имя *', validators=[
                        field_data_capitalizer, RuDataRequired()])
-    patronymic = StringField("Отчество (если есть)", validators=[
-                             field_data_capitalizer])
-    city = StringField("Город *", validators=[
-                       field_data_capitalizer, RuDataRequired()])
+    patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer])
+    city = StringField("Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT,)
     submit = SubmitField('Зарегистрироваться')
 

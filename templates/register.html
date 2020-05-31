@@ -9,6 +9,10 @@
     method="post"
     data-remote="true"
 >
+{% include "vk/vk_reg.html" %}
+<div id="vk_notifications_div" class="form__field-label" style="margin-top: 10px" hidden="true">
+  {{form.vk_notifications}} {{form.vk_notifications.label}}
+</div>
 {{form.hidden_tag()}}
   <fieldset class="form__fields">
     {% from "form_macroses.html" import form_field, field_errors %}
@@ -22,6 +26,9 @@
         id="email_field",
       )}}
       {{field_errors(form.email)}}
+    </div>
+    <div id="email_notifications_div" class="form__field-label" style="margin-top: 10px">
+      {{form.email_notifications}} {{form.email_notifications.label}}
     </div>
     {{form_field(form.surname)}}
       {{form.surname.label(for="surname_field", class="form__field-label")}}

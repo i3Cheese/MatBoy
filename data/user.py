@@ -22,8 +22,8 @@ class User(BaseModel, UserMixin):
                       )
     
     short_serialize_only = ("id",
-                            'name',
-                            'surname',
+                            "name",
+                            "surname",
                             "fullname",
                             "email"
                             )
@@ -34,8 +34,13 @@ class User(BaseModel, UserMixin):
     city = sa.Column(sa.String, nullable=True)
     birthday = sa.Column(sa.Date)
     email = sa.Column(sa.String, index=True, unique=True, nullable=True)
+    confirmed = sa.Column(sa.Boolean, default=False)
     hashed_password = sa.Column(sa.String, nullable=True)
     is_creator = sa.Column(sa.Boolean, default=False)
+    vk_id = sa.Column(sa.Integer, default=0)
+    integration_with_VK = sa.Column(sa.Boolean, default=False)
+    email_notifications = sa.Column(sa.Boolean, nullable=False)
+    vk_notifications = sa.Column(sa.Boolean, nullable=False)
 
     @property
     def fullname(self):

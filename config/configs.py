@@ -13,16 +13,19 @@ class BaseConfig:
     DATA_BASE = 'db/matboy.db'
     DATA_BASE_URL = 'sqlite:///' + os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
-    APP_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy',
-                  'MAIL_SERVER': 'smtp.gmail.com',
-                  'MAIL_PORT': 465,
-                  'MAIL_USE_SSL': True,
-                  'MAIL_USE_TLS': False,
-                  'MAIL_USERNAME': 'blogflask89@gmail.com',
-                  'MAIL_DEFAULT_SENDER': 'blogflask89@gmail.com',
-                  'MAIL_PASSWORD': 'av8-JJm-JFY-jiS'}
+    SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
+    CLIENT_ID = '7491040'
+    ACCESS_TOKEN = '35e624fb35e624fb35e624fbd43594691b335e635e624fb6b344ab020ed07b7da1cb27f'
 
-    APP_URL = "http://i3cheese.pythonanywhere.com/"
+    VK_GROUP_ID = '-193140435'
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = 'blogflask89@gmail.com'
+    MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
+    MAIL_PASSWORD = 'av8-JJm-JFY-jiS'
 
     TEMPLATES_FOLDER = os.path.abspath("templates")
     STATIC_FOLDER = os.path.abspath("static")
@@ -38,8 +41,6 @@ class BaseConfig:
 
     LOCALE = 'ru'
 
-    # Mail settings
-    MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
 
     @classmethod
     def setup(cls):

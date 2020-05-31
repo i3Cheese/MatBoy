@@ -10,6 +10,8 @@ from wtforms import ValidationError
 from typing import List, Tuple
 import logging
 from threading import Thread
+from hashlib import md5
+
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -67,18 +69,38 @@ def index_page():
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
-    if form.validate_on_submit():
-        session = create_session()
-        user = session.query(User).filter(
-            User.email == form.email.data).first()
-        if not user:
-            form.email.errors.append(
-                "Пользователь с таким e-mail не зарегестрирован")
-        elif not user.check_password(form.password.data):
-            form.password.errors.append("Неправильный пароль")
-        else:
+    try:
+        args = request.args
+        uid, hash_st = args.get('uid'), args.get('hash')
+        if uid and hash_st:
+            if md5((config.CLIENT_ID + uid +
+            config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
+                raise ValidationError
+            session = create_session()
+            try:
+                user = session.query(User).filter(
+                    User.vk_id == int(args.get('uid'))).first()
+            except ValueError:
+                raise ValidationError
+            if not user:
+                flash('Пользователь не найден', "error")
+                raise ValidationError
             login_user(user, remember=True)
-            return back_redirect()
+            return redirect('/')
+        if form.validate_on_submit():
+            session = create_session()
+            user = session.query(User).filter(
+                User.email == form.email.data).first()
+            if not user:
+                form.email.errors.append(
+                    "Пользователь с таким e-mail не зарегестрирован")
+            elif not user.check_password(form.password.data):
+                form.password.errors.append("Неправильный пароль")
+            else:
+                login_user(user, remember=True)
+                return back_redirect()
+    except ValidationError:
+        pass
     return render_template("login.html", form=form)
 
 
@@ -92,8 +114,13 @@ def register_page():
                            surname=form.surname.data,
                            patronymic=form.patronymic.data,
                            city=form.city.data,
-                           birthday=form.birthday.data, )
+                           birthday=form.birthday.data,
+                           email_notifications=form.email_notifications.data,
+                           vk_notifications=form.vk_notifications.data)
         user.set_password(form.password.data)
+        if request.args.get('user_id', 0):
+            user.vk_id = int(request.args.get('user_id'))
+            user.integration_with_VK = True
         session.add(user)
         session.commit()
         return redirect("/login")

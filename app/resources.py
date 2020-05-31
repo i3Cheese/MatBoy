@@ -116,8 +116,14 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    def get(self):
+    def get(self):   
         session = create_session()
+        if request.args.get('vk_id', 0):
+            user = session.query(User).filter(User.vk_id == int(request.args.get('vk_id'))).first()
+            if user:
+                return user.to_dict()
+            else:
+                abort(404, message=f"VK ID not found")
         users = session.query(User).all()
         json_resp = {"users": [user.to_dict(only=(
             "id",
