@@ -110,8 +110,13 @@ def register_page():
                            surname=form.surname.data,
                            patronymic=form.patronymic.data,
                            city=form.city.data,
-                           birthday=form.birthday.data,)
+                           birthday=form.birthday.data,
+                           email_notifications=form.email_notifications.data,
+                           vk_notifications=form.vk_notifications.data)
         user.set_password(form.password.data)
+        if request.args.get('user_id', 0):
+            user.vk_id = int(request.args.get('user_id'))
+            user.integration_with_VK = True
         session.add(user)
         session.commit()
         return redirect("/login")

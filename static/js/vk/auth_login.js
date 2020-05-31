@@ -9,7 +9,6 @@ function getAuthInfo() {
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
-        console.log(info);
         if (typeof info['error'] === "undefined") {
             VK.Api.call("users.get", {
                 users_ids: info['user_id'],
@@ -37,9 +36,7 @@ function registration() {
                     $("#vk_notifications_div").removeAttr("hidden");
                     $("#vk_notifications").prop("checked", true);
                 });
-            let href = window.location.hostname + window.location.pathname 
-            + window.location.search + `&user_id=${info.user_id}`;
-            console.log(href);
+            let href = window.location.search + `&user_id=${info.user_id}`;
             window.history.replaceState(null, null, href);
         }
     }
