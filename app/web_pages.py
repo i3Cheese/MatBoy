@@ -1,5 +1,5 @@
 from app import login_manager, send_message
-from flask import Blueprint, render_template, redirect, abort, request, url_for
+from flask import Blueprint, render_template, redirect, abort, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, League, Team, Game, create_session
@@ -240,6 +240,7 @@ def invite_team(url_hash):
         team.players.append(user)
         session.merge(team)
         session.commit()
+        flash('Вы вступили в команду {0}'.format(team.name))
     return redirect(url_for('web_pages.index_page'))
 
 
