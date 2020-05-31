@@ -11,9 +11,17 @@ class BaseConfig:
     """
 
     DATA_BASE = 'db/matboy.db'
-    DATA_BASE_URL = 'sqlite:///'+os.path.abspath('db/matboy.db') + '?check_same_thread=False'
+    DATA_BASE_URL = 'sqlite:///' + os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
-    APP_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy'}
+    APP_CONFIG = {'SECRET_KEY': 'MatBoyIsVeryGoodBoy',
+                  'MAIL_SERVER': 'smtp.gmail.com',
+                  'MAIL_PORT': 465,
+                  'MAIL_USE_SSL': True,
+                  'MAIL_USE_TLS': False,
+                  'MAIL_USERNAME': 'blogflask89@gmail.com',
+                  'MAIL_DEFAULT_SENDER': 'blogflask89@gmail.com',
+                  'MAIL_PASSWORD': 'av8-JJm-JFY-jiS'}
+
     APP_URL = "http://i3cheese.pythonanywhere.com/"
 
     TEMPLATES_FOLDER = os.path.abspath("templates")
@@ -28,18 +36,19 @@ class BaseConfig:
     LOGGING_FILE = "matboy.log"
     LOGGING_LEVEL = logging.WARNING
 
-    LOCALE = 'ru_RU'
+    LOCALE = 'ru'
 
+    # Mail settings
+    MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
 
     @classmethod
     def setup(cls):
         """Setup builtin modules"""
         logging.basicConfig(handlers=[logging.FileHandler(filename=cls.LOGGING_FILE,
-                                                          encoding='utf-8',)],
+                                                          encoding='utf-8', )],
                             level=cls.LOGGING_LEVEL)
         logging.getLogger('serializer').setLevel(logging.WARNING)  # Disable spam log
         locale.setlocale(locale.LC_ALL, cls.LOCALE)
-
 
 
 class DebugConfig(BaseConfig):

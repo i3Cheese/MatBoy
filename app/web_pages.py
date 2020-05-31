@@ -1,11 +1,13 @@
-from app import login_manager
-from flask import Blueprint, render_template, redirect, abort, request
+from app import login_manager, send_message
+from flask import Blueprint, render_template, redirect, abort, request, url_for
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 from data import User, Tournament, League, Team, Game, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
+from app.token import generate_email_hash, confirm_data
 from config import config
 from wtforms import ValidationError
-import logging
+from threading import Thread
 
 
 blueprint = Blueprint('web_pages',
@@ -191,7 +193,6 @@ def team_request(tour_id: int):
                 trainer_id=current_user.id,
                 tournament_id=tour.id,
             )
-
             emails = set()
             for field in form.players.entries:
                 email = field.data.lower()
@@ -203,14 +204,43 @@ def team_request(tour_id: int):
                 if not user:
                     field.errors.append("Пользователь не найден.")
                     raise ValidationError
-                team.players.append(user)
             session.add(team)
             session.commit()
+            for email in emails:
+                url_hash = generate_email_hash(team.id, email)
+                invite_url = url_for('web_pages.invite_team', url_hash=url_hash, _external=True)
+                msg = Message(
+                    subject='Приглашения на участиу в турнире MatBoy',
+                    recipients=[email],
+                    sender=config.MAIL_DEFAULT_SENDER,
+                    html=render_template('invite_team.html',
+                                         team=team, tour=tour, invite_url=invite_url)
+                )
+                thr = Thread(target=send_message, args=[msg])
+                thr.start()
             return redirect(team.link)
     except ValidationError:
-        pass
+        session.delete(team)
 
     return render_template("team_request.html", tour=tour, form=form)
+
+
+@blueprint.route('/invite_team/<url_hash>')
+@login_required
+def invite_team(url_hash):
+    data = confirm_data(url_hash)
+    if data:
+        team_id = data['team_id']
+        email = data['email']
+        if email != current_user.email:
+            abort(403)
+        session = create_session()
+        user = session.query(User).get(int(current_user.id))
+        team = session.query(Team).get(int(team_id))
+        team.players.append(user)
+        session.merge(team)
+        session.commit()
+    return redirect(url_for('web_pages.index_page'))
 
 
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_login import LoginManager
 from flask_restful import Api
+from flask_mail import Mail
 from data import global_init
 from data.user import AnonymousUser
 from config import config
@@ -12,7 +13,15 @@ app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 for key, value in config.APP_CONFIG.items():
     app.config[key] = value
 app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
-    
+
+mail = Mail(app)
+
+
+def send_message(msg):
+    with app.app_context():
+        mail.send(msg)
+
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.anonymous_user = AnonymousUser
@@ -20,14 +29,15 @@ login_manager.anonymous_user = AnonymousUser
 from . import errorhandlers
 from . import web_pages
 from . import single_pages
+
 app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
-
 
 api = Api(app)
 
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
 from .resources import GameResource, GamesResource, ProtocolResource
+
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/user')
 api.add_resource(TeamResource, '/api/team/<int:team_id>')
