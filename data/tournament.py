@@ -34,6 +34,9 @@ class Tournament(BaseModel):
     def have_permission(self, user):
         return user.is_admin or self.chief == user
 
+    def __str__(self):
+        return self.title
+        
     @property
     def link(self) -> str:
         return "/tournament/{0}".format(self.id)

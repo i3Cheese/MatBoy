@@ -28,6 +28,9 @@ class League(BaseModel):
     chief = orm.relationship("User", backref="leagues")
     tournament = orm.relationship("Tournament", backref="leagues")
     
+    def __str__(self):
+        return self.title
+        
     def have_permission(self, user) -> bool:
         if user.is_admin or self.chief == user:
             return True
@@ -55,11 +58,14 @@ class League(BaseModel):
         result = [0] * n
         for game in self.games:
             if non_ended or game.status >= 3:
-                i, j = indexes[game.team1], indexes[game.team2]
-                r1 = game.result_for_team(1, 1)
-                r2 = game.result_for_team(2, 1)
-                table[i][j].append((r1, game,))
-                table[j][i].append((r2, game,))
-                result[i] += r1
-                result[j] += r2
+                try:
+                    i, j = indexes[game.team1], indexes[game.team2]
+                    r1 = game.result_for_team(1, 1)
+                    r2 = game.result_for_team(2, 1)
+                    table[i][j].append((r1, game,))
+                    table[j][i].append((r2, game,))
+                    result[i] += r1
+                    result[j] += r2
+                except KeyError:  # Команду могут удалить из лиги, но оставить игру
+                    pass
         return (teams, table, result)
