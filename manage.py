@@ -24,7 +24,7 @@ def give_creator(id=None, email=None):
     if user.is_creator:
         print(repr(user), "already is creator")
         return
-    user.is_creator = Trueo
+    user.is_creator = True
     session.merge(user)
     session.commit()
     print(repr(user), "now is creator")

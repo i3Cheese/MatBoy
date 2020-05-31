@@ -104,20 +104,24 @@ def tournament_creator_page():
     if not current_user.is_creator:
         abort(403)
     form = TournamentInfoForm()
-    if form.validate_on_submit():
-        session = create_session()
-        if session.query(Tournament).filter(Tournament.title == form.title.data).first():
-            form.title.errors.append("Турнир с таким названием уже существует")
-        tournament = Tournament().fill(title=form.title.data,
-                                       description=form.description.data,
-                                       place=form.place.data,
-                                       start=form.start.data,
-                                       end=form.end.data,
-                                       chief_id=current_user.id,)
-        session.add(tournament)
-        session.commit()
+    try:
+        if form.validate_on_submit():
+            session = create_session()
+            if session.query(Tournament).filter(Tournament.title == form.title.data).first():
+                form.title.errors.append("Турнир с таким названием уже существует")
+                raise ValidationError
+            tournament = Tournament().fill(title=form.title.data,
+                                        description=form.description.data,
+                                        place=form.place.data,
+                                        start=form.start.data,
+                                        end=form.end.data,
+                                        chief_id=current_user.id,)
+            session.add(tournament)
+            session.commit()
 
-        return redirect("/")
+            return redirect("/")
+    except ValidationError:
+        pass
     return render_template("tournament_editor.html", form=form)
 
 
