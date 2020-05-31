@@ -11,7 +11,6 @@ from typing import List, Tuple
 import logging
 from threading import Thread
 
-
 blueprint = Blueprint('web_pages',
                       __name__,
                       template_folder=config.TEMPLATES_FOLDER,
@@ -93,7 +92,7 @@ def register_page():
                            surname=form.surname.data,
                            patronymic=form.patronymic.data,
                            city=form.city.data,
-                           birthday=form.birthday.data,)
+                           birthday=form.birthday.data, )
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
@@ -148,7 +147,7 @@ def tournament_creator_page():
                                            place=form.place.data,
                                            start=form.start.data,
                                            end=form.end.data,
-                                           chief_id=current_user.id,)
+                                           chief_id=current_user.id, )
             session.add(tournament)
             session.commit()
 
@@ -286,15 +285,6 @@ def invite_team(url_hash):
         session.commit()
         flash('Вы вступили в команду {0}'.format(team.name), 'success')
     return redirect(url_for('web_pages.index_page'))
-
-
-@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")
-def league_page(tour_id, league_id):
-    session = create_session()
-    league = session.query(League).get(league_id)
-    if not (league and league.check_relation(tour_id)):
-        abort(404)
-    return render_template("league.html", league=league)
 
 
 @blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")
