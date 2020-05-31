@@ -210,7 +210,7 @@ def team_request(tour_id: int):
                 url_hash = generate_email_hash(team.id, email)
                 invite_url = url_for('web_pages.invite_team', url_hash=url_hash, _external=True)
                 msg = Message(
-                    subject='Приглашения на участиу в турнире MatBoy',
+                    subject='Приглашение на участиу в турнире MatBoy',
                     recipients=[email],
                     sender=config.MAIL_DEFAULT_SENDER,
                     html=render_template('invite_team.html',
@@ -240,7 +240,7 @@ def invite_team(url_hash):
         team.players.append(user)
         session.merge(team)
         session.commit()
-        flash('Вы вступили в команду {0}'.format(team.name))
+        flash('Вы вступили в команду {0}'.format(team.name), 'success')
     return redirect(url_for('web_pages.index_page'))
 
 
