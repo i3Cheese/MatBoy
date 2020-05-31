@@ -1,11 +1,12 @@
 from app import login_manager
-from flask import Blueprint, render_template, redirect, abort, request
+from flask import Blueprint, render_template, redirect, abort, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from data import User, Tournament, League, Team, Game, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
 from config import config
 from wtforms import ValidationError
 import logging
+from hashlib import md5
 
 
 blueprint = Blueprint('web_pages',
@@ -85,18 +86,38 @@ def game_page(game_id):
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
-    if form.validate_on_submit():
-        session = create_session()
-        user = session.query(User).filter(
-            User.email == form.email.data).first()
-        if not user:
-            form.email.errors.append(
-                "Пользователь с таким e-mail не зарегестрирован")
-        elif not user.check_password(form.password.data):
-            form.password.errors.append("Неправильный пароль")
-        else:
+    try:
+        args = request.args
+        uid, hash_st = args.get('uid'), args.get('hash')
+        if uid and hash_st:
+            if md5((config.CLIENT_ID + uid + 
+            config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
+                raise ValidationError
+            session = create_session()
+            try:
+                user = session.query(User).filter(
+                    User.vk_id == int(args.get('uid'))).first()
+            except ValueError:
+                raise ValidationError
+            if not user:
+                flash('Пользователь не найден', "error")
+                raise ValidationError
             login_user(user, remember=True)
-            return back_redirect()
+            return redirect('/')
+        if form.validate_on_submit():
+            session = create_session()
+            user = session.query(User).filter(
+                User.email == form.email.data).first()
+            if not user:
+                form.email.errors.append(
+                    "Пользователь с таким e-mail не зарегестрирован")
+            elif not user.check_password(form.password.data):
+                form.password.errors.append("Неправильный пароль")
+            else:
+                login_user(user, remember=True)
+                return back_redirect()
+    except ValidationError:
+        pass
     return render_template("login.html", form=form)
 
 

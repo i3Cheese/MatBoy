@@ -36,7 +36,7 @@ class User(BaseModel, UserMixin):
     confirmed = sa.Column(sa.Boolean, default=False)
     hashed_password = sa.Column(sa.String, nullable=True)
     is_creator = sa.Column(sa.Boolean, default=False)
-    vk_id = sa.Column(sa.Integer)
+    vk_id = sa.Column(sa.Integer, default=0)
     integration_with_VK = sa.Column(sa.Boolean, default=False)
     email_notifications = sa.Column(sa.Boolean, nullable=False)
     vk_notifications = sa.Column(sa.Boolean, nullable=False)

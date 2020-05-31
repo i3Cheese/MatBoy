@@ -9,36 +9,47 @@ function getAuthInfo() {
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
-        if (typeof info['error'] === "undefined") {
-            VK.Api.call("users.get", {
-                users_ids: info['user_id'],
-                fields: "bdate,city",
-                v: "5.103"
-            },
-                function(r) {
-                    if (r.response) {
-                        let resp = r.response[0];
-                        $("#surname_field").val(resp.last_name);
-                        $("#name_field").val(resp.first_name);
-                        if (typeof resp['bdate'] !== "undefined") {
-                            $("#birthday_field").val(resp.bdate);
+        $.ajax({
+            url: `/api/user?${info.user_id}`,
+            type: 'GET',
+            async: false
+        }).done(function () {
+            makeErrorToast("Эта страница уже зарегистрирована")
+        }).fail(function() {
+            if (typeof info['error'] === "undefined") {
+                VK.Api.call("users.get", {
+                    users_ids: info['user_id'],
+                    fields: "bdate,city",
+                    v: "5.103"
+                },
+                    function(r) {
+                        if (r.response) {
+                            console.log('jopa');
+                            let resp = r.response[0];
+                            $("#surname_field").val(resp.last_name);
+                            $("#name_field").val(resp.first_name);
+                            if (typeof resp['bdate'] !== "undefined") {
+                                $("#birthday_field").val(resp.bdate);
+                            };
+                            if (typeof resp['city'] !== "undefined") {
+                                $("#city_field").val(resp.city.title);
+                            }
                         };
-                        if (typeof resp['city'] !== "undefined") {
-                            $("#city_field").val(resp.city.title);
-                        }
-                    };
-                    if (typeof info['email'] !== "undefined") {
-                        $("#email_field").val(info.email)
-                    };
-                    $("#vk_login_button").prop("onclick", null);
-                    $("#vk_login_button").text("Ваша страница успешно привязана");
-
-                    $("#vk_notifications_div").removeAttr("hidden");
-                    $("#vk_notifications").prop("checked", true);
-                });
-            let href = window.location.search + `&user_id=${info.user_id}`;
-            window.history.replaceState(null, null, href);
-        }
+                        if (typeof info['email'] !== "undefined") {
+                            $("#email_field").val(info.email)
+                        };
+                        $("#vk_login_button").prop("onclick", null);
+                        $("#vk_login_button").text("Ваша страница успешно привязана");
+    
+                        $("#vk_notifications_div").removeAttr("hidden");
+                        $("#vk_notifications").prop("checked", true);
+                    });
+                console.log(window.location.search + `&user_id=${info.user_id}`);
+                let href = window.location.search + `&user_id=${info.user_id}`;
+                console.log(href);
+                window.history.replaceState(null, null, href);
+            }
+        });
     }
 }
 
