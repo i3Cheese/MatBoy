@@ -6,3 +6,4 @@ tasks.md
 venv/
 /alembic
 alembic.ini
+.vscode/

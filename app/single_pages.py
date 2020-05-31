@@ -4,7 +4,7 @@ from config import config
 import logging
 
 
-blueprint = Blueprint('old_pages',
+blueprint = Blueprint('single_pages',
                       __name__,
                       template_folder=config.TEMPLATES_FOLDER,
                       static_folder=config.STATIC_FOLDER,

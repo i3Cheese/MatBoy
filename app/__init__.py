@@ -19,7 +19,9 @@ login_manager.anonymous_user = AnonymousUser
 
 from . import errorhandlers
 from . import web_pages
+from . import single_pages
 app.register_blueprint(web_pages.blueprint)
+app.register_blueprint(single_pages.blueprint)
 
 
 api = Api(app)
