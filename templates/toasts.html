@@ -44,7 +44,7 @@
 
   {% with errors = get_flashed_messages(category_filter=["error"]) %}
     {%- for msg in errors %}
-      <div role="alert" 
+      <div role="alert"
           aria-live="assertive" 
           aria-atomic="true" 
           class="toast" 
@@ -66,11 +66,11 @@
   {% with sucs = get_flashed_messages(category_filter=["success"]) %}
     {%- for msg in sucs %}
       <div role="alert" 
-      aria-live="assertive" 
-      aria-atomic="true" 
-      class="toast" 
-      data-autohide="true"
-      data-delay="4096">
+           aria-live="assertive"
+           aria-atomic="true"
+           class="toast on_ready_toast"
+           data-autohide="true"
+           data-delay="4096">
         <div class="toast-header bg-success">
           <strong class="mr-auto text-white">Успех!</strong>
           <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">

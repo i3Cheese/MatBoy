@@ -99,3 +99,7 @@ $(document).on('click', ".nested-toggler", function(event){
     target = $(`#${$(event.target).attr("for")}`);
     target.toggleClass('hidden');
 });
+
+$(document).ready(function(){
+    $('.on_ready_toast').toast('show'); // Показываем тосты
+});
