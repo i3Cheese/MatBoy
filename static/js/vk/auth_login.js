@@ -1,15 +1,14 @@
 $(document).ready(registration());
 
 function getAuthInfo() {
-    let uri = window.location.hostname + "/register";
+    let uri = window.location.hostname + window.location.pathname + window.location.search;
     let clientId = $("#clientId").text();
-    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=popup&scope=email&response_type=token&revoke=1`;
+    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=page&scope=email&response_type=token&revoke=1`;
 }
 
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
-        window.location.hash = '';
         console.log(info);
         if (typeof info['error'] === "undefined") {
             VK.Api.call("users.get", {
@@ -31,8 +30,17 @@ function registration() {
                     };
                     if (typeof info['email'] !== "undefined") {
                         $("#email_field").val(info.email)
-                    }
+                    };
+                    $("#vk_login_button").prop("onclick", null);
+                    $("#vk_login_button").text("Ваша страница успешно привязана");
+
+                    $("#vk_notifications_div").removeAttr("hidden");
+                    $("#vk_notifications").prop("checked", true);
                 });
+            let href = window.location.hostname + window.location.pathname 
+            + window.location.search + `&user_id=${info.user_id}`;
+            console.log(href);
+            window.history.replaceState(null, null, href);
         }
     }
 }
@@ -43,6 +51,7 @@ function getInfo() {
     for (let i = 0; i < hash.length; ++i) {
         let temp = hash[i].split("=");
         info[temp[0]] = temp[1];
-    }
+    };
+    window.location.hash = '';
     return info
 }

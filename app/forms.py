@@ -1,4 +1,4 @@
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms.fields.html5 import EmailField, IntegerField
@@ -67,6 +67,8 @@ def password_secure_validator(form, field):
 class RegisterForm(FlaskForm):
     email = EmailField(
         'E-mail *', validators=[field_data_lower, Email(),  DataRequired(), unique_email_validator])
+    vk_notifications = BooleanField('Уведомления через ВКонтакте')
+    email_notifications = BooleanField('Уведомления по почте')
     password = PasswordField('Пароль *', validators=[password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[EqualTo("password", message="Пароли должны совпадать")])
