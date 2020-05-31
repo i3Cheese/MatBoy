@@ -9,7 +9,7 @@
     method="post"
     data-remote="true"
 >
-{% include "vk/vk_oauth.html" %}
+{% include "vk/vk_auth.html" %}
 {{form.hidden_tag()}}
   <fieldset class="form__fields">
     {% from "form_macroses.html" import form_field, field_errors %}

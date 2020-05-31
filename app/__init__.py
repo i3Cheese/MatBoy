@@ -4,7 +4,6 @@ from flask_restful import Api
 from data import global_init
 from data.user import AnonymousUser
 from config import config
-from config.configs import DebugConfig
 
 config.setup()
 global_init()
@@ -20,7 +19,7 @@ from . import errorhandlers
 from . import web_pages
 app.register_blueprint(web_pages.blueprint)
 
-app.config.from_object(DebugConfig)
+app.config.from_object(config)
 
 app.jinja_env.globals['client_id'] = app.config['CLIENT_ID']
 app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']
