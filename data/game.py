@@ -49,6 +49,9 @@ class Game(BaseModel):
     def title(self):
         return f"{self.team1.name} — {self.team2.name}"
 
+    def __str__(self):
+        return self.title
+    
     def have_permission(self, user) -> bool:
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)

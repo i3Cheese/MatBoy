@@ -11,11 +11,6 @@
   <h1 class="page_title">
     {{league.title}}
   </h1>
-  <h5>
-    <a href="/tournament/{{league.tournament.id}}">
-      {{league.tournament.title}}
-    </a>
-  </h5>
   {% if current_user.id in (1, league.tournament.chief_id, league.chief_id,) %}
     <div class="link_menu">
       <a class="link-small" href='{{league.link}}/console'>
