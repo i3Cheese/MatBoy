@@ -121,7 +121,7 @@ class UsersResource(Resource):
         if request.args.get('vk_id', 0):
             user = session.query(User).filter(User.vk_id == int(request.args.get('vk_id'))).first()
             if user:
-                return user.to_dict()
+                return jsonify(user.to_dict())
             else:
                 abort(404, message=f"VK ID not found")
         users = session.query(User).all()

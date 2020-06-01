@@ -9,11 +9,12 @@ function getAuthInfo() {
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
+        console.log(info);
         $.ajax({
-            url: `/api/user?${info.user_id}`,
+            url: API_URL + `user?vk_id=${info.user_id}`,
             type: 'GET',
             async: false
-        }).done(function () {
+        }).done(function (r) {
             makeErrorToast("Эта страница уже зарегистрирована")
         }).fail(function() {
             if (typeof info['error'] === "undefined") {
@@ -24,7 +25,6 @@ function registration() {
                 },
                     function(r) {
                         if (r.response) {
-                            console.log('jopa');
                             let resp = r.response[0];
                             $("#surname_field").val(resp.last_name);
                             $("#name_field").val(resp.first_name);
@@ -44,9 +44,12 @@ function registration() {
                         $("#vk_notifications_div").removeAttr("hidden");
                         $("#vk_notifications").prop("checked", true);
                     });
-                console.log(window.location.search + `&user_id=${info.user_id}`);
-                let href = window.location.search + `&user_id=${info.user_id}`;
-                console.log(href);
+                let href = window.location.pathname + window.location.search;
+                if (window.location.search == ''){
+                    href = href + `?user_id=${info.user_id}`
+                } else {
+                    href = href + `&user_id=${info.user_id}`
+                };
                 window.history.replaceState(null, null, href);
             }
         });
