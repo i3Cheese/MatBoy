@@ -451,24 +451,8 @@ class ProtocolResource(Resource):
         return jsonify(game.protocol)
 
 
-class PostResource(Resource):
-    post_pars = reqparse.RequestParser()
-    post_pars.add_argument('title', required=True, type=str)
-    post_pars.add_argument('content', required=True, type=str)
-    post_pars.add_argument('author_id', required=True, type=int)
-    post_pars.add_argument('tournament_id', required=True, type=int)
-
-    put_pars = reqparse.RequestParser()
-    put_pars.add_argument('title', required=True)
-    put_pars.add_argument('content', required=True)
-
-    def post(self):
+class PostsResource(Resource):
+    def get(self, tour_id):
         session = create_session()
-        args = self.post_pars.parse_args()
-        post = Post()
-        for key, item in args.items():
-            post.__setattr__(key, item)
-        session.add(post)
-        session.commit()
-        response = {"success": "ok"}
-        return jsonify(response)
+        posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
+        return jsonify({'posts': list(map(lambda post: post.to_dict(), posts))})
