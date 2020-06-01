@@ -1,8 +1,9 @@
 from app import login_manager, send_message
 from flask import Blueprint, render_template, redirect, abort, request, url_for, flash
+from flask import make_response, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
-from data import User, Tournament, League, Team, Game, create_session
+from data import User, Tournament, League, Team, Game, Post, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
 from app.token import generate_email_hash, confirm_data
 from config import config
@@ -149,10 +150,11 @@ def user_page(user_id):
 def tournament_page(tour_id):
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
+    posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
     if not tour:
         abort(404)
     return render_template("tournament.html",
-                           tour=tour,
+                           tour=tour, posts=posts,
                            menu=make_menu(session, tour_id=tour_id))
 
 
@@ -293,6 +295,45 @@ def team_request(tour_id: int):
                            tour=tour,
                            form=form,
                            menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
+
+
+@blueprint.route('/tournament/<int:tour_id>/create_post', methods=["GET", "POST"])
+@login_required
+def create_post(tour_id):
+    session = create_session()
+    tour = session.query(Tournament).get(tour_id)
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        if not title:
+            flash('Не заполнен заголовок поста', 'error')
+        if not content:
+            flash('Не заполнено содержание поста', 'error')
+        if not title or not content:
+            return render_template('create_post.html', tour=tour, title=title, content=content)
+        post = Post().fill(
+            title=title,
+            content=content,
+            author_id=current_user.get_id(),
+            tournament_id=tour_id
+        )
+        session.add(post)
+        session.commit()
+        return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
+    return render_template('create_post.html', tour=tour)
+
+
+@blueprint.route('/upload-image', methods=['POST'])
+@login_required
+def upload_image_creator():
+    image = request.files.get('upload')
+    url_image = './static/img/' + image.filename
+    image.save(url_image)
+    return make_response(jsonify({
+        'uploaded': 1,
+        'fileName': image.filename,
+        'url': url_for('static', filename='img/{0}'.format(image.filename))
+    }))
 
 
 @blueprint.route('/invite_team/<url_hash>')

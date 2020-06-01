@@ -2,65 +2,92 @@
 {% from 'models_macroses.html' import formated_date %}
 {% block content %}
 
-<div class="title_container">
-  <h1 class="page_title">
-    {{tour.title}}
-  </h1>
-  <div class="link_menu">
-    <a class="link link-small" 
-        onclick="redirectWithStep(event)"
-        href="{{tour.link}}/team_request"
-    >
-      подать заявку
-    </a>
-    {% if current_user.id in (1, tour.chief_id,) %}
-      |
-      <a class="link link-small" 
-          onclick="redirectWithStep(event)" 
-          href="{{tour.link}}/edit"
-      >
-        редактировать
-      </a>
-      |
-      <a class="link link-small" href='{{tour.link}}/console'>
-        управлять
-      </a>
-    {% endif %}
-  </div>
-</div>
-<div class="page_description box">
-  {{tour.description}}
-</div>
-<div class="box_container">
-  <div class="box box-large">
-    <div class="shadow-box__title">
-      Лиги
-    </div>
-    {% for league in tour.leagues | sort(reverse=True, attribute="created_at") %}
-      <div class="centered_block block_link" 
-            onclick="redirect(event)" 
-            href="{{league.link}}"
-      >
-        <h2 class="item_title">{{league.title}}</h2>
-        <div class="description">
-          {{league.description}}
+    <div class="title_container">
+        <h1 class="page_title">
+            {{ tour.title }}
+        </h1>
+        <div class="link_menu">
+            <a class="link link-small"
+               onclick="redirectWithStep(event)"
+               href="{{ tour.link }}/team_request"
+            >
+                подать заявку
+            </a>
+            {% if current_user.id in (1, tour.chief_id,) %}
+                |
+                <a class="link link-small"
+                   onclick="redirectWithStep(event)"
+                   href="{{ tour.link }}/edit"
+                >
+                    редактировать
+                </a>
+                |
+                <a class="link link-small" href='{{ tour.link }}/console'>
+                    управлять
+                </a>
+            {% endif %}
         </div>
-      </div>
-    {% endfor %}
-  </div>
-  <div class="box square-tiny">
-    <div class="shadow-box__title">
-      Информация
     </div>
-    <dl class="row info_in_box">
-      <dd class="col-sm-6">Место проведения:</dd>
-      <dt class="col-sm-6">{{tour.place}}</dt>
-      <dd class="col-sm-6">Дата начала:</dd>
-      <dt class="col-sm-6">{{formated_date(tour.start)}}</dt>
-      <dd class="col-sm-6">Дата оканчания:</dd>
-      <dt class="col-sm-6">{{formated_date(tour.end)}}</dt>
-    </dl>
-  </div>
-</div>
+    <div class="page_description box">
+        {{ tour.description }}
+    </div>
+    <div class="box_container">
+        <div class="box box-large">
+            <div class="shadow-box__title">
+                Лиги
+            </div>
+            {% for league in tour.leagues | sort(reverse=True, attribute="created_at") %}
+                <div class="centered_block block_link"
+                     onclick="redirect(event)"
+                     href="{{ league.link }}"
+                >
+                    <h2 class="item_title">{{ league.title }}</h2>
+                    <div class="description">
+                        {{ league.description }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="box square-tiny">
+            <div class="shadow-box__title">
+                Информация
+            </div>
+            <dl class="row info_in_box">
+                <dd class="col-sm-6">Место проведения:</dd>
+                <dt class="col-sm-6">{{ tour.place }}</dt>
+                <dd class="col-sm-6">Дата начала:</dd>
+                <dt class="col-sm-6">{{ formated_date(tour.start) }}</dt>
+                <dd class="col-sm-6">Дата оканчания:</dd>
+                <dt class="col-sm-6">{{ formated_date(tour.end) }}</dt>
+            </dl>
+        </div>
+    </div>
+    <div class="title_container">
+        <h1 class="page_title">
+            Новости турнира
+        </h1>
+        <div class="link_menu">
+            {% if current_user.id in (1, tour.chief_id,) %}
+                <a class="link link-small"
+                   onclick="redirectWithStep(event)"
+                   href="{{ tour.link }}/create_post"
+                >Создать новость</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="box_container">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="box w-100">
+                    <h3>{{ post.title }}</h3>
+                    {{ post.content|safe }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="box w-100">
+                <p>Новостей пока нет</p>
+            </div>
+        {% endif %}
+    </div>
 
 {% endblock content %}

@@ -1,7 +1,7 @@
 from flask_restful import reqparse, abort, Resource, request
 from flask_restful.inputs import boolean
 from flask import jsonify
-from data import User, Team, Tournament, League, Game, create_session
+from data import User, Team, Tournament, League, Game, Post, create_session
 from datetime import date, datetime
 import logging
 
@@ -116,7 +116,7 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    def get(self):   
+    def get(self):
         session = create_session()
         if request.args.get('vk_id', 0):
             user = session.query(User).filter(User.vk_id == int(request.args.get('vk_id'))).first()
@@ -159,13 +159,13 @@ class TeamResource(Resource):
         logging.info(f"Team put request with args {args}")
         session = create_session()
         team = get_team(session, team_id)
-        if not(args['trainer.id'] is None and args['trainer.email'] is None):
+        if not (args['trainer.id'] is None and args['trainer.email'] is None):
             team.trainer = get_user(session,
                                     user_id=args['trainer']['id'],
                                     email=args['trainer']['email'],
                                     )
         if args['league.id'] is not None:
-            if args['league.id'] == 0 :
+            if args['league.id'] == 0:
                 team.league = None
             else:
                 team.league = get_league(session, args['league.id'])
@@ -217,7 +217,7 @@ class LeagueResource(Resource):
 
         session = create_session()
         league = get_league(session, league_id)
-        if not(args['chief.id'] is None and args['chief.email'] is None):
+        if not (args['chief.id'] is None and args['chief.email'] is None):
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
                                     email=args['chief.email'],
@@ -270,11 +270,11 @@ class LeaguesResource(Resource):
         league = League()
         if args['chief.id'] is None and args['chief.email'] is None:
             abort(400, message={
-                  "chief": "Не указана информация о главном по лиге"})
+                "chief": "Не указана информация о главном по лиге"})
         else:
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
-                                    email=args['chief.email'],)
+                                    email=args['chief.email'], )
         league.tournament = get_tour(session, args['tournament.id'])
         league.title = args['title']
         if args['description'] is not None:
@@ -329,11 +329,11 @@ class GameResource(Resource):
                 game.delete()
             else:
                 abort(400, message="Wrong status value")
-                
-        if not(args['judge.id'] is None and args['judge.email'] is None):
+
+        if not (args['judge.id'] is None and args['judge.email'] is None):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
-                                  email=args['judge.email'],)
+                                  email=args['judge.email'], )
         if args['team1.id'] is not None:
             game.team1 = get_team(session, args['team1.id'])
         if args['team2.id'] is not None:
@@ -379,10 +379,10 @@ class GamesResource(Resource):
             game.place = args['place']
         if args['start'] is not None:
             game.start = args['start']
-        if not(args['judge.id'] is None and args['judge.email'] is None):
+        if not (args['judge.id'] is None and args['judge.email'] is None):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
-                                  email=args['judge.email'],)
+                                  email=args['judge.email'], )
         else:
             abort(400, message="Не указана информация о судье")
         game.team1 = get_team(session, args['team1.id'])
@@ -407,7 +407,7 @@ class ProtocolResource(Resource):
         logging.info(f"Protocol put with json {request.json}")
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
-            
+
         if 'captain_winner' in request.json:
             try:
                 game.captain_winner = int(request.json['captain_winner'])
@@ -438,7 +438,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                [len(rounds)*12 - sum(teams_points), ]
+                                      [len(rounds) * 12 - sum(teams_points), ]
             game.protocol['stars'] = teams_stars
 
         session.merge(game)
@@ -449,3 +449,26 @@ class ProtocolResource(Resource):
         session = create_session()
         game = get_game(session, game_id)
         return jsonify(game.protocol)
+
+
+class PostResource(Resource):
+    post_pars = reqparse.RequestParser()
+    post_pars.add_argument('title', required=True, type=str)
+    post_pars.add_argument('content', required=True, type=str)
+    post_pars.add_argument('author_id', required=True, type=int)
+    post_pars.add_argument('tournament_id', required=True, type=int)
+
+    put_pars = reqparse.RequestParser()
+    put_pars.add_argument('title', required=True)
+    put_pars.add_argument('content', required=True)
+
+    def post(self):
+        session = create_session()
+        args = self.post_pars.parse_args()
+        post = Post()
+        for key, item in args.items():
+            post.__setattr__(key, item)
+        session.add(post)
+        session.commit()
+        response = {"success": "ok"}
+        return jsonify(response)

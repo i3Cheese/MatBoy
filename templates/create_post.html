@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        .ck.ck-editor {
+            width: 100%;
+        }
+    </style>
+    <div class="title_container">
+        <h1 class="page_title">
+            Новость для турнира "{{ tour.title }}"
+        </h1>
+    </div>
+
+    <div class="box_container">
+        <div class="box">
+            <form method="post" id="ckeditor-form" novalidate>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"
+                              id="inputGroup-sizing-default">Заголовок</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Sizing example input"
+                           aria-describedby="inputGroup-sizing-default" name="title" id="title">
+                </div>
+                <div class="input-group mb-3">
+                    <textarea name="content" id="editor" placeholder="Контент" required></textarea>
+                </div>
+                <div class="input-group justify-content-end">
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='ckeditor5/build/ckeditor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/creator.js') }}"></script>
+    <script>
+        {% if title %}
+            $(document).ready(function () {
+                $('#title').val(`{{ title }}`)
+            })
+        {% endif %}
+        {% if content %}
+            $(document).ready(function () {
+                editor.setData(`{{ content|safe }}`);
+            })
+        {% endif %}
+    </script>
+{% endblock %}
