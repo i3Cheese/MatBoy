@@ -4,6 +4,5 @@
 *.log
 tasks.md
 venv/
-/alembic
-alembic.ini
 .vscode/
+alembic/versions/
