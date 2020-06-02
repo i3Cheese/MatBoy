@@ -4,9 +4,9 @@ $(document).ready(function () {
     let tourIdInput = $('input#tour-id');
     let tourId = tourIdInput.val();
     let postIdInput = $('input#post-id');
-    if (postIdInput.length) {
+    if (postIdInput.length) {  // If edit post
         let postId = postIdInput.val();
-        $.ajax({
+        $.ajax({ // Load data for current post
             url: `/api/post/${postId}`,
             type: 'GET'
         }).done(function (data) {
@@ -30,10 +30,10 @@ $(document).ready(function () {
             makeErrorToast('Заголовок новости не заполнен');
         }
         if (!content) {
-            makeErrorToast('Содержание новости не заполнено')
+            makeErrorToast('Содержание новости не заполнено');
         }
         if (title && content) {
-            if (postIdInput.length) {
+            if (postIdInput.length) { // If edit post
                 let postId = postIdInput.val();
                 $.ajax({
                     url: `/api/post/${postId}`,
@@ -46,7 +46,7 @@ $(document).ready(function () {
                         console.log(data);
                     }
                 })
-            } else {
+            } else { // If create post
                 $.ajax({
                     url: `/api/post`,
                     type: 'POST',

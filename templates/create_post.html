@@ -43,16 +43,4 @@
     <script src="{{ url_for('static', filename='js/post.js') }}"></script>
     <script src="{{ url_for('static', filename='ckeditor5/build/ckeditor.js') }}"></script>
     <script src="{{ url_for('static', filename='js/creator.js') }}"></script>
-    <script>
-        {% if title %}
-            $(document).ready(function () {
-                $('#title').val(`{{ title }}`)
-            })
-        {% endif %}
-        {% if content %}
-            $(document).ready(function () {
-                editor.setData(`{{ content|safe }}`);
-            })
-        {% endif %}
-    </script>
 {% endblock %}
