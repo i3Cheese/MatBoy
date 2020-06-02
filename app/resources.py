@@ -365,9 +365,9 @@ class GameResource(Resource):
 class GamesResource(Resource):
     post_pars = GameResource.put_pars.copy()
     post_pars.replace_argument('league.id', type=int, required=True)
-    post_pars.replace_argument('team1.id', type=int, 
+    post_pars.replace_argument('team1.id', type=int,
                                required=True, help="Неправильный указана команда")
-    post_pars.replace_argument('team2.id', type=int, 
+    post_pars.replace_argument('team2.id', type=int,
                                required=True, help="Неправильно указана команда")
 
     def post(self):
@@ -453,8 +453,19 @@ class ProtocolResource(Resource):
         return jsonify(game.protocol)
 
 
-class PostsResource(Resource):
+class PostResource(Resource):
     def get(self, tour_id):
+        """Get all posts for current tournament"""
         session = create_session()
         posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
         return jsonify({'posts': list(map(lambda post: post.to_dict(), posts))[::-1]})
+
+    def delete(self, post_id):
+        """Deleting a post by id"""
+        session = create_session()
+        post = session.query(Post).get(post_id)
+        if post:
+            session.delete(post)
+            session.commit()
+            return jsonify({"success": "ok"})
+        return jsonify({"success": "error"})

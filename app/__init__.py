@@ -17,6 +17,7 @@ mail = Mail(app)
 
 
 def send_message(msg):
+    """Send message on email"""
     with app.app_context():
         mail.send(msg)
 
@@ -40,7 +41,7 @@ app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']
 api = Api(app)
 
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
-from .resources import GameResource, GamesResource, ProtocolResource, PostsResource
+from .resources import GameResource, GamesResource, ProtocolResource, PostResource
 
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/user')
@@ -50,4 +51,4 @@ api.add_resource(LeaguesResource, '/api/league')
 api.add_resource(GameResource, '/api/game/<int:game_id>')
 api.add_resource(GamesResource, '/api/game')
 api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
-api.add_resource(PostsResource, '/api/post/<int:tour_id>')
+api.add_resource(PostResource, '/api/post/<int:tour_id>', '/api/post/<int:post_id>')

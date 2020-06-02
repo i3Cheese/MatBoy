@@ -13,6 +13,8 @@ from wtforms import ValidationError
 from typing import List, Tuple
 from threading import Thread
 from hashlib import md5
+from string import ascii_letters, digits
+from random import choice
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -137,11 +139,10 @@ def logout_page():
 
 @blueprint.route('/reset_password_step_1', methods=["POST", "GET"])
 def reset_password_step_1():
+    """Processing the first step of changing the password (search for a user by email)"""
     form = ResetPasswordStep1()
     if form.validate_on_submit():
         email = form.email.data
-        session = create_session()
-        user = session.query(User).filter(User.email == email).first()
         token = generate_confirmation_token_reset_password(email)
         reset_password_url = url_for('web_pages.reset_password_step_2',
                                          token=token, _external=True)
@@ -160,6 +161,7 @@ def reset_password_step_1():
 
 @blueprint.route('/reset_password_step_2/<token>', methods=["POST", "GET"])
 def reset_password_step_2(token):
+    """Processing the second step of changing the password (password change)"""
     email = confirm_token(token)
     if not email:
         return redirect(url_for('web_pages.reset_password_step_1'))
@@ -179,6 +181,7 @@ def reset_password_step_2(token):
 @blueprint.route('/feedback', methods=["POST", "GET"])
 @login_required
 def feedback():
+    """The feedback page"""
     if request.method == 'POST':
         title = request.form.get('title')
         content = request.form.get('content')
@@ -384,13 +387,16 @@ def create_post(tour_id):
 @blueprint.route('/upload-image', methods=['POST'])
 @login_required
 def upload_image_creator():
+    """Load images from ck-editor"""
     image = request.files.get('upload')
-    url_image = './static/img/' + image.filename
+    type_img = image.filename.split('.')[-1]
+    filename = ''.join(choice(ascii_letters + digits) for _ in range(50)) + '.' + type_img
+    url_image = './static/img/' + filename
     image.save(url_image)
     return make_response(jsonify({
         'uploaded': 1,
-        'fileName': image.filename,
-        'url': url_for('static', filename='img/{0}'.format(image.filename))
+        'fileName': filename,
+        'url': url_for('static', filename='img/{0}'.format(filename))
     }))
 
 
