@@ -75,7 +75,7 @@ def login_page():
         uid, hash_st = args.get('uid'), args.get('hash')
         if uid and hash_st:
             if md5((config.CLIENT_ID + uid +
-            config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
+                    config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
                 raise ValidationError
             session = create_session()
             try:
@@ -275,18 +275,16 @@ def team_request(tour_id: int):
                     raise ValidationError
             session.add(team)
             session.commit()
-            for email in emails:
-                url_hash = generate_email_hash(team.id, email)
-                invite_url = url_for('web_pages.invite_team', url_hash=url_hash, _external=True)
-                msg = Message(
-                    subject='Приглашение на участие в турнире MatBoy',
-                    recipients=[email],
-                    sender=config.MAIL_DEFAULT_SENDER,
-                    html=render_template('invite_team.html',
-                                         team=team, tour=tour, invite_url=invite_url)
-                )
-                thr = Thread(target=send_message, args=[msg])
-                thr.start()
+            
+            msg = Message(
+                subject='Участие в турнире MatBoy',
+                recipients=list(emails),
+                sender=config.MAIL_DEFAULT_SENDER,
+                html=render_template('mails/invite_team.html',
+                                        team=team, tour=tour)
+            )
+            thr = Thread(target=send_message, args=[msg])
+            thr.start()
             return redirect(team.link)
     except ValidationError:
         session.delete(team)
@@ -320,7 +318,7 @@ def create_post(tour_id):
         session.add(post)
         session.commit()
         return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
-    return render_template('create_post.html', tour=tour, 
+    return render_template('create_post.html', tour=tour,
                            menu=make_menu(tour_id=tour_id, now="Новый пост"))
 
 
@@ -335,25 +333,6 @@ def upload_image_creator():
         'fileName': image.filename,
         'url': url_for('static', filename='img/{0}'.format(image.filename))
     }))
-
-
-@blueprint.route('/invite_team/<url_hash>')
-@login_required
-def invite_team(url_hash):
-    data = confirm_data(url_hash)
-    if data:
-        team_id = data['team_id']
-        email = data['email']
-        if email != current_user.email:
-            abort(403)
-        session = create_session()
-        user = session.query(User).get(int(current_user.id))
-        team = session.query(Team).get(int(team_id))
-        team.players.append(user)
-        session.merge(team)
-        session.commit()
-        flash('Вы вступили в команду {0}'.format(team.name), 'success')
-    return redirect(url_for('web_pages.index_page'))
 
 
 @blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")
