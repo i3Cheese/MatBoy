@@ -57,7 +57,7 @@ $(document).ready(function () {
                 type: 'POST',
                 data: {title: title, content: content}
             }).done(function () {
-                makeSuccessToast('Сообщение доставлено');
+                window.location.href='/'
             }).fail(function () {
                 makeErrorToast('Сообщение не доставлено');
             }).always(function () {

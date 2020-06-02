@@ -193,6 +193,7 @@ def feedback():
             sender=config.MAIL_DEFAULT_SENDER
         )
         send_message(msg)
+        flash("Сообщение доставленно", 'success')
         return make_response(jsonify({'status': 'ok'}), 200)
     return render_template('feedback.html', menu=make_menu(now='Обратная связь'))
 
