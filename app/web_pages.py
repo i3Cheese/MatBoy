@@ -180,11 +180,8 @@ def reset_password_step_2(token):
 @login_required
 def feedback():
     if request.method == 'POST':
-        print(request.form)
         title = request.form.get('title')
         content = request.form.get('content')
-        print(title)
-        print(content)
         html_message = render_template('feedback_message.html', content=content)
         msg = Message(
             subject='Support: {0} - MatBoy'.format(title),
@@ -194,7 +191,7 @@ def feedback():
         )
         send_message(msg)
         return make_response(jsonify({'status': 'ok'}), 200)
-    return render_template('feedback.html')
+    return render_template('feedback.html', menu=make_menu(now='Обратная связь'))
 
 
 @blueprint.route("/profile/<int:user_id>")
