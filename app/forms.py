@@ -2,7 +2,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms.fields.html5 import EmailField, IntegerField
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
 from data import User, Game, Tournament, create_session
 from config import config
@@ -103,6 +103,7 @@ class RegisterForm(BaseForm):
     patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer])
     city = StringField("Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
 
 
