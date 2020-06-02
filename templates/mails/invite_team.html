@@ -1,0 +1,9 @@
+<h2>Участие в турнире математического боя</h2>
+<p>
+  Вас добавили в команду
+  <a href="{{url_for('web_pages.team_page', tour_id=tour.id, team_id=team.id, _external=True)}}">
+    {{ str(team) }}</a>,
+  участвующую в турнире
+  <a href="{{url_for('web_pages.tournament_page', tour_id=tour.id, _external=True)}}">
+    {{ str(tour) }}</a>
+</p>
