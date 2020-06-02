@@ -36,10 +36,6 @@
         id="registration_button",
         class="button button_wide button_primary"
       ) }}
-                <br>
-                <button type="button" onclick="redirect(event)" href="{{ url_for('web_pages.reset_password_step_1') }}"
-                        class="button button_wide button_primary reset-password">Забыл пароль
-                </button>
             </div>
         </fieldset>
     </form>
@@ -47,5 +43,8 @@
 {% block link_to %}
 
     Ещё нет аккаунта?&nbsp;
-    <a href="/register" class="form-additional-message__link">Зарегистрируйтесь</a>
+    <a href="/register" class="form-additional-message__link">Зарегистрируйтесь</a><br>
+    Забыли пароль?
+    <a href="{{ url_for('web_pages.reset_password_step_1') }}"
+       class="form-additional-message__link">Восстановить</a>
 {% endblock link_to %}
