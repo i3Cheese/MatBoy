@@ -19,6 +19,10 @@ function loader() {
             type: 'GET',
         }
     ).done(function (data) {
+        if (data.posts.length == 0){
+            $("#news_title").remove();
+            return
+        };
         let posts = data.posts;
         if (postN >= posts.length + inpCount) {
             block = true;
