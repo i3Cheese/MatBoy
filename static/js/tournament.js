@@ -15,7 +15,7 @@ function scrolling() {
 
 function loader() {
     $.ajax({
-            url: API_URL + `tournament/${tournamentId}/post/0`,
+            url: API_URL + `tournament/${tournamentId}/posts`,
             type: 'GET',
         }
     ).done(function (data) {
@@ -54,7 +54,7 @@ $(document).on('click', '.delete', function (event) {
     let targetElem = $(event.target);
     let postId = targetElem.attr('id');
     $.ajax({
-        url: API_URL + `tournament/${tournamentId}/post/${postId}`,
+        url: API_URL + `post/${postId}`,
         type: 'DELETE',
     }).done(function(r) {
         targetElem.parent('div.link_menu').parent('div.post_card').remove()

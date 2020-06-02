@@ -454,14 +454,7 @@ class ProtocolResource(Resource):
 
 
 class PostResource(Resource):
-    def get(self, tour_id, post_id):
-        """Get existing (ststus != 0) posts for current tournament"""
-        session = create_session()
-        posts = session.query(Post).filter(Post.tournament_id == tour_id, Post.status != 0).all()
-        return jsonify({'posts': list(map(lambda post: post.to_dict(), 
-                        posts))[::-1]})
-
-    def delete(self, tour_id, post_id):
+    def delete(self, post_id):
         """Deleting a post by id"""
         session = create_session()
         post = session.query(Post).filter(Post.id == post_id).first()
@@ -470,3 +463,12 @@ class PostResource(Resource):
             session.commit()
             return jsonify({"success": "ok"})
         return jsonify({"error": "error"})
+
+
+class TournamentPostsResource(Resource):
+    def get(self, tour_id):
+        """Get existing (ststus != 0) posts for current tournament"""
+        session = create_session()
+        posts = session.query(Post).filter(Post.tournament_id == tour_id, Post.status != 0).all()
+        return jsonify({'posts': list(map(lambda post: post.to_dict(), 
+                        posts))[::-1]})
