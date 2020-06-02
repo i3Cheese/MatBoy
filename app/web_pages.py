@@ -145,14 +145,14 @@ def reset_password_step_1():
         email = form.email.data
         token = generate_confirmation_token_reset_password(email)
         reset_password_url = url_for('web_pages.reset_password_step_2',
-                                         token=token, _external=True)
+                                     token=token, _external=True)
         template_html = render_template('reset_password_mail.html', url=reset_password_url)
         msg = Message(
-                subject='Восстановление пароля MatBoy',
-                recipients=[email],
-                sender=config.MAIL_DEFAULT_SENDER,
-                html=template_html
-            )
+            subject='Восстановление пароля MatBoy',
+            recipients=[email],
+            sender=config.MAIL_DEFAULT_SENDER,
+            html=template_html
+        )
         send_message(msg)
         flash('На вашу почту отправлена инструкция по восстановлению пароля', 'success')
         return redirect(url_for('web_pages.login_page'))
@@ -336,13 +336,13 @@ def team_request(tour_id: int):
                     raise ValidationError
             session.add(team)
             session.commit()
-            
+
             msg = Message(
                 subject='Участие в турнире MatBoy',
                 recipients=list(emails),
                 sender=config.MAIL_DEFAULT_SENDER,
                 html=render_template('mails/invite_team.html',
-                                        team=team, tour=tour)
+                                     team=team, tour=tour)
             )
             thr = Thread(target=send_message, args=[msg])
             thr.start()
@@ -357,10 +357,16 @@ def team_request(tour_id: int):
 
 
 @blueprint.route('/tournament/<int:tour_id>/create_post', methods=["GET", "POST"])
+@blueprint.route('/tournament/<int:tour_id>/edit_post/<int:post_id>', methods=["GET", "POST"])
 @login_required
-def create_post(tour_id):
+def create_post(tour_id, post_id=None):
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
+    if post_id:
+        post = session.query(Post).get(post_id)
+        if not post:
+            flash('Пост не найден', 'error')
+            return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
     if request.method == 'POST':
         title = request.form.get('title')
         content = request.form.get('content')
@@ -369,18 +375,47 @@ def create_post(tour_id):
         if not content:
             flash('Не заполнено содержание поста', 'error')
         if not title or not content:
-            return render_template('create_post.html', tour=tour, title=title, content=content)
-        post = Post().fill(
-            title=title,
-            content=content,
-            author_id=current_user.get_id(),
-            tournament_id=tour_id
-        )
-        session.add(post)
-        session.commit()
+            if post_id:
+                return render_template('create_post.html', tour=tour, title=title, content=content,
+                                       post=post,
+                                       menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
+            return render_template('create_post.html', tour=tour, title=title, content=content,
+                                   menu=make_menu(tour_id=tour_id, now='Создание поста'))
+        if post_id:
+            post.title = title
+            post.content = content
+            session.commit()
+        else:
+            post = Post().fill(
+                title=title,
+                content=content,
+                author_id=current_user.get_id(),
+                tournament_id=tour_id
+            )
+            session.add(post)
+            session.commit()
         return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
-    return render_template('create_post.html', tour=tour,
-                           menu=make_menu(tour_id=tour_id, now="Новый пост"))
+    elif request.method == 'GET':
+        if post_id:
+            title = post.title
+            content = post.content
+            return render_template('create_post.html', tour=tour, title=title, content=content,
+                                   post=post,
+                                   menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
+        else:
+            return render_template('create_post.html', tour=tour,
+                                   menu=make_menu(tour_id=tour_id, now="Новый пост"))
+
+
+@blueprint.route('/edit_post/<int:post_id>', methods=['POST', 'GET'])
+def edit_post(post_id):
+    session = create_session()
+    post = session.query(Post).get(post_id)
+    if not post:
+        return
+    title = post.title
+    content = post.content
+    return redner
 
 
 @blueprint.route('/upload-image', methods=['POST'])

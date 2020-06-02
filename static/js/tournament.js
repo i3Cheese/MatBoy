@@ -22,7 +22,7 @@ function loader() {
         if (data.posts.length == 0){
             $("#news_title").remove();
             return
-        };
+        }
         let posts = data.posts;
         if (postN >= posts.length + inpCount) {
             block = true;
@@ -33,12 +33,13 @@ function loader() {
             if (n >= posts.length) {
                 block = true;
                 break
-            };
+            }
             let card = $(document.querySelector('template#card').content).children(".post_card").clone();
             card.children(".title").html(posts[n].title);
             card.children('.content').html(posts[n].content);
             card.children(".datetime_info").html(posts[n].created_info);
             card.children(".link_menu").children(".delete").attr("id", (posts[n].id).toString());
+            card.children(".link_menu").children(".edit").attr("id", (posts[n].id).toString());
             container.prepend(card);
         }
         postN += inpCount;
@@ -47,12 +48,14 @@ function loader() {
 
 $(document).on('click', '.edit', function (event) {
     let targetElem = $(event.target);
-    return
+    let postId = targetElem.attr('id');
+    window.location.href = `/tournament/${tournamentId}/edit_post/${postId}`;
 });
 
 $(document).on('click', '.delete', function (event) {
     let targetElem = $(event.target);
     let postId = targetElem.attr('id');
+    console.log(postId)
     $.ajax({
         url: API_URL + `post/${postId}`,
         type: 'DELETE',

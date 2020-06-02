@@ -27,7 +27,11 @@
                     <textarea name="content" id="editor" placeholder="Контент" required></textarea>
                 </div>
                 <div class="input-group justify-content-end">
-                    <input type="submit" class="btn btn-primary">
+                    {% if post %}
+                        <input type="submit" class="btn btn-primary" value="Редактировать">
+                    {% else %}
+                        <input type="submit" class="btn btn-primary" value="Создать">
+                    {% endif %}
                 </div>
             </form>
         </div>
