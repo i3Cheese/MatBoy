@@ -368,44 +368,11 @@ def create_post(tour_id, post_id=None):
         if not post:
             flash('Пост не найден', 'error')
             return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
-    if request.method == 'POST':
-        title = request.form.get('title')
-        content = request.form.get('content')
-        if not title:
-            flash('Не заполнен заголовок поста', 'error')
-        if not content:
-            flash('Не заполнено содержание поста', 'error')
-        if not title or not content:
-            if post_id:
-                return render_template('create_post.html', tour=tour, title=title, content=content,
-                                       post=post,
-                                       menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
-            return render_template('create_post.html', tour=tour, title=title, content=content,
-                                   menu=make_menu(tour_id=tour_id, now='Создание поста'))
-        if post_id:
-            post.title = title
-            post.content = content
-            session.commit()
-        else:
-            post = Post().fill(
-                title=title,
-                content=content,
-                author_id=current_user.get_id(),
-                tournament_id=tour_id
-            )
-            session.add(post)
-            session.commit()
-        return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
-    elif request.method == 'GET':
-        if post_id:
-            title = post.title
-            content = post.content
-            return render_template('create_post.html', tour=tour, title=title, content=content,
-                                   post=post,
-                                   menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
-        else:
-            return render_template('create_post.html', tour=tour,
-                                   menu=make_menu(tour_id=tour_id, now="Новый пост"))
+        return render_template('create_post.html', tour=tour, post=post,
+                               menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
+    else:
+        return render_template('create_post.html', tour=tour,
+                               menu=make_menu(tour_id=tour_id, now="Новый пост"))
 
 
 @blueprint.route('/upload-image', methods=['POST'])

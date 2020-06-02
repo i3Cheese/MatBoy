@@ -1,6 +1,7 @@
 from flask_restful import reqparse, abort, Resource, request
 from flask_restful.inputs import boolean
 from flask import jsonify
+from flask_login import current_user
 from data import User, Team, Tournament, League, Game, Post, create_session
 from datetime import date, datetime
 import logging
@@ -454,6 +455,33 @@ class ProtocolResource(Resource):
 
 
 class PostResource(Resource):
+    put_parse = reqparse.RequestParser()
+    put_parse.add_argument('title', required=True, type=str)
+    put_parse.add_argument('content', required=True, type=str)
+
+    post_parse = reqparse.RequestParser()
+    post_parse.add_argument('title', required=True, type=str)
+    post_parse.add_argument('content', required=True, type=str)
+    post_parse.add_argument('tournament_id', required=True, type=int)
+
+    def get(self, post_id):
+        """Get a post by id"""
+        session = create_session()
+        post = session.query(Post).get(post_id)
+        if post:
+            return jsonify({'post': post.to_dict()})
+        return jsonify({'error': 'Post not found'})
+
+    def put(self, post_id):
+        """Edit a post by id"""
+        session = create_session()
+        post = session.query(Post).get(post_id)
+        args = self.put_parse.parse_args()
+        for key, value in args.items():
+            post.__setattr__(key, value)
+        session.commit()
+        return jsonify({"success": "ok"})
+
     def delete(self, post_id):
         """Deleting a post by id"""
         session = create_session()
@@ -464,11 +492,23 @@ class PostResource(Resource):
             return jsonify({"success": "ok"})
         return jsonify({"error": "error"})
 
+    def post(self):
+        """Create post"""
+        session = create_session()
+        args = self.post_parse.parse_args()
+        post = Post()
+        for key, value in args.items():
+            post.__setattr__(key, value)
+        post.author_id = current_user.get_id()
+        session.add(post)
+        session.commit()
+        return jsonify({"success": "ok"})
+
 
 class TournamentPostsResource(Resource):
     def get(self, tour_id):
         """Get existing (ststus != 0) posts for current tournament"""
         session = create_session()
         posts = session.query(Post).filter(Post.tournament_id == tour_id, Post.status != 0).all()
-        return jsonify({'posts': list(map(lambda post: post.to_dict(), 
-                        posts))[::-1]})
+        return jsonify({'posts': list(map(lambda post: post.to_dict(),
+                                          posts))[::-1]})

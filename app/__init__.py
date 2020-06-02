@@ -33,10 +33,8 @@ from . import single_pages
 app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
 
-
 app.jinja_env.globals['client_id'] = app.config['CLIENT_ID']
 app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']
-
 
 api = Api(app)
 
@@ -53,4 +51,4 @@ api.add_resource(GameResource, '/api/game/<int:game_id>')
 api.add_resource(GamesResource, '/api/game')
 api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
 api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts')
-api.add_resource(PostResource, '/api/post/<int:post_id>')
+api.add_resource(PostResource, '/api/post/<int:post_id>', '/api/post')
