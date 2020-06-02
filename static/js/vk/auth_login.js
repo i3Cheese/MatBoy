@@ -1,4 +1,4 @@
-$(document).ready(registration());
+$(document).ready(registration);
 
 function getAuthInfo() {
     let uri = window.location.hostname + window.location.pathname + window.location.search;
@@ -38,12 +38,13 @@ function registration() {
                         if (typeof info['email'] !== "undefined") {
                             $("#email_field").val(info.email)
                         };
-                        $("#vk_login_button").prop("onclick", null);
-                        $("#vk_login_button").text("Ваша страница успешно привязана");
-    
-                        $("#vk_notifications_div").removeAttr("hidden");
-                        $("#vk_notifications").prop("checked", true);
-                    });
+                    }
+                );
+                $("#vk_login_button").prop("onclick", null);
+                $("#vk_login_button").text("Ваша страница успешно привязана");
+
+                $("#vk_notifications_div").removeAttr("hidden");
+                $("#vk_notifications").prop("checked", true);
                 let href = window.location.pathname + window.location.search;
                 if (window.location.search == ''){
                     href = href + `?user_id=${info.user_id}`
