@@ -360,6 +360,7 @@ def team_request(tour_id: int):
 @blueprint.route('/tournament/<int:tour_id>/edit_post/<int:post_id>', methods=["GET", "POST"])
 @login_required
 def create_post(tour_id, post_id=None):
+    """Create and edit post"""
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
     if post_id:
@@ -405,17 +406,6 @@ def create_post(tour_id, post_id=None):
         else:
             return render_template('create_post.html', tour=tour,
                                    menu=make_menu(tour_id=tour_id, now="Новый пост"))
-
-
-@blueprint.route('/edit_post/<int:post_id>', methods=['POST', 'GET'])
-def edit_post(post_id):
-    session = create_session()
-    post = session.query(Post).get(post_id)
-    if not post:
-        return
-    title = post.title
-    content = post.content
-    return redner
 
 
 @blueprint.route('/upload-image', methods=['POST'])
