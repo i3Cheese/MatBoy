@@ -296,9 +296,9 @@ class GameResource(Resource):
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
-    put_pars.add_argument('league.id', type=int)
-    put_pars.add_argument('team1.id', type=int)
-    put_pars.add_argument('team2.id', type=int)
+    put_pars.add_argument('league.id', type=int, help="Неправильно указана лига")
+    put_pars.add_argument('team1.id', type=int, help="Неправильный указана команда")
+    put_pars.add_argument('team2.id', type=int, help="Неправильно указана команда")
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, game_id):
@@ -365,8 +365,10 @@ class GameResource(Resource):
 class GamesResource(Resource):
     post_pars = GameResource.put_pars.copy()
     post_pars.replace_argument('league.id', type=int, required=True)
-    post_pars.replace_argument('team1.id', type=int, required=True)
-    post_pars.replace_argument('team2.id', type=int, required=True)
+    post_pars.replace_argument('team1.id', type=int, 
+                               required=True, help="Неправильный указана команда")
+    post_pars.replace_argument('team2.id', type=int, 
+                               required=True, help="Неправильно указана команда")
 
     def post(self):
         """Handle request to change game."""
