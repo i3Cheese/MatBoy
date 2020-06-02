@@ -3,6 +3,7 @@ $(document).bind("scroll", scrolling);
 let postN = 0;
 let inpCount = 3;
 let block = false;
+let tournamentId = window.location.pathname.split('/')[2];
 
 window.onload = loader();
 
@@ -13,12 +14,15 @@ function scrolling() {
 }
 
 function loader() {
-    let tournamentId = window.location.pathname.split('/')[2];
     $.ajax({
-            url: `/api/post/${tournamentId}`,
+            url: API_URL + `tournament/${tournamentId}/posts`,
             type: 'GET',
         }
     ).done(function (data) {
+        if (data.posts.length == 0){
+            $("#news_title").remove();
+            return
+        };
         let posts = data.posts;
         if (postN >= posts.length + inpCount) {
             block = true;
@@ -29,13 +33,30 @@ function loader() {
             if (n >= posts.length) {
                 block = true;
                 break
-            }
-            let card = $(document.querySelector('template#card').content).children("#post_card").clone();
-            card.children("#title").html(posts[n].title);
-            card.children('#content').html(posts[n].content);
-            card.children("#datetime_info").html(posts[n].created_info);
+            };
+            let card = $(document.querySelector('template#card').content).children(".post_card").clone();
+            card.children(".title").html(posts[n].title);
+            card.children('.content').html(posts[n].content);
+            card.children(".datetime_info").html(posts[n].created_info);
+            card.children(".link_menu").children(".delete").attr("id", (posts[n].id).toString());
             container.prepend(card);
         }
         postN += inpCount;
     });
 }
+
+$(document).on('click', '.edit', function (event) {
+    let targetElem = $(event.target);
+    return
+});
+
+$(document).on('click', '.delete', function (event) {
+    let targetElem = $(event.target);
+    let postId = targetElem.attr('id');
+    $.ajax({
+        url: API_URL + `post/${postId}`,
+        type: 'DELETE',
+    }).done(function(r) {
+        targetElem.parent('div.link_menu').parent('div.post_card').remove()
+    });
+});

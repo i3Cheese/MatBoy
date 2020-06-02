@@ -41,7 +41,8 @@ app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']
 api = Api(app)
 
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
-from .resources import GameResource, GamesResource, ProtocolResource, PostResource
+from .resources import GameResource, GamesResource, ProtocolResource
+from .resources import PostResource, TournamentPostsResource
 
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/user')
@@ -51,4 +52,5 @@ api.add_resource(LeaguesResource, '/api/league')
 api.add_resource(GameResource, '/api/game/<int:game_id>')
 api.add_resource(GamesResource, '/api/game')
 api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
-api.add_resource(PostResource, '/api/post/<int:tour_id>', '/api/post/<int:post_id>')
+api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts')
+api.add_resource(PostResource, '/api/post/<int:post_id>')

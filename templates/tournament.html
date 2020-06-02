@@ -62,7 +62,7 @@
             </dl>
         </div>
     </div>
-    <div class="title_container">
+    <div id="news_title" class="title_container">
         <h1 class="page_title">
             Новости турнира
         </h1>
@@ -78,10 +78,21 @@
     <div id="post_container" class="box_container">
         <script src="{{url_for('static', filename='js/tournament.js')}}"></script>
         <template id="card">
-            <div id="post_card" class="box w-100">
-                <h3 id="title"></h3>
-                <div id="content" class="ck-content clearfix"></div>
-                <p id="datetime_info" align="right"></p>
+            <div class="post_card box w-100">
+                {% if current_user.id == tour.chief_id %}
+                <div class="link_menu" align="right">
+                    <a id="" class="edit link link-small" onclick="" href="">
+                        редактировать
+                    </a>
+                     | 
+                    <a id="" class="delete link link-small" onclick="">
+                        удалить
+                    </a>
+                </div>
+                {% endif %}
+                <h3 class="title"></h3>
+                <div class="content ck-content clearfix"></div>
+                <p class="datetime_info" align="right"></p>
             </div>
         </template>
     </div>
