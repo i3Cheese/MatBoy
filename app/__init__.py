@@ -11,6 +11,7 @@ global_init()
 
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
+app.config.from_object(config)
 
 mail = Mail(app)
 
@@ -31,7 +32,6 @@ from . import single_pages
 app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
 
-app.config.from_object(config)
 
 app.jinja_env.globals['client_id'] = app.config['CLIENT_ID']
 app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']

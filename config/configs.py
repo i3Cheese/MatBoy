@@ -14,10 +14,14 @@ class BaseConfig:
     DATA_BASE_URL = 'sqlite:///' + os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
     SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
+    SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'
     CLIENT_ID = '7491040'
     ACCESS_TOKEN = '35e624fb35e624fb35e624fbd43594691b335e635e624fb6b344ab020ed07b7da1cb27f'
 
     VK_GROUP_ID = '-193140435'
+
+    RECAPTCHA_PUBLIC_KEY = '6LfcguUUAAAAAMWvFiu8rpazGR61ZxuIDbtkaG65'
+    RECAPTCHA_PRIVATE_KEY = '6LfcguUUAAAAAEWzpN78kxcUj31kU8FAuQn2UG8S'
 
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
@@ -26,6 +30,7 @@ class BaseConfig:
     MAIL_USERNAME = 'blogflask89@gmail.com'
     MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
     MAIL_PASSWORD = 'av8-JJm-JFY-jiS'
+    FEEDBACK_MAIL = 'ebedak2003@yandex.ru'
 
     TEMPLATES_FOLDER = os.path.abspath("templates")
     STATIC_FOLDER = os.path.abspath("static")

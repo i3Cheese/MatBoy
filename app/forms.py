@@ -2,7 +2,7 @@ from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms.fields.html5 import EmailField, IntegerField
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
 from data import User, Game, Tournament, create_session
 from config import config
@@ -97,12 +97,13 @@ class RegisterForm(BaseForm):
     vk_notifications = BooleanField('Уведомления через ВКонтакте')
     email_notifications = BooleanField('Уведомления по почте')
     surname = StringField('Фамилия *', validators=[
-                          field_data_capitalizer, RuDataRequired()])
+        field_data_capitalizer, RuDataRequired()])
     name = StringField('Имя *', validators=[
-                       field_data_capitalizer, RuDataRequired()])
+        field_data_capitalizer, RuDataRequired()])
     patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer])
     city = StringField("Город *", validators=[field_data_capitalizer, RuDataRequired()])
-    birthday = RuDateField("Дата рождения *", format=DATE_FORMAT,)
+    birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
+    recaptcha = RecaptchaField(validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
 
 
@@ -133,8 +134,23 @@ class TeamForm(BaseForm):
                                    ),
                         "E-mail yчастников",
                         min_entries=4,
-                        max_entries=8,)
+                        max_entries=8, )
     submit = SubmitField("Подтвердить")
+
+
+class ResetPasswordStep1(BaseForm):
+    email = EmailField(
+        "E-mail", validators=[field_data_lower, Email(message="Неправильный формат"),
+                              RuDataRequired(), exist_email_validator])
+    submit = SubmitField("Восстановить")
+
+
+class ResetPasswordStep2(BaseForm):
+    password = PasswordField('Пароль *', validators=[RuDataRequired(), password_secure_validator])
+    password_again = PasswordField(
+        'Повторите пароль *', validators=[RuDataRequired(),
+                                          EqualTo("password", message="Пароли должны совпадать")])
+    submit = SubmitField("Изменить пароль")
 
 
 class PlayerBooleanField(BooleanField):
@@ -189,8 +205,8 @@ def PrepareToGameForm(game: Game):
             setattr(PrepareToGameForm, field_name, field)
             choices.append((player.id, player.fullname))
 
-        selected_cap = teams_json[i-1].get('captain', {}).get('id', -1)
-        selected_deputy = teams_json[i-1].get('deputy', {}).get('id', -1)
+        selected_cap = teams_json[i - 1].get('captain', {}).get('id', -1)
+        selected_deputy = teams_json[i - 1].get('deputy', {}).get('id', -1)
 
         # Choisen on the first place
         cap_choices = sorted(choices, reverse=True,

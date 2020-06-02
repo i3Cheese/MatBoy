@@ -6,3 +6,4 @@ tasks.md
 venv/
 .vscode/
 alembic/versions/
+ngrok.exe
