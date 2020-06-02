@@ -14,6 +14,7 @@ class BaseConfig:
     DATA_BASE_URL = 'sqlite:///' + os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
     SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
+    SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'
     CLIENT_ID = '7491040'
     ACCESS_TOKEN = '35e624fb35e624fb35e624fbd43594691b335e635e624fb6b344ab020ed07b7da1cb27f'
 

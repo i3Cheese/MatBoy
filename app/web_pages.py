@@ -5,14 +5,14 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, League, Team, Game, Post, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
-from app.token import generate_email_hash, confirm_data
+from app.forms import ResetPasswordStep1, ResetPasswordStep2
+from app.token import generate_email_hash, confirm_data, generate_confirmation_token_reset_password
+from app.token import confirm_token
 from config import config
 from wtforms import ValidationError
 from typing import List, Tuple
-import logging
 from threading import Thread
 from hashlib import md5
-
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -75,7 +75,7 @@ def login_page():
         uid, hash_st = args.get('uid'), args.get('hash')
         if uid and hash_st:
             if md5((config.CLIENT_ID + uid +
-            config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
+                    config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
                 raise ValidationError
             session = create_session()
             try:
@@ -133,6 +133,47 @@ def register_page():
 def logout_page():
     logout_user()
     return back_redirect("/login")
+
+
+@blueprint.route('/reset_password_step_1', methods=["POST", "GET"])
+def reset_password_step_1():
+    form = ResetPasswordStep1()
+    if form.validate_on_submit():
+        email = form.email.data
+        session = create_session()
+        user = session.query(User).filter(User.email == email).first()
+        token = generate_confirmation_token_reset_password(email)
+        reset_password_url = url_for('web_pages.reset_password_step_2',
+                                         token=token, _external=True)
+        template_html = render_template('reset_password_mail.html', url=reset_password_url)
+        msg = Message(
+                subject='Восстановление пароля MatBoy',
+                recipients=[email],
+                sender=config.MAIL_DEFAULT_SENDER,
+                html=template_html
+            )
+        send_message(msg)
+        flash('На вашу почту отправлена инструкция по восстановлению пароля', 'success')
+        return redirect(url_for('web_pages.login_page'))
+    return render_template('reset_password_step_1.html', form=form)
+
+
+@blueprint.route('/reset_password_step_2/<token>', methods=["POST", "GET"])
+def reset_password_step_2(token):
+    email = confirm_token(token)
+    if not email:
+        return redirect(url_for('web_pages.reset_password_step_1'))
+    form = ResetPasswordStep2()
+    if form.validate_on_submit():
+        password = form.password.data
+        session = create_session()
+        user = session.query(User).filter(User.email == email).first()
+        user.set_password(password)
+        session.merge(user)
+        session.commit()
+        flash('Пароль успешно изменен', 'success')
+        return redirect(url_for('web_pages.login_page'))
+    return render_template('reset_password_step_2.html', form=form)
 
 
 @blueprint.route("/profile/<int:user_id>")
@@ -366,7 +407,7 @@ def team_page(team_id, tour_id):
                            team=team,
                            menu=make_menu(session,
                                           tour_id=tour_id,
-                                          team_id=team_id,))
+                                          team_id=team_id, ))
 
 
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")

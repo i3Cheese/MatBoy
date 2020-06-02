@@ -1,8 +1,7 @@
-from flask import url_for, render_template, flash
-from itsdangerous import URLSafeSerializer, SignatureExpired, BadSignature
+from flask import flash
+from itsdangerous import URLSafeSerializer, SignatureExpired, BadSignature, URLSafeTimedSerializer
 
 from app import app
-from config import config
 
 
 def generate_email_hash(team_id, email):
@@ -23,3 +22,28 @@ def confirm_data(hash):
     except BadSignature:
         return False
     return data
+
+
+def generate_confirmation_token_reset_password(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except SignatureExpired:
+        flash('Срок дейсвия токена истек', 'error')
+        return False
+    except BadSignature:
+        flash('Ошибка проверки подписи', 'error')
+        return False
+    except:
+        flash('Непредвиденная ошибка проверки токена', 'error')
+        return False
+    return email
