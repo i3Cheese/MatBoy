@@ -43,3 +43,7 @@ function loader() {
         postN += inpCount;
     });
 }
+
+function deletePost(){
+    return
+}
