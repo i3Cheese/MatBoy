@@ -83,6 +83,14 @@ function makeErrorToast(message){
     $("#toasts").append(toast);
 }
 
+
+function makeSuccessToast(message){
+    let toast = $(document.querySelector("#success_toast_template").content).clone().find(".toast");
+    toast.find(".message").text(message);
+    toast.toast('show');
+    $("#toasts").append(toast);
+}
+
 function holdErrorResponse(data){
     console.error(data);
     message = data.responseJSON.message;

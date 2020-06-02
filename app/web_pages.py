@@ -176,6 +176,27 @@ def reset_password_step_2(token):
     return render_template('reset_password_step_2.html', form=form)
 
 
+@blueprint.route('/feedback', methods=["POST", "GET"])
+@login_required
+def feedback():
+    if request.method == 'POST':
+        print(request.form)
+        title = request.form.get('title')
+        content = request.form.get('content')
+        print(title)
+        print(content)
+        html_message = render_template('feedback_message.html', content=content)
+        msg = Message(
+            subject='Support: {0} - MatBoy'.format(title),
+            recipients=[config.FEEDBACK_MAIL],
+            html=html_message,
+            sender=config.MAIL_DEFAULT_SENDER
+        )
+        send_message(msg)
+        return make_response(jsonify({'status': 'ok'}), 200)
+    return render_template('feedback.html')
+
+
 @blueprint.route("/profile/<int:user_id>")
 def user_page(user_id):
     session = create_session()

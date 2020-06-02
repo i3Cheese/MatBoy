@@ -30,6 +30,7 @@ class BaseConfig:
     MAIL_USERNAME = 'blogflask89@gmail.com'
     MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
     MAIL_PASSWORD = 'av8-JJm-JFY-jiS'
+    FEEDBACK_MAIL = 'ebedak2003@yandex.ru'
 
     TEMPLATES_FOLDER = os.path.abspath("templates")
     STATIC_FOLDER = os.path.abspath("static")
