@@ -150,12 +150,10 @@ def user_page(user_id):
 def tournament_page(tour_id):
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
-    posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
     if not tour:
         abort(404)
     return render_template("tournament.html",
-                           tour=tour, posts=posts,
-                           menu=make_menu(session, tour_id=tour_id))
+                           tour=tour, menu=make_menu(session, tour_id=tour_id))
 
 
 @blueprint.route("/new_tournament", methods=["POST", "GET"])

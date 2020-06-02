@@ -455,4 +455,4 @@ class PostsResource(Resource):
     def get(self, tour_id):
         session = create_session()
         posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
-        return jsonify({'posts': list(map(lambda post: post.to_dict(), posts))})
+        return jsonify({'posts': list(map(lambda post: post.to_dict(), posts))[::-1]})
