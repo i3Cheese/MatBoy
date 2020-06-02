@@ -320,7 +320,8 @@ def create_post(tour_id):
         session.add(post)
         session.commit()
         return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
-    return render_template('create_post.html', tour=tour)
+    return render_template('create_post.html', tour=tour, 
+                           menu=make_menu(tour_id=tour_id, now="Новый пост"))
 
 
 @blueprint.route('/upload-image', methods=['POST'])
