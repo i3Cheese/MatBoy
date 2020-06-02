@@ -78,21 +78,21 @@
     <div id="post_container" class="box_container">
         <script src="{{url_for('static', filename='js/tournament.js')}}"></script>
         <template id="card">
-            <div id="post_card" class="box w-100">
+            <div class="post_card box w-100">
                 {% if current_user.id == tour.chief_id %}
                 <div class="link_menu" align="right">
-                    <a class="link link-small" onclick="" href="">
+                    <a id="" class="edit link link-small" onclick="" href="">
                         редактировать
                     </a>
                      | 
-                    <a class="link link-small" onclick="deletePost()">
+                    <a id="" class="delete link link-small" onclick="">
                         удалить
                     </a>
                 </div>
                 {% endif %}
-                <h3 id="title"></h3>
-                <div id="content" class="ck-content clearfix"></div>
-                <p id="datetime_info" align="right"></p>
+                <h3 class="title"></h3>
+                <div class="content ck-content clearfix"></div>
+                <p class="datetime_info" align="right"></p>
             </div>
         </template>
     </div>
