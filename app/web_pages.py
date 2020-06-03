@@ -119,8 +119,8 @@ def register_page():
                            patronymic=form.patronymic.data,
                            city=form.city.data,
                            birthday=form.birthday.data,
-                           email_notifications=form.email_notifications.data,
-                           vk_notifications=form.vk_notifications.data)
+                           email_notifications=form.email_notifications.data
+                           )
         user.set_password(form.password.data)
         if request.args.get('user_id', 0):
             user.vk_id = int(request.args.get('user_id'))

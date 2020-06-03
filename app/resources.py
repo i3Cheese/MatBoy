@@ -125,10 +125,10 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    @login_required
+    # @login_required
     def get(self):
-        if not current_user.is_admin:
-            abort(403, message="Permission denied")
+        # if not current_user.is_admin:
+            # abort(403, message="Permission denied")
 
         session = create_session()
         if request.args.get('vk_id', 0):

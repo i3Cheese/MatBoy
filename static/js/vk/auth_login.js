@@ -3,7 +3,7 @@ $(document).ready(registration);
 function getAuthInfo() {
     let uri = window.location.hostname + window.location.pathname + window.location.search;
     let clientId = $("#clientId").text();
-    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=page&scope=email&response_type=token&revoke=1`;
+    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=page&scope=email,groups&response_type=token&revoke=1`;
 }
 
 function registration() {
@@ -42,9 +42,23 @@ function registration() {
                 );
                 $("#vk_login_button").prop("onclick", null);
                 $("#vk_login_button").text("Ваша страница успешно привязана");
-
-                $("#vk_notifications_div").removeAttr("hidden");
-                $("#vk_notifications").prop("checked", true);
+                
+                let vkInfo = $("#vk_notification");
+                vkInfo.removeClass("hidden");
+                let vkLink = '';
+                VK.Api.call("groups.getById", {
+                    group_id: $("#groupId").text(),
+                    fields: 'screen_name',
+                    v: "5.103"
+                },
+                    function(r) {
+                        if (r.response) {
+                            vkLink = r.response[0].screen_name;
+                            vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте, 
+                            напишите в сообщения <a href="https://vk.com/${vkLink}">сообщества</a>`)
+                        };
+                    }
+                );
                 let href = window.location.pathname + window.location.search;
                 if (window.location.search == ''){
                     href = href + `?user_id=${info.user_id}`

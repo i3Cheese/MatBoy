@@ -7,6 +7,7 @@ from data.user import AnonymousUser
 from config import config
 from bot import bot_launch
 from threading import Thread
+import os
 
 
 config.setup()
@@ -57,5 +58,7 @@ api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts',
                  '/api/tournament/<int:tour_id>/posts/<int:status>')
 api.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')
 
-bot_thread = Thread(target=bot_launch)
-bot_thread.start()
+bot_working = os.environ.get('BOT_WORKING', None)
+if not bot_working:
+    bot_thread = Thread(target=bot_launch)
+    bot_thread.start()
