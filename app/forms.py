@@ -38,10 +38,54 @@ class RuDateField(DateField):
         if valuelist:
             date_str = ' '.join(valuelist)
             try:
-                self.data = datetime.datetime.strptime(date_str, self.format).date()
+                self.data = datetime.datetime.strptime(
+                    date_str, self.format).date()
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Не правильный формат даты'))
+
+
+class FillWith:
+    """
+    Check that other field isn't empty if this field isn't empty
+
+    :param fieldname:
+        The name of the other field to compare to.
+    :param message:
+        Error message to raise in case of a validation error. Can be
+        interpolated with `%(other_label)s` and `%(other_name)s` to provide a
+        more helpful error.
+    """
+
+    def __init__(self, fieldname, other_msg=None, this_msg=None):
+        self.fieldname = fieldname
+        self.other_msg = other_msg
+        self.this_msg = this_msg
+
+    def __call__(self, form, field):
+        if field.data:
+            try:
+                other = form[self.fieldname]
+            except KeyError:
+                raise ValidationError(field.gettext(
+                    "Invalid field name '%s'.") % self.fieldname)
+            if not other.data:
+                d = {
+                    'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
+                    'other_name': self.fieldname,
+                    'this_label': hasattr(self, 'label') and self.label.text or field.name,
+                    'this_name': field.name,
+                }
+                other_msg = self.other_msg
+                if other_msg is None:
+                    other_msg = field.gettext(
+                        'Поле "%(this_label)s" заполнено и это должно')
+                this_msg = self.this_msg
+                if this_msg is None:
+                    this_msg = field.gettext(
+                        'Поле "%(other_label)s" должно быть тоже заполнено')
+                other.errors.append(other_msg)
+                raise ValidationError(this_msg % d)
 
 
 def field_data_lower(form, field):
@@ -91,7 +135,8 @@ class RegisterForm(BaseForm):
                                 Email(message="Неправильный формат"),
                                 RuDataRequired(),
                                 unique_email_validator])
-    password = PasswordField('Пароль *', validators=[password_secure_validator])
+    password = PasswordField(
+        'Пароль *', validators=[password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[EqualTo("password", message="Пароли должны совпадать")])
     vk_notifications = BooleanField('Уведомления через ВКонтакте')
@@ -100,10 +145,13 @@ class RegisterForm(BaseForm):
         field_data_capitalizer, RuDataRequired()])
     name = StringField('Имя *', validators=[
         field_data_capitalizer, RuDataRequired()])
-    patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer])
-    city = StringField("Город *", validators=[field_data_capitalizer, RuDataRequired()])
+    patronymic = StringField("Отчество (если есть)", validators=[
+                             field_data_capitalizer])
+    city = StringField(
+        "Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
-    recaptcha = RecaptchaField(validators=[Recaptcha(message='Это поле обязательно')])
+    recaptcha = RecaptchaField(
+        validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
 
 
@@ -120,7 +168,9 @@ class TournamentInfoForm(BaseForm):
     description = TextAreaField("Дополнительная информация")
     place = StringField("Местро проведения")
     start = NullableDateField("Начало турнира", format=DATE_FORMAT)
-    end = NullableDateField("Конец турнира", format=DATE_FORMAT)
+    end = NullableDateField("Конец турнира",
+                            format=DATE_FORMAT,
+                            validators=[FillWith('start', other_msg='Без начала нет конца')])
     submit = SubmitField("Подтвердить")
 
 
@@ -146,7 +196,8 @@ class ResetPasswordStep1(BaseForm):
 
 
 class ResetPasswordStep2(BaseForm):
-    password = PasswordField('Пароль *', validators=[RuDataRequired(), password_secure_validator])
+    password = PasswordField(
+        'Пароль *', validators=[RuDataRequired(), password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[RuDataRequired(),
                                           EqualTo("password", message="Пароли должны совпадать")])

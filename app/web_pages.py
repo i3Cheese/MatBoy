@@ -232,6 +232,11 @@ def tournament_creator_page():
                 form.title.errors.append(
                     "Турнир с таким названием уже существует")
                 raise ValidationError
+
+            if form.end.data and form.start.data > form.end.data:
+                form.end.errors.append("Турнир заканчивается слишком рано.")
+                raise ValidationError
+                
             tournament = Tournament().fill(title=form.title.data,
                                            description=form.description.data,
                                            place=form.place.data,
