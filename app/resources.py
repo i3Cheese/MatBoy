@@ -458,12 +458,13 @@ class PostResource(Resource):
     put_parse = reqparse.RequestParser()
     put_parse.add_argument('title', type=str)
     put_parse.add_argument('content', type=str)
-    put_parse.add_argument('status', type=int)
+    put_parse.add_argument('status')
 
     post_parse = reqparse.RequestParser()
     post_parse.add_argument('title', required=True, type=str)
     post_parse.add_argument('content', required=True, type=str)
     post_parse.add_argument('tournament_id', required=True, type=int)
+    post_parse.add_argument('status')
 
     def get(self, post_id):
         """Get a post by id"""
@@ -479,7 +480,15 @@ class PostResource(Resource):
         post = session.query(Post).get(post_id)
         args = self.put_parse.parse_args()
         for key, value in args.items():
-            if value is not None:
+            if key == 'status':
+                if value and type(value) == str and value.isdigit():
+                    post.__setattr__(key, int(value))
+                else:
+                    if value:
+                        post.__setattr__(key, 1)
+                    else:
+                        post.__setattr__(key, 0)
+            elif value is not None:
                 post.__setattr__(key, value)
         session.commit()
         return jsonify({"success": "ok"})
@@ -489,7 +498,7 @@ class PostResource(Resource):
         session = create_session()
         post = session.query(Post).filter(Post.id == post_id).first()
         if post:
-            post.status = 0
+            session.delete(post)
             session.commit()
             return jsonify({"success": "ok"})
         return jsonify({"error": "error"})
@@ -500,7 +509,13 @@ class PostResource(Resource):
         args = self.post_parse.parse_args()
         post = Post()
         for key, value in args.items():
-            post.__setattr__(key, value)
+            if key == 'status':
+                if value:
+                    post.__setattr__(key, 1)
+                else:
+                    post.__setattr__(key, 0)
+            else:
+                post.__setattr__(key, value)
         post.author_id = current_user.get_id()
         session.add(post)
         session.commit()

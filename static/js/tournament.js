@@ -30,6 +30,15 @@ $(document).ready(function () {
     });
 });
 
+
+function displayEmptyPost() {
+    let container = $('#post_container');
+    if (!container.children('div').length) {
+        let card = $(document.querySelector('template#empty_posts').content).children(".post_card").clone();
+        container.prepend(card);
+    }
+}
+
 function loader() {
     $.ajax({
             url: API_URL + `tournament/${tournamentId}/posts/${statusPost}`,
@@ -38,10 +47,7 @@ function loader() {
     ).done(function (data) {
         let container = $('#post_container');
         if (!data.posts.length) {
-            if (!container.children('div').length) {
-                let card = $(document.querySelector('template#empty_posts').content).children(".post_card").clone();
-                container.prepend(card);
-            }
+            displayEmptyPost();
             return
         }
         let posts = data.posts;
@@ -80,6 +86,7 @@ $(document).on('click', '.edit', function (event) {
 
 $(document).on('click', '.hide', function (event) {
     let targetElem = $(event.target);
+    let container = $('#post_container');
     let card = targetElem.parents('div.post_card');
     let title = card.find('.title').html();
     let content = card.find('.content').html();
@@ -120,6 +127,9 @@ $(document).on('click', '.hide', function (event) {
     } else {
         card.remove();
     }
+    if (container.children('div').length === 0) {
+        displayEmptyPost();
+    }
 });
 
 
@@ -132,5 +142,8 @@ $(document).on('click', '.delete', function (event) {
         type: 'DELETE'
     }).done(function () {
         card.remove();
-    })
+    });
+    if (container.children('div').length === 0) {
+        displayEmptyPost();
+    }
 });

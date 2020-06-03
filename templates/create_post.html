@@ -30,6 +30,12 @@
                 <div class="input-group mb-3">
                     <textarea name="content" id="editor" placeholder="Контент" required></textarea>
                 </div>
+                <div class="input-group mb-3">
+                    <label for="status" class="align-top ml-2">
+                        <input class="pr-2" type="checkbox" name="status" id="status" checked>
+                        Опубликовать</label>
+
+                </div>
                 <div class="input-group justify-content-end">
                     {% if post %}
                         <input type="submit" class="btn btn-primary" value="Редактировать">
