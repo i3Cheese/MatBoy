@@ -2,8 +2,8 @@
 <p>
   Вас добавили в команду
   <a href="{{url_for('web_pages.team_page', tour_id=tour.id, team_id=team.id, _external=True)}}">
-    {{ str(team) }}</a>,
+    {{ team|string }}</a>,
   участвующую в турнире
   <a href="{{url_for('web_pages.tournament_page', tour_id=tour.id, _external=True)}}">
-    {{ str(tour) }}</a>
+    {{ tour|string }}</a>
 </p>

@@ -5,6 +5,9 @@ from flask_mail import Mail
 from data import global_init
 from data.user import AnonymousUser
 from config import config
+from bot import bot_launch
+from threading import Thread
+
 
 config.setup()
 global_init()
@@ -53,3 +56,6 @@ api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
 api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts',
                  '/api/tournament/<int:tour_id>/posts/<int:status>')
 api.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')
+
+bot_thread = Thread(target=bot_launch)
+bot_thread.start()

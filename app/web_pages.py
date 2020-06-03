@@ -15,6 +15,8 @@ from threading import Thread
 from hashlib import md5
 from string import ascii_letters, digits
 from random import choice
+import bot
+
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -346,11 +348,15 @@ def team_request(tour_id: int):
                 subject='Участие в турнире MatBoy',
                 recipients=list(emails),
                 sender=config.MAIL_DEFAULT_SENDER,
-                html=render_template('mails/invite_team.html',
+                html=render_template('mails/email/invite_team.html',
                                      team=team, tour=tour)
             )
-            thr = Thread(target=send_message, args=[msg])
-            thr.start()
+            # thr_email = Thread(target=send_message, args=[msg])
+            thr_vk = Thread(target=bot.invite_message, 
+                            args=[render_template('mails/vk/invite_team.vkmsg',
+                            team=team, tour=tour), emails])
+            # thr_email.start()
+            thr_vk.start()
             return redirect(team.link)
     except ValidationError:
         session.delete(team)

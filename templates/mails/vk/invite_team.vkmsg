@@ -1,0 +1,4 @@
+Участие в турнире математического боя
+Вас добавили в команду {{ team|string }}, участвующую в турнире {{ tour|string }} 
+страница команды - {{url_for('web_pages.team_page', tour_id=tour.id, team_id=team.id, _external=True)}}
+страница турнира - {{url_for('web_pages.tournament_page', tour_id=tour.id, _external=True)}}
