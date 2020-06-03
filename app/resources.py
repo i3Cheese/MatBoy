@@ -185,10 +185,10 @@ class TeamResource(Resource):
            trainer was looking by trainer.id"""
         args = self.put_pars.parse_args()
         logging.info(f"Team put request with args {args}")
-        
+
         session = create_session()
         team = get_team(session, team_id)
-        
+
         if not(args['league.id'] is None and args['status'] is None):
             if not team.tournament.have_permission(current_user):
                 abort(403, message="You haven't access to tournament")
@@ -201,7 +201,7 @@ class TeamResource(Resource):
                 team.status = args['status']
             if team.status >= 2 and team.league is None:
                 abort(400, message="Принятая команда должна быть привязана к лиге")
-                
+
         if not(args['name'] is None and args['motto'] is None) or args['send_info']:
             if not team.have_permission(current_user):
                 abort(403, message="You haven't access to team")
@@ -319,7 +319,7 @@ class LeaguesResource(Resource):
         tour = get_tour(session, args['tournament.id'])
         if not tour.have_permission(current_user):
             abort('403', message="Permission denied")
-        
+
         league = League()
         league.tournament = tour
         if args['chief.id'] is None and args['chief.email'] is None:
@@ -399,7 +399,7 @@ class GameResource(Resource):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
                                   email=args['judge.email'], )
-            
+
         if not(args['team1.id'] is None and args['team2.id'] is None):
             if args['team1.id'] is not None:
                 game.team1 = get_team(session, args['team1.id'])
@@ -487,7 +487,7 @@ class ProtocolResource(Resource):
         logging.info(f"Protocol put with json {request.json}")
         if not game.have_permission(current_user):
             abort(403, message="Permission denied")
-            
+
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
 
@@ -536,13 +536,15 @@ class ProtocolResource(Resource):
 
 class PostResource(Resource):
     put_parse = reqparse.RequestParser()
-    put_parse.add_argument('title', required=True, type=str)
-    put_parse.add_argument('content', required=True, type=str)
+    put_parse.add_argument('title', type=str)
+    put_parse.add_argument('content', type=str)
+    put_parse.add_argument('status')
 
     post_parse = reqparse.RequestParser()
     post_parse.add_argument('title', required=True, type=str)
     post_parse.add_argument('content', required=True, type=str)
     post_parse.add_argument('tournament_id', required=True, type=int)
+    post_parse.add_argument('status')
 
     def get(self, post_id):
         """Get a post by id"""
@@ -562,7 +564,16 @@ class PostResource(Resource):
             abort(403, message="Permission denied")
         args = self.put_parse.parse_args()
         for key, value in args.items():
-            post.__setattr__(key, value)
+            if key == 'status':
+                if value and type(value) == str and value.isdigit():
+                    post.__setattr__(key, int(value))
+                else:
+                    if value:
+                        post.__setattr__(key, 1)
+                    else:
+                        post.__setattr__(key, 0)
+            elif value is not None:
+                post.__setattr__(key, value)
         session.commit()
         return jsonify({"success": "ok"})
 
@@ -573,7 +584,7 @@ class PostResource(Resource):
         if not post.have_permission(current_user):
             abort(403, message="Permission denied")
         if post:
-            post.status = 0
+            session.delete(post)
             session.commit()
             return jsonify({"success": "ok"})
         else:
@@ -588,7 +599,13 @@ class PostResource(Resource):
         if not tour.have_permission(current_user):
             abort(403, message="Permission denied")
         for key, value in args.items():
-            post.__setattr__(key, value)
+            if key == 'status':
+                if value:
+                    post.__setattr__(key, 1)
+                else:
+                    post.__setattr__(key, 0)
+            else:
+                post.__setattr__(key, value)
         post.author_id = current_user.get_id()
         session.add(post)
         session.commit()
@@ -596,8 +613,13 @@ class PostResource(Resource):
 
 
 class TournamentPostsResource(Resource):
-    def get(self, tour_id):
-        """Get existing (status != 0) posts for current tournament"""
+    def get(self, tour_id, status=1):
+        """
+        Get existing (status != 0) posts for current tournament
+        Status '0' - get hide posts for current tournament
+        Status '1' - get visible posts for current tournament
+        Status '10' - get all posts for current tournament
+        """
         session = create_session()
         tour = get_tour(session, tour_id)
         posts = tour.posts
@@ -605,6 +627,7 @@ class TournamentPostsResource(Resource):
             f = lambda post: post.to_dict()
         else:
             f = lambda post: post.to_secure_dict()
-
+        if status != 10:
+            posts = filter(lambda post: post.status == status, posts)
         return jsonify({'posts': list(
             map(f, sorted(posts, key=lambda post: post.created_at, reverse=True)))})
