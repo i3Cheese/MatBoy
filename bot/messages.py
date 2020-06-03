@@ -1,14 +1,21 @@
 from random import randint
 from data import User, create_session
 from bot import VK_SESSION as vk
+from bot import empty_keyboard, welcome_keyboard
 
 
-def send_message(uid, text):
-    vk.messages.send(user_id=uid, message=text, random_id=randint(0, 2 ** 64))
+def send_message(uid, text, keyboard=empty_keyboard):
+    vk.messages.send(user_id=uid, 
+                     message=text, 
+                     random_id=randint(0, 2 ** 64), 
+                     keyboard=keyboard.get_keyboard())
 
 
 def welcome_message(uid):
-    send_message(uid, 'Привки!!')
+    text = "Привет! Я буду уведомлять тебя о новостях в турнирах MatBoy.\n"  \
+           "Сейчас твои уведомления выключены :(\n"  \
+           "Чтобы получать их, отравь слово Включить"
+    send_message(uid, text, keyboard=welcome_keyboard)
 
 
 def invite_message(text, emails):

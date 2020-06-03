@@ -8,6 +8,7 @@ LONGPOLL = VkBotLongPoll(vk_session, config.VK_GROUP_ID)
 
 VK_SESSION = vk_session.get_api()
 
+from .keyboards import *
 from .launch import *
 from .utils import *
 from .messages import *
