@@ -139,7 +139,6 @@ class RegisterForm(BaseForm):
         'Пароль *', validators=[password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[EqualTo("password", message="Пароли должны совпадать")])
-    vk_notifications = BooleanField('Уведомления через ВКонтакте')
     email_notifications = BooleanField('Уведомления по почте')
     surname = StringField('Фамилия *', validators=[
         field_data_capitalizer, RuDataRequired()])

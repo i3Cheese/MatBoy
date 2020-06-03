@@ -48,7 +48,7 @@ class User(BaseModel, UserMixin):
     vk_id = sa.Column(sa.Integer, default=0)
     integration_with_VK = sa.Column(sa.Boolean, default=False)
     email_notifications = sa.Column(sa.Boolean, nullable=False)
-    vk_notifications = sa.Column(sa.Boolean, nullable=False)
+    vk_notifications = sa.Column(sa.Boolean, default=False)
 
     @property
     def fullname(self):
