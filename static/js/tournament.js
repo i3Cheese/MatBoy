@@ -137,13 +137,16 @@ $(document).on('click', '.delete', function (event) {
     let targetElem = $(event.target);
     let card = targetElem.parents('div.post_card');
     let postId = card.data('post_id');
+    let container = $('#post_container');
     $.ajax({
         url: API_URL + `post/${postId}`,
         type: 'DELETE'
     }).done(function () {
         card.remove();
+    }).always(function () {
+        console.log(container.children('div').length);
+        if (container.children('div').length === 0) {
+            displayEmptyPost();
+        }
     });
-    if (container.children('div').length === 0) {
-        displayEmptyPost();
-    }
 });

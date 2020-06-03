@@ -32,9 +32,17 @@
                 </div>
                 <div class="input-group mb-3">
                     <label for="status" class="align-top ml-2">
-                        <input class="pr-2" type="checkbox" name="status" id="status" checked>
+                        {% if post %}
+                            {% if post.status|int == 1 %}
+                                <input class="pr-2" type="checkbox" name="status" id="status"
+                                       checked>
+                            {% else %}
+                                <input class="pr-2" type="checkbox" name="status" id="status">
+                            {% endif %}
+                        {% else %}
+                            <input class="pr-2" type="checkbox" name="status" id="status" checked>
+                        {% endif %}
                         Опубликовать</label>
-
                 </div>
                 <div class="input-group justify-content-end">
                     {% if post %}

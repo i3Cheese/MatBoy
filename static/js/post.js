@@ -4,7 +4,6 @@ $(document).ready(function () {
     let tourIdInput = $('input#tour-id');
     let tourId = tourIdInput.val();
     let postIdInput = $('input#post-id');
-    let statusInput = $('input#status');
     if (postIdInput.length) {  // If edit post
         let postId = postIdInput.val();
         $.ajax({ // Load data for current post
@@ -15,12 +14,6 @@ $(document).ready(function () {
             if ('post' in data) {
                 let title = data.post.title;
                 let content = data.post.content;
-                let status = data.post.status;
-                if (status) {
-                    statusInput.prop('checked', true);
-                } else {
-                    statusInput.prop('checked', false);
-                }
                 titleInput.val(title);
                 editor.setData(content);
             } else {
@@ -33,7 +26,6 @@ $(document).ready(function () {
         event.preventDefault();
         let title = titleInput.val()
         let content = editor.getData();
-        let data = postForm.serialize();
         if (!title) {
             makeErrorToast('Заголовок новости не заполнен');
         }
