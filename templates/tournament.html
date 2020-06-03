@@ -25,6 +25,11 @@
                 <a class="link link-small" href='{{ tour.link }}/console'>
                     управлять
                 </a>
+                |
+                <a class="link link-small"
+                   onclick="redirectWithStep(event)"
+                   href="{{ tour.link }}/create_post"
+                >создать новость</a>
             {% endif %}
         </div>
     </div>
@@ -66,40 +71,70 @@
         <h1 class="page_title">
             Новости турнира
         </h1>
-        <div class="link_menu">
-            {% if current_user.id in (1, tour.chief_id,) %}
-                <a class="link link-small"
-                   onclick="redirectWithStep(event)"
-                   href="{{ tour.link }}/create_post"
-                >Создать новость</a>
-            {% endif %}
+        <div class="dropdown mt-2">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                Открытые
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <button class="dropdown-item" type="button" id="visible-posts-btn" value="1">
+                    Открытые
+                </button>
+                <button class="dropdown-item" type="button" id="not-visible-posts-btn" value="0">
+                    Скрытые
+                </button>
+                <button class="dropdown-item" type="button" id="all-posts-btn" value="10">Все
+                </button>
+            </div>
         </div>
     </div>
-    <div id="post_container" class="box_container">
-        <script src="{{url_for('static', filename='js/tournament.js')}}"></script>
-        <template id="card">
-            <div class="post_card box w-100">
-                {% if current_user.id == tour.chief_id %}
+    <div id="post_container" class="box_container"></div>
+    <template id="visible-card-post">
+        <div class="post_card box w-100">
+            {% if current_user.id == tour.chief_id %}
                 <div class="link_menu" align="right">
                     <a class="edit link link-small" onclick="">
                         редактировать
                     </a>
-                     | 
+                    |
                     <a class="hide link link-small" onclick="">
                         скрыть
                     </a>
                 </div>
-                {% endif %}
-                <h3 class="title"></h3>
-                <div class="content ck-content clearfix"></div>
-                <p class="datetime_info" align="right"></p>
-            </div>
-        </template>
-        <template id="empty_posts">
-            <div class="page_description box post_card">
-                Новостей пока нет
-            </div>
-        </template>
-    </div>
+            {% endif %}
+            <h3 class="title"></h3>
+            <div class="content ck-content clearfix"></div>
+            <p class="datetime_info" align="right"></p>
+        </div>
+    </template>
+    <template id="not-visible-card-post">
+        <div class="post_card box w-100">
+            {% if current_user.id == tour.chief_id %}
+                <div class="link_menu" align="right">
+                    <a class="edit link link-small" onclick="">
+                        редактировать
+                    </a>
+                    |
+                    <a class="hide link link-small" onclick="">
+                        отобразить
+                    </a>
+                    |
+                    <a class="hide link link-small">
+                        удалить
+                    </a>
+                </div>
+            {% endif %}
+            <h3 class="title"></h3>
+            <div class="content ck-content clearfix"></div>
+            <p class="datetime_info" align="right"></p>
+        </div>
+    </template>
+    <template id="empty_posts">
+        <div class="page_description box post_card">
+            Новостей пока нет
+        </div>
+    </template>
+    <script src="{{ url_for('static', filename='js/tournament.js') }}"></script>
 
 {% endblock content %}

@@ -52,4 +52,4 @@ api.add_resource(GamesResource, '/api/game')
 api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
 api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts',
                  '/api/tournament/<int:tour_id>/posts/<int:status>')
-api.add_resource(PostResource, '/api/post/<int:post_id>', '/api/post')
+api.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')

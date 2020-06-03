@@ -513,11 +513,11 @@ class TournamentPostsResource(Resource):
         Get existing (status != 0) posts for current tournament
         Status '0' - get hide posts for current tournament
         Status '1' - get visible posts for current tournament
-        Status '-1' - get all posts for current tournament
+        Status '10' - get all posts for current tournament
         """
         session = create_session()
-        if status == -1:
-            posts = session.query(Post).filter(Post.tournament_id == tour_id)
+        if status == 10:
+            posts = session.query(Post).filter(Post.tournament_id == tour_id).all()
         else:
             posts = session.query(Post).filter(
                 Post.tournament_id == tour_id, Post.status == status).all()
