@@ -58,10 +58,16 @@ function saveGame(finish=false){
         data: JSON.stringify(data),
         dataType: "json",
         success: function(){
+            makeSuccessToast("Протокол сохранён");
             if (finish){
-                changeStatus(3, function(){
+                let red = function(){
                     window.location.href=window.location.href.strip('/console');
-                });
+                };
+                if (stat == 2){
+                    changeStatus(3, red);
+                } else {
+                    red()
+                }
             }
         },
     })
@@ -107,10 +113,7 @@ $(document).on('click', '.save', function(){
     saveGame();
 });
 $(document).on('click', '.end_editing', function(){
-    if (stat == 3)
-        saveGame(redirect=true);
-    else
-        saveGame(st=3, redirect=true)
+    saveGame(finish=true);
 });
 $(document).on('click', '.start_editing', function(e){
     if (stat == 1){
