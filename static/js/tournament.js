@@ -127,43 +127,38 @@ $(document).on('click', '.hide', function (event) {
     let dateTimeInfo = card.find('.datetime_info').html();
     let postId = card.data('post_id');
     let status = card.data('status');
-    console.log(statusPost);
-    if (status === 1) {
-        $.ajax({
-            url: API_URL + `post/${postId}`,
-            type: 'PUT',
-            data: {
-                status: 0
-            }
-        });
-    } else if (status === 0) {
-        $.ajax({
-            url: API_URL + `post/${postId}`,
-            type: 'PUT',
-            data: {
-                status: 1
-            }
-        });
+    let newStatus
+    if (status === 0) {
+        newStatus = 1
+    } else if (status === 1) {
+        newStatus = 0
     }
-    if (statusPost === 10) {
-        card.empty();
-        if (status === 1) {
-            card.html($($('template#not-visible-card-post').html()).html());
-            card.data("status", 0);
-        } else if (status === 0) {
-            card.html($($('template#visible-card-post').html()).html());
-            card.data("status", 1);
+    $.ajax({
+        url: API_URL + `post/${postId}`,
+        type: 'PUT',
+        data: {
+            status: newStatus
         }
-        card.children(".title").html(title);
-        card.children('.content').html(content);
-        card.children(".datetime_info").html(dateTimeInfo);
-        card.data("post_id", postId);
-    } else {
-        card.remove();
-    }
-    if (container.children('div').length === 0) {
-        reloadLoader();
-    }
+    }).done(function () {
+        if (statusPost === 10) {
+            card.empty();
+            if (newStatus === 0) {
+                card.html($($('template#not-visible-card-post').html()).html());
+            } else if (newStatus === 1) {
+                card.html($($('template#visible-card-post').html()).html());
+            }
+            card.children(".title").html(title);
+            card.children('.content').html(content);
+            card.children(".datetime_info").html(dateTimeInfo);
+            card.data("post_id", postId);
+            card.data("status", newStatus);
+        } else {
+            card.remove();
+        }
+        if (container.children('div').length === 0) {
+            reloadLoader();
+        }
+    });
 });
 
 
