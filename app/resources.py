@@ -456,8 +456,9 @@ class ProtocolResource(Resource):
 
 class PostResource(Resource):
     put_parse = reqparse.RequestParser()
-    put_parse.add_argument('title', required=True, type=str)
-    put_parse.add_argument('content', required=True, type=str)
+    put_parse.add_argument('title', type=str)
+    put_parse.add_argument('content', type=str)
+    put_parse.add_argument('status', type=int)
 
     post_parse = reqparse.RequestParser()
     post_parse.add_argument('title', required=True, type=str)
@@ -478,7 +479,8 @@ class PostResource(Resource):
         post = session.query(Post).get(post_id)
         args = self.put_parse.parse_args()
         for key, value in args.items():
-            post.__setattr__(key, value)
+            if value is not None:
+                post.__setattr__(key, value)
         session.commit()
         return jsonify({"success": "ok"})
 
@@ -506,9 +508,17 @@ class PostResource(Resource):
 
 
 class TournamentPostsResource(Resource):
-    def get(self, tour_id):
-        """Get existing (ststus != 0) posts for current tournament"""
+    def get(self, tour_id, status=1):
+        """
+        Get existing (status != 0) posts for current tournament
+        Status '0' - get hide posts for current tournament
+        Status '1' - get visible posts for current tournament
+        Status '-1' - get all posts for current tournament
+        """
         session = create_session()
-        posts = session.query(Post).filter(Post.tournament_id == tour_id, Post.status != 0).all()
-        return jsonify({'posts': list(map(lambda post: post.to_dict(),
-                                          posts))[::-1]})
+        if status == -1:
+            posts = session.query(Post).filter(Post.tournament_id == tour_id)
+        else:
+            posts = session.query(Post).filter(
+                Post.tournament_id == tour_id, Post.status == status).all()
+        return jsonify({'posts': list(map(lambda post: post.to_dict(), posts))[::-1]})

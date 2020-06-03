@@ -4,6 +4,7 @@ let postN = 0;
 let inpCount = 3;
 let block = false;
 let tournamentId = window.location.pathname.split('/')[2];
+let statusPost = 1;
 
 window.onload = loader;
 
@@ -15,7 +16,7 @@ function scrolling() {
 
 function loader() {
     $.ajax({
-            url: API_URL + `tournament/${tournamentId}/posts`,
+            url: API_URL + `tournament/${tournamentId}/posts/${statusPost}`,
             type: 'GET',
         }
     ).done(function (data) {
@@ -41,8 +42,7 @@ function loader() {
             card.children(".title").html(posts[n].title);
             card.children('.content').html(posts[n].content);
             card.children(".datetime_info").html(posts[n].created_info);
-            card.children(".link_menu").children(".delete").attr("id", (posts[n].id).toString());
-            card.children(".link_menu").children(".edit").attr("id", (posts[n].id).toString());
+            card.data("post_id", posts[n].id);
             container.prepend(card);
         }
         postN += inpCount;
@@ -51,22 +51,37 @@ function loader() {
 
 $(document).on('click', '.edit', function (event) {
     let targetElem = $(event.target);
-    let postId = targetElem.attr('id');
+    let card = targetElem.parents('div.post_card');
+    let postId = card.data('post_id');
     window.location.href = `/tournament/${tournamentId}/edit_post/${postId}`;
 });
 
-$(document).on('click', '.delete', function (event) {
+$(document).on('click', '.hide', function (event) {
     let targetElem = $(event.target);
-    let postId = targetElem.attr('id');
+    let card = targetElem.parents('div.post_card');
+    let postId = card.data('post_id');
     let container = $('#post_container');
-    console.log(postId)
-    $.ajax({
-        url: API_URL + `post/${postId}`,
-        type: 'DELETE',
-    }).done(function(r) {
-        targetElem.parent('div.link_menu').parent('div.post_card').remove()
-        if (!container.children('div').length) {
-            loader();
-        }
-    });
+    if (statusPost === 1) {
+        $.ajax({
+            url: API_URL + `post/${postId}`,
+            type: 'PUT',
+            data: {
+                status: 0
+            }
+        }).done(function(r) {
+            targetElem.parent('div.link_menu').parent('div.post_card').remove()
+            if (!container.children('div').length) {
+                loader();
+            }
+        });
+    }
+    else if (statusPost === 0) {
+        $.ajax({
+            url: API_URL + `post/${postId}`,
+            type: 'PUT',
+            data: {
+                status: 1
+            }
+        })
+    }
 });
