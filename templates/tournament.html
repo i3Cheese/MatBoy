@@ -65,6 +65,28 @@
                 <dd class="col-sm-6">Дата оканчания:</dd>
                 <dt class="col-sm-6">{{ formated_date(tour.end) }}</dt>
             </dl>
+            {% if current_user.is_authenticated %}
+                <div class="subscribe">
+                    <div class="subscribe__item">
+                        <label for="subscribe-email-input">Уведомления по почте:</label>
+                        {% if current_user in tour.users_subscribe_email %}
+                            <input type="checkbox" id="subscribe-email-input" checked>
+                        {% else %}
+                            <input type="checkbox" id="subscribe-email-input">
+                        {% endif %}
+                    </div>
+                    {% if current_user.integration_with_VK %}
+                        <div class="subscribe__item">
+                            <label for="subscribe-vk-input">Уведомления ВК:</label>
+                            {% if current_user in tour.users_subscribe_vk %}
+                                <input type="checkbox" id="subscribe-vk-input" checked>
+                            {% else %}
+                                <input type="checkbox" id="subscribe-vk-input">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
     <div id="news_title" class="title_container">
