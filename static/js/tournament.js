@@ -24,9 +24,7 @@ $(document).ready(function () {
         currentStatus.html($(target.target).html());
         statusPost = parseInt($(target.target).val(), 10);
         container.empty();
-        postN = 0;
-        block = false;
-        loader();
+        reloadLoader();
     });
 });
 
@@ -37,6 +35,13 @@ function displayEmptyPost() {
         let card = $(document.querySelector('template#empty_posts').content).children(".post_card").clone();
         container.prepend(card);
     }
+}
+
+
+function reloadLoader() {
+    postN = 0;
+    block = false;
+    loader();
 }
 
 function loader() {
@@ -128,7 +133,7 @@ $(document).on('click', '.hide', function (event) {
         card.remove();
     }
     if (container.children('div').length === 0) {
-        displayEmptyPost();
+        reloadLoader();
     }
 });
 
@@ -146,7 +151,7 @@ $(document).on('click', '.delete', function (event) {
     }).always(function () {
         console.log(container.children('div').length);
         if (container.children('div').length === 0) {
-            displayEmptyPost();
+            reloadLoader();
         }
     });
 });
