@@ -42,8 +42,8 @@
       class="toast_holder" 
       id="toasts">
 
-  {% with errors = get_flashed_messages(category_filter=["error"]) %}
-    {%- for msg in errors %}
+  {%- with errors = get_flashed_messages(category_filter=["error"]) %}
+    {%- for msg in errors -%}
       <div role="alert"
           aria-live="assertive" 
           aria-atomic="true" 
@@ -60,11 +60,11 @@
           <span class="message">{{msg}}</span>
         </div>
       </div>
-    {% endfor -%}
-  {% endwith %}
+    {%- endfor -%}
+  {%- endwith -%}
 
-  {% with sucs = get_flashed_messages(category_filter=["success"]) %}
-    {%- for msg in sucs %}
+  {%- with sucs = get_flashed_messages(category_filter=["success"]) -%}
+    {%- for msg in sucs -%}
       <div role="alert" 
            aria-live="assertive"
            aria-atomic="true"
@@ -81,7 +81,7 @@
           <span class="message">{{msg}}</span>
         </div>
       </div>
-    {% endfor -%}
-  {% endwith %}
+    {%- endfor -%}
+  {%- endwith -%}
 
 </div>

@@ -1,7 +1,7 @@
 from flask_restful import reqparse, abort, Resource, request
 from flask_restful.inputs import boolean
 from flask import jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 from data import User, Team, Tournament, League, Game, Post, create_session
 from datetime import date, datetime
 import logging
@@ -72,23 +72,31 @@ def get_game(session, game_id, do_abort=True) -> Game:
         abort(404, message=f"Game #{game_id} not found")
     return game
 
+def get_post(session, post_id, do_abort=True) -> Game:
+    """Get Post from database, abort(404) if do_abort==True and post not found"""
+    post = session.query(Post).get(post_id)
+    if do_abort and not post:
+        abort(404, message=f"Post #{post_id} not found")
+    return post
+
 
 def abort_if_email_exist(session, email):
     user = session.query(User).filter(User.email == email).first()
     logging.info(repr(user))
     if user is not None:
-        abort(409, message=f"Пользователь с e-mail {repr(email)} уже зарегестрирован")
+        abort(
+            409, message=f"Пользователь с e-mail {repr(email)} уже зарегестрирован")
 
 
 class UserResource(Resource):
     def get(self, user_id: int):
         session = create_session()
-        return jsonify({"user": get_user(session, user_id).to_dict()})
-
-    def delete(self, user_id):
-        """Only admin can delete"""
-        # TODO: UserResource delete
-        pass
+        user = get_user(session, user_id)
+        if current_user.is_admin:
+            d = user.to_dict()
+        else:
+            d = user.to_secure_dict()
+        return jsonify({"user": d})
 
 
 class UsersResource(Resource):
@@ -117,10 +125,15 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
+    @login_required
     def get(self):
+        if not current_user.is_admin:
+            abort(403, message="Permission denied")
+
         session = create_session()
         if request.args.get('vk_id', 0):
-            user = session.query(User).filter(User.vk_id == int(request.args.get('vk_id'))).first()
+            user = session.query(User).filter(
+                User.vk_id == int(request.args.get('vk_id'))).first()
             if user:
                 return jsonify(user.to_dict())
             else:
@@ -142,44 +155,62 @@ class TeamResource(Resource):
     put_pars.add_argument('name', type=str)
     put_pars.add_argument('motto', type=str)
     put_pars.add_argument('status', type=int)
-    put_pars.add_argument('trainer.id', type=int)
-    put_pars.add_argument('trainer.email', type=str)
-    put_pars.add_argument('trainer', type=dict)
     put_pars.add_argument('league.id', type=int)  # 0 == None
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, team_id: int):
         session = create_session()
         team = get_team(session, team_id)
-        return jsonify({'team': team.to_dict()})
+        if team.have_permission(current_user):
+            return jsonify({'team': team.to_dict()})
+        else:
+            return jsonify({'team': team.to_dict(
+                only=("id",
+                      "name",
+                      "motto",
+                      "status",
+                      "trainer.id",
+                      "trainer.fullname",
+                      "tournament.id",
+                      "tournament.title",
+                      "league.id",
+                      "league.title",
+                      "link",
+                      )
+                )})
 
+    @login_required
     def put(self, team_id):
         """If trainer.id and trainer.email specified in the same time
            trainer was looking by trainer.id"""
         args = self.put_pars.parse_args()
         logging.info(f"Team put request with args {args}")
+        
         session = create_session()
         team = get_team(session, team_id)
-        if not (args['trainer.id'] is None and args['trainer.email'] is None):
-            team.trainer = get_user(session,
-                                    user_id=args['trainer']['id'],
-                                    email=args['trainer']['email'],
-                                    )
-        if args['league.id'] is not None:
-            if args['league.id'] == 0:
-                team.league = None
-            else:
-                team.league = get_league(session, args['league.id'])
-        if args['status'] is not None:
-            team.status = args['status']
-        if team.status >= 2 and team.league is None:
-            abort(400, message="Принятая команда должна быть привязана к лиге")
-        if args['name'] is not None:
-            if not args['name']:
-                abort(400, message="Название не может быть пустым")
-            team.name = args['name']
-        if args['motto'] is not None:
-            team.motto = args['motto']
+        
+        if not(args['league.id'] is None and args['status'] is None):
+            if not team.tournament.have_permission(current_user):
+                abort(403, message="You haven't access to tournament")
+            if args['league.id'] is not None:
+                if args['league.id'] == 0:
+                    team.league = None
+                else:
+                    team.league = get_league(session, args['league.id'])
+            if args['status'] is not None:
+                team.status = args['status']
+            if team.status >= 2 and team.league is None:
+                abort(400, message="Принятая команда должна быть привязана к лиге")
+                
+        if not(args['name'] is None and args['motto'] is None) or args['send_info']:
+            if not team.have_permission(current_user):
+                abort(403, message="You haven't access to team")
+            if args['name'] is not None:
+                if not args['name']:
+                    abort(400, message="Название не может быть пустым")
+                team.name = args['name']
+            if args['motto'] is not None:
+                team.motto = args['motto']
         session.merge(team)
         session.commit()
 
@@ -188,9 +219,12 @@ class TeamResource(Resource):
             response['team'] = team.to_dict()
         return response
 
+    @login_required
     def delete(self, team_id):
         session = create_session()
         team = get_team(session, team_id)
+        if not team.have_permission(current_user):
+            abort(403, message="Permission denied")
         team.status = 0
         session.merge(team)
         session.commit()
@@ -209,8 +243,13 @@ class LeagueResource(Resource):
     def get(self, league_id: int):
         session = create_session()
         league = get_league(session, league_id)
-        return jsonify({'league': league.to_dict()})
+        if league.have_permission(current_user):
+            d = league.to_dict()
+        else:
+            d = league.to_secure_dict()
+        return jsonify({'league': d})
 
+    @login_required
     def put(self, league_id):
         """Handle request to change league."""
         args = self.put_pars.parse_args()
@@ -218,6 +257,9 @@ class LeagueResource(Resource):
 
         session = create_session()
         league = get_league(session, league_id)
+        if not league.have_permission(current_user):
+            abort(403, message="Permission denied")
+
         if not (args['chief.id'] is None and args['chief.email'] is None):
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
@@ -239,10 +281,14 @@ class LeagueResource(Resource):
             response["league"] = league.to_dict()
         return jsonify(response)
 
+    @login_required
     def delete(self, league_id):
         """Delete this league and set league.teams.status to <=1"""
         session = create_session()
         league = get_league(session, league_id, do_abort=False)
+        if not league.have_permission(current_user):
+            abort(403, message="Permission denied")
+
         if not league:
             return jsonify({'success': 'ok'})
 
@@ -259,16 +305,23 @@ class LeagueResource(Resource):
 
 class LeaguesResource(Resource):
     post_pars = LeagueResource.put_pars.copy()
-    post_pars.replace_argument('title', type=str, required=True, help="Необходимо указать название")
+    post_pars.replace_argument(
+        'title', type=str, required=True, help="Необходимо указать название")
     post_pars.replace_argument('tournament.id', type=int, required=True)
 
+    @login_required
     def post(self):
         """Handle request to create league."""
         args = self.post_pars.parse_args()
         logging.info(f"League post request with args {args}")
 
         session = create_session()
+        tour = get_tour(session, args['tournament.id'])
+        if not tour.have_permission(current_user):
+            abort('403', message="Permission denied")
+        
         league = League()
+        league.tournament = tour
         if args['chief.id'] is None and args['chief.email'] is None:
             abort(400, message={
                 "chief": "Не указана информация о главном по лиге"})
@@ -276,7 +329,6 @@ class LeaguesResource(Resource):
             league.chief = get_user(session,
                                     user_id=args['chief.id'],
                                     email=args['chief.email'], )
-        league.tournament = get_tour(session, args['tournament.id'])
         league.title = args['title']
         if args['description'] is not None:
             league.description = args['description']
@@ -293,20 +345,29 @@ class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)
     # Empty string == None
-    put_pars.add_argument('start', type=get_datetime_from_string, help="Неверный формат даты")
+    put_pars.add_argument(
+        'start', type=get_datetime_from_string, help="Неверный формат даты")
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)
-    put_pars.add_argument('league.id', type=int, help="Неправильно указана лига")
-    put_pars.add_argument('team1.id', type=int, help="Неправильный указана команда")
-    put_pars.add_argument('team2.id', type=int, help="Неправильно указана команда")
+    put_pars.add_argument('league.id', type=int,
+                          help="Неправильно указана лига")
+    put_pars.add_argument('team1.id', type=int,
+                          help="Неправильный указана команда")
+    put_pars.add_argument('team2.id', type=int,
+                          help="Неправильно указана команда")
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, game_id):
         session = create_session()
         game = get_game(session, game_id)
-        return jsonify({'game': game.to_dict()})
+        if game.have_permission(current_user):
+            d = game.to_dict()
+        else:
+            d = game.to_short_dict()
+        return jsonify({'game': d})
 
+    @login_required
     def put(self, game_id):
         """Handle request to change game."""
         args = self.put_pars.parse_args()
@@ -314,6 +375,9 @@ class GameResource(Resource):
 
         session = create_session()
         game = get_game(session, game_id)
+        if not game.have_permission(current_user):
+            abort(403, message="Permission denied")
+
         if args['place'] is not None:
             game.place = args['place']
         if args['start'] is not None:
@@ -335,12 +399,14 @@ class GameResource(Resource):
             game.judge = get_user(session,
                                   user_id=args['judge.id'],
                                   email=args['judge.email'], )
-        if args['team1.id'] is not None:
-            game.team1 = get_team(session, args['team1.id'])
-        if args['team2.id'] is not None:
-            game.team2 = get_team(session, args['team2.id'])
-        if game.team1 == game.team2:
-            abort(400, message="Команды должны быть различны")
+            
+        if not(args['team1.id'] is None and args['team2.id'] is None):
+            if args['team1.id'] is not None:
+                game.team1 = get_team(session, args['team1.id'])
+            if args['team2.id'] is not None:
+                game.team2 = get_team(session, args['team2.id'])
+            if game.team1 == game.team2:
+                abort(400, message="Команды должны быть различны")
         if args['league.id'] is not None:
             game.league = get_league(session, args['league.id'])
 
@@ -353,10 +419,13 @@ class GameResource(Resource):
         logging.info(f"Game put response: {response}")
         return jsonify(response)
 
+    @login_required
     def delete(self, game_id):
         """Sets the status of game to zero. Thats mean that the game is canceled"""
         session = create_session()
         game = get_game(session, game_id)
+        if not game.have_permission(current_user):
+            abort(403, message="Permission denied")
         game.status = 0
         session.merge(game)
         session.commit()
@@ -371,13 +440,19 @@ class GamesResource(Resource):
     post_pars.replace_argument('team2.id', type=int,
                                required=True, help="Неправильно указана команда")
 
+    @login_required
     def post(self):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
 
         session = create_session()
+        league = get_league(session, args['league.id'])
+        if not league.have_permission(current_user):
+            abort(403, message="Permission denied")
+
         game = Game()
+        game.league = league
         if args['place'] is not None:
             game.place = args['place']
         if args['start'] is not None:
@@ -390,7 +465,8 @@ class GamesResource(Resource):
             abort(400, message="Не указана информация о судье")
         game.team1 = get_team(session, args['team1.id'])
         game.team2 = get_team(session, args['team2.id'])
-        game.league = get_league(session, args['league.id'])
+        if game.team1 == game.team2:
+            abort(400, message="Команды должны быть различны")
 
         session.add(game)
         session.commit()
@@ -403,11 +479,15 @@ class GamesResource(Resource):
 
 
 class ProtocolResource(Resource):
+    @login_required
     def put(self, game_id):
         """Gets parts of protocol and complements it"""
         session = create_session()
         game = get_game(session, game_id)
         logging.info(f"Protocol put with json {request.json}")
+        if not game.have_permission(current_user):
+            abort(403, message="Permission denied")
+            
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
 
@@ -441,7 +521,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                                      [len(rounds) * 12 - sum(teams_points), ]
+                [len(rounds) * 12 - sum(teams_points), ]
             game.protocol['stars'] = teams_stars
 
         session.merge(game)
@@ -467,15 +547,19 @@ class PostResource(Resource):
     def get(self, post_id):
         """Get a post by id"""
         session = create_session()
-        post = session.query(Post).get(post_id)
-        if post:
-            return jsonify({'post': post.to_dict()})
-        return jsonify({'error': 'Post not found'})
+        post = get_post(session, post_id)
+        if post.have_permission(current_user):
+            d = post.to_dict()
+        else:
+            d = post.to_secure_dict()
+        return jsonify({'post': d})
 
     def put(self, post_id):
         """Edit a post by id"""
         session = create_session()
-        post = session.query(Post).get(post_id)
+        post = get_post(session, post_id)
+        if not post.have_permission(current_user):
+            abort(403, message="Permission denied")
         args = self.put_parse.parse_args()
         for key, value in args.items():
             post.__setattr__(key, value)
@@ -486,17 +570,23 @@ class PostResource(Resource):
         """Deleting a post by id"""
         session = create_session()
         post = session.query(Post).filter(Post.id == post_id).first()
+        if not post.have_permission(current_user):
+            abort(403, message="Permission denied")
         if post:
             post.status = 0
             session.commit()
             return jsonify({"success": "ok"})
-        return jsonify({"error": "error"})
+        else:
+            abort(404, message="Post not found")
 
     def post(self):
         """Create post"""
         session = create_session()
         args = self.post_parse.parse_args()
         post = Post()
+        tour = get_tour(session, args['tournament_id'])
+        if not tour.have_permission(current_user):
+            abort(403, message="Permission denied")
         for key, value in args.items():
             post.__setattr__(key, value)
         post.author_id = current_user.get_id()
@@ -507,8 +597,14 @@ class PostResource(Resource):
 
 class TournamentPostsResource(Resource):
     def get(self, tour_id):
-        """Get existing (ststus != 0) posts for current tournament"""
+        """Get existing (status != 0) posts for current tournament"""
         session = create_session()
-        posts = session.query(Post).filter(Post.tournament_id == tour_id, Post.status != 0).all()
-        return jsonify({'posts': list(map(lambda post: post.to_dict(),
-                                          posts))[::-1]})
+        tour = get_tour(session, tour_id)
+        posts = tour.posts
+        if tour.have_permission(current_user):
+            f = lambda post: post.to_dict()
+        else:
+            f = lambda post: post.to_secure_dict()
+
+        return jsonify({'posts': list(
+            map(f, sorted(posts, key=lambda post: post.created_at, reverse=True)))})

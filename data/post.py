@@ -20,6 +20,18 @@ class Post(BaseModel):
         "author.fullname",
         "created_info"
     )
+    secure_serialize_only = (
+        "id",
+        "title",
+        "content",
+        "status",
+        "tournament.id",
+        "tournament.title",
+        "author.id",
+        "author.fullname",
+        "created_info"
+    )
+    
 
     title = sa.Column(sa.String, nullable=False)
     content = sa.Column(sa.Text, nullable=False)
@@ -37,3 +49,7 @@ class Post(BaseModel):
 
     def __str__(self):
         return self.title
+
+    def have_permission(self, user):
+        return user == self.author or self.tournament.have_permission(user)
+    

@@ -20,7 +20,15 @@ class User(BaseModel, UserMixin):
                       "is_creator",
                       "link",
                       )
-    
+    secure_serialize_only = ("id",
+                             "name",
+                             "surname",
+                             "patronymic",
+                             "fullname",
+                             "city",
+                             "birthday",
+                             "link",
+                             )
     short_serialize_only = ("id",
                             "name",
                             "surname",
@@ -74,8 +82,11 @@ class User(BaseModel, UserMixin):
     @property
     def is_admin(self):
         return self.id == 1
-    
-    
+
+
 class AnonymousUser(AnonymousUserMixin):
     id = 0
     is_admin = False
+
+    def __eq__(self, other):
+        return other.id == 0

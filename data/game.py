@@ -24,6 +24,21 @@ class Game(BaseModel):
                       "league.title",
                       "link",
                       )
+    secure_serialize_only = ("id",
+                             "title",
+                             "place",
+                             "start",
+                             "status",
+                             "judge.id",
+                             "judge.fullname",
+                             "team1.id",
+                             "team1.name",
+                             "team2.id",
+                             "team2.name",
+                             "league.id",
+                             "league.title",
+                             "link",
+                             )
 
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
@@ -41,21 +56,23 @@ class Game(BaseModel):
     league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"))
 
     judge = orm.relationship("User", backref="judged_games")
-    team1 = orm.relationship("Team", backref="games_1", foreign_keys=[team1_id, ])
-    team2 = orm.relationship("Team", backref="games_2", foreign_keys=[team2_id, ])
+    team1 = orm.relationship("Team", backref="games_1",
+                             foreign_keys=[team1_id, ])
+    team2 = orm.relationship("Team", backref="games_2",
+                             foreign_keys=[team2_id, ])
     league = orm.relationship("League", backref="games")
-    
+
     @property
     def title(self):
         return f"{self.team1.name} — {self.team2.name}"
 
     def __str__(self):
         return self.title
-    
+
     def have_permission(self, user) -> bool:
         """Check if user has access to this game"""
         return user.is_admin or self.judge == user or self.league.have_permission(user)
-    
+
     @property
     def link(self) -> str:
         return self.league.link + "/game/{0}".format(self.id)
@@ -87,7 +104,7 @@ class Game(BaseModel):
             if team.id == team_id:
                 return team
         return None
-    
+
     @captain_winner.setter
     def captain_winner(self, team_data):
         """:team_data - Union[int, Team]"""
@@ -106,7 +123,7 @@ class Game(BaseModel):
                 return
             else:
                 raise ValueError("Team doesn't participate in this game")
-    
+
     def result_for_team(self, num, first=0):
         if self.status < 3:
             raise StatusError
@@ -117,7 +134,7 @@ class Game(BaseModel):
             return self.protocol['result'][num]
         else:
             raise ValueError
-    
+
     def set_result(self):
         points = self.protocol['points']
         if points[0] - points[1] > 3:
@@ -129,7 +146,7 @@ class Game(BaseModel):
 
     def delete(self):
         self.status = 0
-    
+
     def restore(self):
         self.status = 1
 
@@ -139,11 +156,11 @@ class Game(BaseModel):
     def finish(self):
         self.set_result()
         self.status = 3
-    
+
     @property
     def is_deleted(self):
         return self.status == 0
-    
+
     def started(self):
         return self.status >= 2
 

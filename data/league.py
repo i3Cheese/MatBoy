@@ -19,6 +19,17 @@ class League(BaseModel):
                       "teams.name",
                       "link",
                       )
+    secure_serialize_only = ("id",
+                             "title",
+                             "description",
+                             "chief.id",
+                             "chief.fullname",
+                             "tournament.id",
+                             "tournament.title",
+                             "teams.id",
+                             "teams.name",
+                             "link",
+                             )
 
     title = sa.Column(sa.String, unique=False)
     description = sa.Column(sa.Text, nullable=True)
@@ -27,10 +38,10 @@ class League(BaseModel):
 
     chief = orm.relationship("User", backref="leagues")
     tournament = orm.relationship("Tournament", backref="leagues")
-    
+
     def __str__(self):
         return self.title
-        
+
     def have_permission(self, user) -> bool:
         if user.is_admin or self.chief == user:
             return True

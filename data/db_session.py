@@ -39,6 +39,9 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     
     def to_short_dict(self):
        return self.to_dict(only=self.short_serialize_only)
+    
+    def to_secure_dict(self):
+       return self.to_dict(only=self.secure_serialize_only)
 
 
 def global_init() -> None:
