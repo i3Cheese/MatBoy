@@ -121,3 +121,16 @@ $(document).on('click', '.hide', function (event) {
         card.remove();
     }
 });
+
+
+$(document).on('click', '.delete', function (event) {
+    let targetElem = $(event.target);
+    let card = targetElem.parents('div.post_card');
+    let postId = card.data('post_id');
+    $.ajax({
+        url: API_URL + `post/${postId}`,
+        type: 'DELETE'
+    }).done(function () {
+        card.remove();
+    })
+});
