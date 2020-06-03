@@ -1,7 +1,7 @@
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from config import config
-from utils import handler
+from bot.utils import handler
 
 
 USERS_INFO = {}
