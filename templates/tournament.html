@@ -93,28 +93,31 @@
         <h1 class="page_title">
             Новости турнира
         </h1>
-        <div class="dropdown mt-2">
-            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
-                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
-                Открытые
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <button class="dropdown-item" type="button" id="visible-posts-btn" value="1">
+        {% if current_user.id in (1, tour.chief_id,) %}
+            <div class="dropdown mt-2">
+                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
                     Открытые
                 </button>
-                <button class="dropdown-item" type="button" id="not-visible-posts-btn" value="0">
-                    Скрытые
-                </button>
-                <button class="dropdown-item" type="button" id="all-posts-btn" value="10">Все
-                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <button class="dropdown-item" type="button" id="visible-posts-btn" value="1">
+                        Открытые
+                    </button>
+                    <button class="dropdown-item" type="button" id="not-visible-posts-btn"
+                            value="0">
+                        Скрытые
+                    </button>
+                    <button class="dropdown-item" type="button" id="all-posts-btn" value="10">Все
+                    </button>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
     <div id="post_container" class="box_container"></div>
     <template id="visible-card-post">
         <div class="post_card box w-100">
-            {% if current_user.id == tour.chief_id %}
+            {% if current_user.id in (1, tour.chief_id,) %}
                 <div class="link_menu" align="right">
                     <a class="edit link link-small" onclick="">
                         редактировать
@@ -132,7 +135,7 @@
     </template>
     <template id="not-visible-card-post">
         <div class="post_card box w-100">
-            {% if current_user.id == tour.chief_id %}
+            {% if current_user.id in (1, tour.chief_id,) %}
                 <div class="link_menu" align="right">
                     <a class="edit link link-small" onclick="">
                         редактировать
