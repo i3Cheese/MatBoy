@@ -88,7 +88,7 @@ def login_page():
                 flash('Пользователь не найден', "error")
                 raise ValidationError
             login_user(user, remember=True)
-            return redirect('/')
+            return back_redirect()
         if form.validate_on_submit():
             session = create_session()
             user = session.query(User).filter(
@@ -102,7 +102,7 @@ def login_page():
                 login_user(user, remember=True)
                 return back_redirect()
     except ValidationError:
-        pass
+        return redirect("/login?comefrom={}".format(request.args.get("comefrom", "/")))
     return render_template("login.html", form=form)
 
 
