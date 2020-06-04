@@ -613,7 +613,7 @@ class PostResource(Resource):
         post.author_id = current_user.get_id()
         session.add(post)
         session.commit()
-        return jsonify({"success": "ok"})
+        return jsonify({"success": "ok", "post_id": post.id, "status": post.status})
 
 
 class TournamentPostsResource(Resource):

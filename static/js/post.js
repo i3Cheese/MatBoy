@@ -53,7 +53,17 @@ $(document).ready(function () {
                     data: postForm.serialize()
                 }).done(function (data) {
                     if ('success' in data) {
-                        window.location.href = `/tournament/${tourId}`
+                        if (data.status == 1) {
+                            $.ajax({
+                                url: '/notifications_sending',
+                                type: 'POST',
+                                data: {'tour_id': tourId, "post_id": data.post_id}
+                            }).done(function() {
+                                window.location.href = `/tournament/${tourId}`
+                            })
+                        } else {
+                            window.location.href = `/tournament/${tourId}`
+                        }
                     } else {
                         console.log(data);
                     }

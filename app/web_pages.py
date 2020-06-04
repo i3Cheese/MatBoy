@@ -332,6 +332,7 @@ def team_request(tour_id: int):
                 tournament_id=tour.id,
             )
             emails = set()
+            vk_uids = []
             for field in form.players.entries:
                 email = field.data.lower()
                 if email in emails:
@@ -342,6 +343,8 @@ def team_request(tour_id: int):
                 if not user:
                     field.errors.append("Пользователь не найден.")
                     raise ValidationError
+                if user.integration_with_VK:
+                    vk_uids.append(user.id)
             session.add(team)
             session.commit()
 
@@ -352,11 +355,11 @@ def team_request(tour_id: int):
                 html=render_template('mails/email/invite_team.html',
                                      team=team, tour=tour)
             )
-            # thr_email = Thread(target=send_message, args=[msg])
-            thr_vk = Thread(target=bot.invite_message,
+            thr_email = Thread(target=send_message, args=[msg])
+            thr_vk = Thread(target=bot.notification_message,
                             args=[render_template('mails/vk/invite_team.vkmsg',
-                                                  team=team, tour=tour), emails])
-            # thr_email.start()
+                                                  team=team, tour=tour), vk_uids])
+            thr_email.start()
             thr_vk.start()
             return redirect(team.link)
     except ValidationError:
@@ -368,8 +371,8 @@ def team_request(tour_id: int):
                            menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
 
 
-@blueprint.route('/tournament/<int:tour_id>/create_post', methods=["GET", "POST"])
-@blueprint.route('/tournament/<int:tour_id>/edit_post/<int:post_id>', methods=["GET", "POST"])
+@blueprint.route('/tournament/<int:tour_id>/create_post')
+@blueprint.route('/tournament/<int:tour_id>/edit_post/<int:post_id>')
 @login_required
 def create_post(tour_id, post_id=None):
     """Create and edit post"""

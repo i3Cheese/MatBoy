@@ -67,9 +67,6 @@ def subscribe(uid):
     send_message(uid, text, keyboard=subscribe_keyboard.get_keyboard())
 
 
-def invite_message(text, emails: list):
-    session = create_session()
-    for email in emails:
-        user = session.query(User).filter(User.email == email).first()
-        if user.integration_with_VK:
-            send_message(user.vk_id, text)
+def notification_message(text, uids: list):
+    for user_id in uids:
+        send_message(user_id, text)

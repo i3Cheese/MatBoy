@@ -1,0 +1,5 @@
+<h2>Новый пост в турнире "{{tour.title}}"</h2>
+<p>
+  В новостях турнира вышло обновление - <a href="{{ url_for('web_pages.tournament_page', tour_id=tour.id, _external=True) }}">{{post.title}}</a>
+  Переходите по ссылке, чтобы прочитать пост.
+</p>
