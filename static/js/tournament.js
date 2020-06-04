@@ -37,7 +37,7 @@ $(document).ready(function () {
             status = 0
         }
         $.ajax({
-            url: '/subscribe-email',
+            url: '/subscribe-email-tour',
             type: 'POST',
             data: {status: status, tour_id: tournamentId}
         });
@@ -50,7 +50,7 @@ $(document).ready(function () {
             status = 0
         }
         $.ajax({
-            url: '/subscribe-vk',
+            url: '/subscribe-vk-tour',
             type: 'POST',
             data: {status: status, tour_id: tournamentId}
         });
@@ -174,7 +174,6 @@ $(document).on('click', '.delete', function (event) {
     }).done(function () {
         card.remove();
     }).always(function () {
-        console.log(container.children('div').length);
         if (container.children('div').length === 0) {
             reloadLoader();
         }

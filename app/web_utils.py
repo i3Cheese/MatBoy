@@ -5,8 +5,8 @@ from data import User, Tournament, Post, create_session
 from string import ascii_letters, digits
 from random import choice
 
-
 blueprint = Blueprint('web_utils', __name__)
+
 
 @blueprint.route('/upload-image', methods=['POST'])
 @login_required
@@ -24,27 +24,36 @@ def upload_image_creator():
     }))
 
 
-@blueprint.route('/subscribe-email', methods=['POST'])
+@blueprint.route('/subscribe-email-tour', methods=['POST'])
+@blueprint.route('/subscribe-email-profile', methods=['POST'])
 @login_required
 def subscribe_email():
     try:
-        if 'status' in request.form and 'tour_id' in request.form:
+        if 'status' in request.form:
             session = create_session()
             status = request.form.get('status')
             status = bool(int(status))
-            tour_id = request.form.get('tour_id')
-            tour = session.query(Tournament).get(tour_id)
             user = session.query(User).get(current_user.id)
-            if not tour:
-                raise AttributeError
-            if status:
-                if user not in tour.users_subscribe_email:
-                    tour.users_subscribe_email.append(user)
+            if request.path == '/subscribe-email-tour' and 'tour_id' in request.form:
+                tour_id = request.form.get('tour_id')
+                tour = session.query(Tournament).get(tour_id)
+                if not tour:
+                    raise AttributeError
+                if status:
+                    if user not in tour.users_subscribe_email:
+                        tour.users_subscribe_email.append(user)
+                else:
+                    if user in tour.users_subscribe_email:
+                        tour.users_subscribe_email.remove(user)
+                session.merge(tour)
+                session.merge(user)
+            elif request.path == '/subscribe-email-profile':
+                if status:
+                    user.email_notifications = True
+                else:
+                    user.email_notifications = False
             else:
-                if user in tour.users_subscribe_email:
-                    tour.users_subscribe_email.remove(user)
-            session.merge(tour)
-            session.merge(user)
+                raise AttributeError
             session.commit()
             return jsonify({'success': 'ok'})
         else:
@@ -53,27 +62,37 @@ def subscribe_email():
         return jsonify({'error': 'Invalid response'})
 
 
-@blueprint.route('/subscribe-vk', methods=['POST'])
+
+@blueprint.route('/subscribe-vk-tour', methods=['POST'])
+@blueprint.route('/subscribe-vk-profile', methods=['POST'])
 @login_required
 def subscribe_vk():
     try:
-        if 'status' in request.form and 'tour_id' in request.form:
+        if 'status' in request.form:
             session = create_session()
             status = request.form.get('status')
             status = bool(int(status))
-            tour_id = request.form.get('tour_id')
-            tour = session.query(Tournament).get(tour_id)
             user = session.query(User).get(current_user.id)
-            if not tour:
-                raise AttributeError
-            if status:
-                if user not in tour.users_subscribe_vk:
-                    tour.users_subscribe_vk.append(user)
+            if request.path == '/subscribe-vk-tour' and 'tour_id' in request.form:
+                tour_id = request.form.get('tour_id')
+                tour = session.query(Tournament).get(tour_id)
+                if not tour:
+                    raise AttributeError
+                if status:
+                    if user not in tour.users_subscribe_vk:
+                        tour.users_subscribe_vk.append(user)
+                else:
+                    if user in tour.users_subscribe_vk:
+                        tour.users_subscribe_vk.remove(user)
+                session.merge(tour)
+                session.merge(user)
+            elif request.path == '/subscribe-vk-profile':
+                if status:
+                    user.vk_notifications = True
+                else:
+                    user.vk_notifications = False
             else:
-                if user in tour.users_subscribe_vk:
-                    tour.users_subscribe_vk.remove(user)
-            session.merge(tour)
-            session.merge(user)
+                raise AttributeError
             session.commit()
             return jsonify({'success': 'ok'})
         else:

@@ -2,33 +2,54 @@
 {% from 'models_macroses.html' import team_status, team_league, check_specified %}
 
 {% block title %}
-  Профиль - {{user.fullname}}
+    Профиль - {{ user.fullname }}
 {% endblock title %}
 
 {% block content %}
 
-<div class="box_container">
-  <div class="box">
-    <div class="shadow-box__title">
-      Команды
+    <div class="box_container">
+        <div class="box">
+            <div class="shadow-box__title">
+                Команды
+            </div>
+            {% for team in user.teams | sort(reverse=True, attribute="created_at") %}
+                <div class="centered_block block_link" onclick="redirect(event);"
+                     href="{{ team.link }}">
+                    <h5 class="item_title">{{ team.name }}</h5>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="box square-tiny">
+            <div class="shadow-box__title">
+                {{ user.fullname }}
+            </div>
+            <dl class="row info_in_box">
+                <dd class="col-sm-3">Город:</dd>
+                <dt class="col-sm-9">{{ check_specified(user.city) }}</dt>
+                <dd class="col-sm-3">Возраст:</dd>
+                <dt class="col-sm-9">{{ user.years_old }}</dt>
+            </dl>
+            <div class="subscribe">
+                <div class="subscribe__item">
+                    <label for="subscribe-email-input">Уведомления по почте:</label>
+                    {% if current_user.email_notifications %}
+                        <input type="checkbox" id="subscribe-email-input" checked>
+                    {% else %}
+                        <input type="checkbox" id="subscribe-email-input">
+                    {% endif %}
+                </div>
+                {% if current_user.integration_with_VK %}
+                    <div class="subscribe__item">
+                        <label for="subscribe-vk-input">Уведомления ВК:</label>
+                        {% if current_user.vk_notifications %}
+                            <input type="checkbox" id="subscribe-vk-input" checked>
+                        {% else %}
+                            <input type="checkbox" id="subscribe-vk-input">
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    {% for team in user.teams | sort(reverse=True, attribute="created_at")%}
-      <div class="centered_block block_link" onclick="redirect(event);" href="{{team.link}}">
-        <h5 class="item_title">{{team.name}}</h5>
-      </div>
-    {% endfor %}
-  </div>
-  <div class="box square-tiny">
-    <div class="shadow-box__title">
-      {{user.fullname}}
-    </div>
-    <dl class="row info_in_box">
-      <dd class="col-sm-3">Город:</dd>
-      <dt class="col-sm-9">{{check_specified(user.city)}}</dt>
-      <dd class="col-sm-3">Возраст:</dd>
-      <dt class="col-sm-9">{{user.years_old}}</dt>
-    </dl>
-  </div>
-</div>
-
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock content %}
