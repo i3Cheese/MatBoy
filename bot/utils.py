@@ -1,44 +1,63 @@
 from data import User, create_session
-import bot.messages as messages
+import bot.messages as msg
+from bot import keyboards as kb
 
+
+COMMANDS = {'уведомления': ['включить', 'выключить'], 
+            'подписка': ['информация', 'отписаться', 'подписаться'],
+            'помощь': [],
+            'выход': []}
 
 def handler(uid, text, users_info):
     if uid not in users_info.keys():
-        users_info[uid] = {}
-        messages.welcome_message(uid)
+        users_info[uid] = ''
+        msg.welcome_message(uid)
         return
     else:
-        if text.lower() not in ('выключить', 'включить'):
-            messages.auto_answer(uid)
+        session = create_session()
+        user = session.query(User).filter(User.vk_id == uid).first()
+        if not user:
+            msg.without_integration(uid)
+            return
+        if text == 'помощь':
+            msg.help(uid)
+        elif text == 'выход':
+            users_info[uid] = ''
+            msg.exit_message(uid)
+        elif text == 'уведомления' or users_info[uid] == 'уведомления': 
+            users_info[uid] = 'уведомления'
+            notifications(uid, user, text)
+            session.commit()
         else:
-            notifications(uid, text.lower())
-
-
-def notifications(uid, command):
-    session = create_session()
-    user = session.query(User).filter(User.vk_id == uid).first()
-    if not user:
-        messages.send_message(uid, 'К сожалению Ваша страница ' \
-                                   'ВКонтакте не привязана к аккаунту на сайте')
+            msg.auto_answer(uid)
         return
-    if command == 'включить':
+
+
+def notifications(uid, user, command):
+    if command == 'уведомления':
+        msg.notifications(uid)
+    elif command == 'включить':
         turn_on_notification(uid, user)
     elif command == 'выключить':
         turn_off_notification(uid, user)
-    session.commit()
+    else:
+        msg.auto_answer(uid)
+    return
 
 
 def turn_on_notification(uid, user):
     if user.vk_notifications:
-        messages.send_message(uid, 'У Вас уже включены уведомления')
+        text = 'У Вас уже включены уведомления'
     else:
         user.vk_notifications = True
-        messages.send_message(uid, 'Уведомления успешно включены')
+        text = 'Уведомления успешно включены'
+    msg.notifications_info(uid, text)
 
 
 def turn_off_notification(uid, user):
     if not user.vk_notifications:
-        messages.send_message(uid, 'У Вас отключены уведомления')
+        text ='У Вас отключены уведомления'
     else:
         user.vk_notifications = False
-        messages.send_message(uid, 'Уведомления успешно отключены')
+        text = 'Уведомления успешно отключены'
+    msg.notifications_info(uid, text)
