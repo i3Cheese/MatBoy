@@ -32,9 +32,11 @@ login_manager.anonymous_user = AnonymousUser
 from . import errorhandlers
 from . import web_pages
 from . import single_pages
+from . import web_utils
 
 app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
+app.register_blueprint(web_utils.blueprint)
 
 app.jinja_env.globals['client_id'] = app.config['CLIENT_ID']
 app.jinja_env.globals['group_id'] = app.config['VK_GROUP_ID']

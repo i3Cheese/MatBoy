@@ -7,4 +7,5 @@ venv/
 .vscode/
 alembic/versions/
 ngrok.exe
-static/img/
+*.idea
+static/img/*.*
