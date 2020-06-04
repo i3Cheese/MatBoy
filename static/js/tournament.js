@@ -1,6 +1,6 @@
 $(document).bind("scroll", scrolling);
 
-let postN = 0;
+let last_id = -1;
 let inpCount = 3;
 let block = false;
 let tournamentId = window.location.pathname.split('/')[2];
@@ -68,46 +68,56 @@ function displayEmptyPost() {
 
 
 function reloadLoader() {
-    postN = 0;
+    last_id = -1;
     block = false;
     loader();
 }
 
 function loader() {
+    let type;
+    switch(statusPost) {
+        case 0:
+            type = 'hidden';
+            break;
+        case 1:
+            type = 'visible';
+            break;
+        case 10:
+            type = 'all';
+            break;
+    }
+    url = `tournament/${tournamentId}/posts?type=${type}&offset=${inpCount}`;
+    if (~last_id){
+        url += `&last_id=${last_id}`;
+    }
+
     $.ajax({
-            url: API_URL + `tournament/${tournamentId}/posts/${statusPost}`,
+            url: API_URL + url,
             type: 'GET',
         }
     ).done(function (data) {
         let container = $('#post_container');
-        if (!data.posts.length) {
-            displayEmptyPost();
-            return
-        }
-        let posts = data.posts;
-        if (postN >= posts.length + inpCount) {
-            block = true;
-            return
-        }
-        for (let n = postN; n < postN + inpCount; ++n) {
-            if (n >= posts.length) {
-                block = true;
-                break
-            }
+        let posts = data.posts
+        
+        posts.forEach(post => {
             let card
-            if (posts[n].status === 1) {
+            if (post.status === 1) {
                 card = $(document.querySelector('template#visible-card-post').content).children(".post_card").clone();
-            } else if (posts[n].status === 0) {
+            } else if (post.status === 0) {
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
-            card.children(".title").html(posts[n].title);
-            card.children('.content').html(posts[n].content);
-            card.children(".datetime_info").html(posts[n].created_info);
-            card.data("post_id", posts[n].id);
-            card.data("status", posts[n].status);
+            card.children(".title").html(post.title);
+            card.children('.content').html(post.content);
+            card.children(".datetime_info").html(post.created_info);
+            card.data("post_id", post.id);
+            card.data("status", post.status);
             container.prepend(card);
+        });
+        if (posts.length < inpCount){
+            block = true;
+        } else {
+            last_id = posts.pop().id
         }
-        postN += inpCount;
     });
 }
 

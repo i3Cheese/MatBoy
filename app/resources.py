@@ -142,7 +142,9 @@ class UsersResource(Resource):
             if request.args.get('check', 'false') == 'true':
                 json_resp = {'exist': user is not None}
             else:
-                return to_dict(user)
+                if not user:
+                    abort(404)
+                json_resp = to_dict(user)
         else:
             users = session.query(User).all()
             json_resp = {"users": [user.to_dict(only=("id",
@@ -615,17 +617,45 @@ class PostResource(Resource):
 
 
 class TournamentPostsResource(Resource):
-    def get(self, tour_id, status=1):
+    get_pars = reqparse.RequestParser()
+    get_pars.add_argument('type', type=str, default='visible',
+                          location='args')
+    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id",
+                          location='args')
+    get_pars.add_argument('offset', type=int, help="Не правильно указан offset",
+                          default=100, location='args')
+
+    def get(self, tour_id):
         """
         Get existing (status != 0) posts for current tournament
-        Status '0' - get hide posts for current tournament
-        Status '1' - get visible posts for current tournament
-        Status '10' - get all posts for current tournament
+        Request args:
+        type 'hidden' - get hidden posts for current tournament
+        type 'visible' - get visible posts for current tournament
+        tupe 'all' - get all posts for current tournament
         """
+        args = self.get_pars.parse_args()
+        logging.info(f"Posts get request: {args}")
         session = create_session()
         tour = get_tour(session, tour_id)
-        posts = tour.posts
-        if status != 10:
-            posts = filter(lambda post: post.status == status, posts)
+        t = args['type']
+        if t in ('hidden', 'all') and not tour.have_permission(current_user):
+            abort(403, message="Permission denied")
+
+        query = session.query(Post)
+        if t != 'all':
+            status = 0 if t == 'hidden' else 1
+            query = query.filter_by(status=status)
+
+        last_id = args['last_id']
+        if last_id is not None:
+            created_at = get_post(session, last_id).created_at
+            query = query.filter(
+                Post.created_at <= created_at, Post.id != last_id)
+
+        query.order_by()
+
+        offset = args['offset']
+        posts = query.order_by(Post.created_at.desc()).limit(offset)
+
         return jsonify({'posts': list(
             map(to_dict, sorted(posts, key=lambda post: post.created_at, reverse=True)))})
