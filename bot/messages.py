@@ -1,7 +1,7 @@
 from random import randint
 from data import User, create_session
 from bot import VK_SESSION as vk
-from bot import empty_keyboard, basic_keyboard, notification_keyboard
+from bot import empty_keyboard, basic_keyboard, notification_keyboard, subscribe_keyboard
 from bot import options_keyboard, options_keyboard_with_help
 
 
@@ -56,6 +56,15 @@ def notifications(uid):
 
 def notifications_info(uid, text):
     send_message(uid, text, keyboard=notification_keyboard.get_keyboard())
+
+
+def subscribe(uid):
+    text = 'Отправьте "Информация", чтобы посмотреть список подписок на турниры;\n'  \
+           '"Подписаться" - чтобы добавить турнир в подписки;\n'  \
+           '"Отписаться" - чтобы отписаться от турнира.\n\n'  \
+           'В случае, если Вы хотите модифицировать ваши подписки, после выбора ' \
+           'соответствующей команды, следом отправьте число - номер турнира в выведеном списке.'
+    send_message(uid, text, keyboard=subscribe_keyboard.get_keyboard())
 
 
 def invite_message(text, emails: list):
