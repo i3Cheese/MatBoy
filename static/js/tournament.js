@@ -73,6 +73,15 @@ function reloadLoader() {
     loader();
 }
 
+function generateTemplateCard(card, title, content, datetime_info, post_id, status) {
+    card.children(".title").html(title);
+    card.children('.content').html(content);
+    card.children(".datetime_info").html(datetime_info);
+    card.data("post_id", post_id);
+    card.data("status", status);
+    return card;
+}
+
 function loader() {
     $.ajax({
             url: API_URL + `tournament/${tournamentId}/posts/${statusPost}`,
@@ -100,11 +109,8 @@ function loader() {
             } else if (posts[n].status === 0) {
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
-            card.children(".title").html(posts[n].title);
-            card.children('.content').html(posts[n].content);
-            card.children(".datetime_info").html(posts[n].created_info);
-            card.data("post_id", posts[n].id);
-            card.data("status", posts[n].status);
+            card = generateTemplateCard(card, posts[n].title, posts[n].content,
+                posts[n].created_info, posts[n].id, posts[n].status);
             container.prepend(card);
         }
         postN += inpCount;
@@ -147,11 +153,7 @@ $(document).on('click', '.hide', function (event) {
             } else if (newStatus === 1) {
                 card.html($($('template#visible-card-post').html()).html());
             }
-            card.children(".title").html(title);
-            card.children('.content').html(content);
-            card.children(".datetime_info").html(dateTimeInfo);
-            card.data("post_id", postId);
-            card.data("status", newStatus);
+            generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus)
         } else {
             card.remove();
         }
