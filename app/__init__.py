@@ -9,7 +9,6 @@ from bot import bot_launch
 from threading import Thread
 import os
 
-
 config.setup()
 global_init()
 

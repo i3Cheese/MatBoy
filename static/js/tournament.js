@@ -73,6 +73,14 @@ function reloadLoader() {
     loader();
 }
 
+function generateTemplateCard(card, title, content, datetime_info, post_id, status) {
+    card.children(".title").html(title);
+    card.children('.content').html(content);
+    card.children(".datetime_info").html(datetime_info);
+    card.data("post_id", post_id);
+    card.data("status", status);
+}
+
 function loader() {
     let type;
     switch(statusPost) {
@@ -106,11 +114,8 @@ function loader() {
             } else if (post.status === 0) {
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
-            card.children(".title").html(post.title);
-            card.children('.content').html(post.content);
-            card.children(".datetime_info").html(post.created_info);
-            card.data("post_id", post.id);
-            card.data("status", post.status);
+            generateTemplateCard(card, post.title, post.content,
+                post.created_info, post.id, post.status);
             container.prepend(card);
         });
         if (posts.length < inpCount){
@@ -157,11 +162,7 @@ $(document).on('click', '.hide', function (event) {
             } else if (newStatus === 1) {
                 card.html($($('template#visible-card-post').html()).html());
             }
-            card.children(".title").html(title);
-            card.children('.content').html(content);
-            card.children(".datetime_info").html(dateTimeInfo);
-            card.data("post_id", postId);
-            card.data("status", newStatus);
+            generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus)
         } else {
             card.remove();
         }
