@@ -72,6 +72,10 @@ function generateTemplateCard(card, title, content, datetime_info, post_id, stat
 }
 
 function loader() {
+    if (block) {
+        return
+    };
+    block = true;
     let type;
     switch(statusPost) {
         case 0:
@@ -84,7 +88,7 @@ function loader() {
             type = 'all';
             break;
     }
-    url = `tournament/${tournamentId}/posts?type=${type}&offset=${inpCount}`;
+    let url = `tournament/${tournamentId}/posts?type=${type}&offset=${inpCount}`;
     if (~last_id){
         url += `&last_id=${last_id}`;
     }
@@ -111,7 +115,8 @@ function loader() {
         if (posts.length < inpCount){
             block = true;
         } else {
-            last_id = posts.pop().id
+            last_id = posts.pop().id;
+            block = false
         }
     });
 }

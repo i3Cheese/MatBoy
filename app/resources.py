@@ -94,7 +94,7 @@ def to_dict(obj):
     if obj.have_permission(current_user):
         return obj.to_dict()
     else:
-        return obj.to_short_dict()
+        return obj.to_secure_dict()
 
 
 class UserResource(Resource):
@@ -641,7 +641,7 @@ class TournamentPostsResource(Resource):
         if t in ('hidden', 'all') and not tour.have_permission(current_user):
             abort(403, message="Permission denied")
 
-        query = session.query(Post)
+        query = session.query(Post).filter(Post.tournament_id == tour_id)
         if t != 'all':
             status = 0 if t == 'hidden' else 1
             query = query.filter_by(status=status)
@@ -658,4 +658,4 @@ class TournamentPostsResource(Resource):
         posts = query.order_by(Post.created_at.desc()).limit(offset)
 
         return jsonify({'posts': list(
-            map(to_dict, sorted(posts, key=lambda post: post.created_at, reverse=True)))})
+            map(to_dict, posts))})
