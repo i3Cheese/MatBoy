@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, League, Team, Game, Post, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
-from app.forms import ResetPasswordStep1, ResetPasswordStep2
+from app.forms import ResetPasswordStep1, EditPassword
 from app.token import generate_email_hash, confirm_data, generate_confirmation_token_reset_password
 from app.token import confirm_token
 from config import config
@@ -14,7 +14,6 @@ from typing import List, Tuple
 from threading import Thread
 from hashlib import md5
 import bot
-
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -165,7 +164,7 @@ def reset_password_step_2(token):
     email = confirm_token(token)
     if not email:
         return redirect(url_for('web_pages.reset_password_step_1'))
-    form = ResetPasswordStep2()
+    form = EditPassword()
     if form.validate_on_submit():
         password = form.password.data
         session = create_session()
@@ -202,10 +201,12 @@ def feedback():
 def user_page(user_id):
     session = create_session()
     user = session.query(User).get(user_id)
+    edit_password_form = EditPassword()
     if not user:
         abort(404)
     return render_template("profile.html",
                            user=user,
+                           edit_password_form=edit_password_form,
                            menu=make_menu(session, user_id=user_id))
 
 
@@ -382,7 +383,6 @@ def create_post(tour_id, post_id=None):
     else:
         return render_template('create_post.html', tour=tour,
                                menu=make_menu(tour_id=tour_id, now="Новый пост"))
-
 
 
 @blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")

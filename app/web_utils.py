@@ -1,11 +1,26 @@
-from flask import Blueprint, request, url_for
-from flask import make_response, jsonify
+from flask import Blueprint, request, url_for, make_response, jsonify
 from flask_login import login_required, current_user
-from data import User, Tournament, Post, create_session
+from data import User, Tournament, create_session
 from string import ascii_letters, digits
 from random import choice
+from app.forms import EditPassword
 
 blueprint = Blueprint('web_utils', __name__)
+
+
+@blueprint.route('/edit-password', methods=['POST'])
+@login_required
+def edit_password():
+    edit_password_form = EditPassword()
+    if edit_password_form.validate_on_submit():
+        session = create_session()
+        password = edit_password_form.password.data
+        user = session.query(User).get(current_user.id)
+        user.set_password(password)
+        session.commit()
+        return make_response(jsonify({'success': 'ok'}), 200)
+    else:
+        return make_response(jsonify(edit_password_form.errors), 400)
 
 
 @blueprint.route('/upload-image', methods=['POST'])
@@ -60,7 +75,6 @@ def subscribe_email():
             raise AttributeError
     except AttributeError:
         return jsonify({'error': 'Invalid response'})
-
 
 
 @blueprint.route('/subscribe-vk-tour', methods=['POST'])

@@ -145,7 +145,7 @@ class RegisterForm(BaseForm):
     name = StringField('Имя *', validators=[
         field_data_capitalizer, RuDataRequired()])
     patronymic = StringField("Отчество (если есть)", validators=[
-                             field_data_capitalizer])
+        field_data_capitalizer])
     city = StringField(
         "Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
@@ -194,7 +194,7 @@ class ResetPasswordStep1(BaseForm):
     submit = SubmitField("Восстановить")
 
 
-class ResetPasswordStep2(BaseForm):
+class EditPassword(BaseForm):
     password = PasswordField(
         'Пароль *', validators=[RuDataRequired(), password_secure_validator])
     password_again = PasswordField(

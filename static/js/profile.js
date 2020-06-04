@@ -27,4 +27,32 @@ $(document).ready(function () {
             data: {status: status}
         });
     });
+});
+
+
+
+$(document).on('submit', '#edit_password_form', function (event) {
+    event.preventDefault();
+    let errorInputTemplate = $($('template#error-input-template').html())
+    let closeModalButton = $('#close-password-modal');
+    $.ajax({
+        'url': '/edit-password',
+        'type': 'POST',
+        'data': $(this).serialize()
+    }).always(function () {
+        $('.active-error').remove();
+    }).done(function (data) {
+        closeModalButton.click();
+        makeSuccessToast('Пароль успешно изменен');
+    }).fail(function (response) {
+        let errors = response.responseJSON
+        for (let key in errors) {
+            let input = $('#' + key);
+            let error = errors[key]
+            let currentErrorDiv = errorInputTemplate.clone();
+            currentErrorDiv.addClass('active-error');
+            currentErrorDiv.html(error);
+            input.after(currentErrorDiv);
+        }
+    });
 })
