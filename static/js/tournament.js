@@ -57,16 +57,6 @@ $(document).ready(function () {
     });
 });
 
-
-function displayEmptyPost() {
-    let container = $('#post_container');
-    if (!container.children('div').length) {
-        let card = $(document.querySelector('template#empty_posts').content).children(".post_card").clone();
-        container.prepend(card);
-    }
-}
-
-
 function reloadLoader() {
     last_id = -1;
     block = false;

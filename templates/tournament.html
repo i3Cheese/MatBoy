@@ -89,6 +89,7 @@
             {% endif %}
         </div>
     </div>
+    {% if tour.posts %}
     <div id="news_title" class="title_container">
         <h1 class="page_title">
             Новости турнира
@@ -114,6 +115,7 @@
             </div>
         {% endif %}
     </div>
+    {% endif %}
     <div id="post_container" class="box_container"></div>
     <template id="visible-card-post">
         <div class="post_card box w-100">
@@ -153,11 +155,6 @@
             <h3 class="title"></h3>
             <div class="content ck-content clearfix"></div>
             <p class="datetime_info" align="right"></p>
-        </div>
-    </template>
-    <template id="empty_posts">
-        <div class="page_description box post_card">
-            Новостей пока нет
         </div>
     </template>
     <script src="{{ url_for('static', filename='js/tournament.js') }}"></script>

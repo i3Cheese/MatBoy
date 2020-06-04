@@ -20,7 +20,6 @@ def get_user_tournaments(user):
     text += '\nСледом отправьте номер турнира, который необходимо удалить из подписок.\n'  \
             'Если список пусть - отправьте любое число.'
     return text
-    return text
 
 
 def get_free_tournaments(user, session):
@@ -103,19 +102,19 @@ def subscribe(uid, user, session, command, user_status):
 
 def turn_on_notification(uid, user):
     if user.vk_notifications:
-        text = 'У Вас уже включены уведомления'
+        text = 'У Вас уже включены уведомления.'
     else:
         user.vk_notifications = True
-        text = 'Уведомления успешно включены'
+        text = 'Уведомления успешно включены.'
     msg.notifications_info(uid, text)
 
 
 def turn_off_notification(uid, user):
     if not user.vk_notifications:
-        text ='У Вас отключены уведомления'
+        text ='У Вас отключены уведомления.'
     else:
         user.vk_notifications = False
-        text = 'Уведомления успешно отключены'
+        text = 'Уведомления успешно отключены.'
     msg.notifications_info(uid, text)
 
 
@@ -131,5 +130,5 @@ def get_subscribe(uid, user, session, tour_id, delete=True):
     else:
         if user not in tour.users_subscribe_vk:
             tour.users_subscribe_vk.append(user)
-    msg.send_message(uid, 'Команда успешло выполнена', 
+    msg.send_message(uid, 'Команда успешло выполнена.', 
                      keyboard=kb.subscribe_keyboard.get_keyboard())
