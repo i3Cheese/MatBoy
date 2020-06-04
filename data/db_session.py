@@ -42,6 +42,9 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
     
     def to_secure_dict(self):
        return self.to_dict(only=self.secure_serialize_only)
+   
+    def have_permission(self, user):
+        return user.is_admin
 
 
 def global_init() -> None:

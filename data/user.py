@@ -83,10 +83,15 @@ class User(BaseModel, UserMixin):
     def is_admin(self):
         return self.id == 1
 
+    def __eq__(self, other):
+        if isinstance(other, (User, AnonymousUser)):
+            return self.id == other.id
+
 
 class AnonymousUser(AnonymousUserMixin):
     id = 0
     is_admin = False
 
     def __eq__(self, other):
-        return other.id == 0
+        if isinstance(other, (User, AnonymousUser)):
+            return self.id == other.id
