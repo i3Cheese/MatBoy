@@ -72,6 +72,7 @@ def get_game(session, game_id, do_abort=True) -> Game:
         abort(404, message=f"Game #{game_id} not found")
     return game
 
+
 def get_post(session, post_id, do_abort=True) -> Game:
     """Get Post from database, abort(404) if do_abort==True and post not found"""
     post = session.query(Post).get(post_id)
@@ -86,6 +87,14 @@ def abort_if_email_exist(session, email):
     if user is not None:
         abort(
             409, message=f"Пользователь с e-mail {repr(email)} уже зарегестрирован")
+
+
+def to_dict(obj):
+    """Serialize object with check permissions"""
+    if obj.have_permission(current_user):
+        return obj.to_dict()
+    else:
+        return obj.to_short_dict()
 
 
 class UserResource(Resource):
@@ -125,28 +134,21 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    # @login_required
     def get(self):
-        # if not current_user.is_admin:
-            # abort(403, message="Permission denied")
-
         session = create_session()
-        if request.args.get('vk_id', 0):
+        if request.args.get('vk_id'):
             user = session.query(User).filter(
                 User.vk_id == int(request.args.get('vk_id'))).first()
-            if user:
-                return jsonify(user.to_dict())
+            if request.args.get('check', 'false') == 'true':
+                json_resp = {'exist': user is not None}
             else:
-                abort(404, message=f"VK ID not found")
-        users = session.query(User).all()
-        json_resp = {"users": [user.to_dict(only=(
-            "id",
-            "name",
-            "surname",
-            "patronymic",
-            "fullname",
-            "email",
-        )) for user in users]}
+                return to_dict(user)
+        else:
+            users = session.query(User).all()
+            json_resp = {"users": [user.to_dict(only=("id",
+                                                      "name",
+                                                      "surname",
+                                                      "fullname",)) for user in users]}
         return jsonify(json_resp)
 
 
@@ -177,7 +179,7 @@ class TeamResource(Resource):
                       "league.title",
                       "link",
                       )
-                )})
+            )})
 
     @login_required
     def put(self, team_id):
@@ -623,11 +625,7 @@ class TournamentPostsResource(Resource):
         session = create_session()
         tour = get_tour(session, tour_id)
         posts = tour.posts
-        if tour.have_permission(current_user):
-            f = lambda post: post.to_dict()
-        else:
-            f = lambda post: post.to_secure_dict()
         if status != 10:
             posts = filter(lambda post: post.status == status, posts)
         return jsonify({'posts': list(
-            map(f, sorted(posts, key=lambda post: post.created_at, reverse=True)))})
+            map(to_dict, sorted(posts, key=lambda post: post.created_at, reverse=True)))})
