@@ -5,7 +5,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, League, Team, Game, Post, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
-from app.forms import ResetPasswordStep1, EditPassword
+from app.forms import ResetPasswordStep1, EditPassword, EditEmail
 from app.token import generate_email_hash, confirm_data, generate_confirmation_token_reset_password
 from app.token import confirm_token
 from config import config
@@ -202,11 +202,13 @@ def user_page(user_id):
     session = create_session()
     user = session.query(User).get(user_id)
     edit_password_form = EditPassword()
+    edit_email_form = EditEmail()
     if not user:
         abort(404)
     return render_template("profile.html",
                            user=user,
                            edit_password_form=edit_password_form,
+                           edit_email_form=edit_email_form,
                            menu=make_menu(session, user_id=user_id))
 
 

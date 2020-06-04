@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from data import User, Tournament, create_session
 from string import ascii_letters, digits
 from random import choice
-from app.forms import EditPassword
+from app.forms import EditPassword, EditEmail
 
 blueprint = Blueprint('web_utils', __name__)
 
@@ -21,6 +21,21 @@ def edit_password():
         return make_response(jsonify({'success': 'ok'}), 200)
     else:
         return make_response(jsonify(edit_password_form.errors), 400)
+
+
+@blueprint.route('/edit-email', methods=['POST'])
+@login_required
+def edit_email():
+    edit_email_form = EditEmail()
+    if edit_email_form.validate_on_submit():
+        session = create_session()
+        email = edit_email_form.email.data
+        user = session.query(User).get(current_user.id)
+        user.email = email
+        session.commit()
+        return make_response(jsonify({'success': 'ok'}), 200)
+    else:
+        return make_response(jsonify(edit_email_form.errors), 400)
 
 
 @blueprint.route('/upload-image', methods=['POST'])

@@ -30,15 +30,14 @@ $(document).ready(function () {
 });
 
 
-
-$(document).on('submit', '#edit_password_form', function (event) {
+$(document).on('submit', '#edit-password-form', function (event) {
     event.preventDefault();
     let errorInputTemplate = $($('template#error-input-template').html())
     let closeModalButton = $('#close-password-modal');
     $.ajax({
-        'url': '/edit-password',
-        'type': 'POST',
-        'data': $(this).serialize()
+        url: '/edit-password',
+        type: 'POST',
+        data: $(this).serialize()
     }).always(function () {
         $('.active-error').remove();
     }).done(function (data) {
@@ -55,4 +54,31 @@ $(document).on('submit', '#edit_password_form', function (event) {
             input.after(currentErrorDiv);
         }
     });
+});
+
+
+$(document).on('submit', '#edit-email-form', function (event) {
+    event.preventDefault();
+    let errorInputTemplate = $($('template#error-input-template').html())
+    let closeModalButton = $('#close-email-modal');
+    $.ajax({
+        url: '/edit-email',
+        type: 'POST',
+        data: $(this).serialize()
+    }).always(function () {
+        $('.active-error').remove();
+    }).done(function (data) {
+        closeModalButton.click();
+        makeSuccessToast('Почта успешно изменена');
+    }).fail(function (response) {
+        let errors = response.responseJSON
+        for (let key in errors) {
+            let input = $('#' + key);
+            let error = errors[key]
+            let currentErrorDiv = errorInputTemplate.clone();
+            currentErrorDiv.addClass('active-error');
+            currentErrorDiv.html(error);
+            input.after(currentErrorDiv);
+        }
+    })
 })

@@ -203,6 +203,13 @@ class EditPassword(BaseForm):
     submit = SubmitField("Изменить пароль")
 
 
+class EditEmail(BaseForm):
+    email = EmailField(
+        "E-mail *", validators=[field_data_lower, Email(message="Неправильный формат"),
+                                RuDataRequired()])
+    submit = SubmitField("Изменить почту")
+
+
 class PlayerBooleanField(BooleanField):
     def __init__(self, *args, player_id, **kwargs):
         super(PlayerBooleanField, self).__init__(*args, **kwargs)
