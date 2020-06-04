@@ -79,7 +79,6 @@ function generateTemplateCard(card, title, content, datetime_info, post_id, stat
     card.children(".datetime_info").html(datetime_info);
     card.data("post_id", post_id);
     card.data("status", status);
-    return card;
 }
 
 function loader() {
@@ -109,7 +108,7 @@ function loader() {
             } else if (posts[n].status === 0) {
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
-            card = generateTemplateCard(card, posts[n].title, posts[n].content,
+            generateTemplateCard(card, posts[n].title, posts[n].content,
                 posts[n].created_info, posts[n].id, posts[n].status);
             container.prepend(card);
         }

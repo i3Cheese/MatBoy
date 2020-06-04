@@ -1,10 +1,10 @@
-from vk_api.bot_longpoll import  VkBotEventType
+from vk_api.bot_longpoll import VkBotEventType
 from bot import LONGPOLL
 from bot.utils import handler
 import os
 
-
 USERS_INFO = {}
+
 
 def bot_launch():
     os.environ['BOT_WORKING'] = 'working'
