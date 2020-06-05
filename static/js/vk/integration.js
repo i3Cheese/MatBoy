@@ -9,9 +9,9 @@ function getAuthInfo() {
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
-        console.log(info);
+        let vkId = info.user_id;
         $.ajax({
-            url: API_URL + `user?vk_id=${info.user_id}&check=true`,
+            url: API_URL + `user?vk_id=${vkId}&check=true`,
             type: 'GET',
             async: false
         }).done(function (r) {
@@ -19,7 +19,16 @@ function registration() {
                 makeErrorToast("Эта страница уже зарегистрирована")
             } else {
                 if (typeof info['error'] === "undefined") {
-                    console.log('a')
+                   let userId = getUserId();
+                   $.ajax({
+                       url: API_URL +  `user/${userId}?vk_id=${vkId}`,
+                       type: 'PUT',
+                       async: false
+                   }).done(function(r) {
+                       if (r.success) {
+                            makeSuccessToast("Страница ВКонтакте привязана к вашему аккаунту")
+                       }
+                   })
                 }
             }
         }
@@ -36,4 +45,9 @@ function getInfo() {
     };
     window.location.hash = '';
     return info
+}
+
+function getUserId() {
+    let path = window.location.pathname.split('/');
+    return path[2]
 }

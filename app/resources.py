@@ -106,6 +106,22 @@ class UserResource(Resource):
         else:
             d = user.to_secure_dict()
         return jsonify({"user": d})
+    
+    def put(self, user_id: int):
+        vk_id = request.args.get('vk_id', '')
+        if not vk_id:
+            abort(400, message="Должен быть указан id страницы ВКонтакте")
+        session = create_session()
+        user = session.query(User).filter(User.id == user_id).first()
+        if not user:
+            abort(404)
+        if current_user != user:
+            abort(403)
+        user.vk_id = int(vk_id)
+        user.integration_with_VK = True
+        session.commit()
+        return jsonify({"success": "ok"})
+
 
 
 class UsersResource(Resource):

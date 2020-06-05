@@ -9,7 +9,6 @@ function getAuthInfo() {
 function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
-        console.log(info);
         $.ajax({
             url: API_URL + `user?vk_id=${info.user_id}&check=true`,
             type: 'GET',
