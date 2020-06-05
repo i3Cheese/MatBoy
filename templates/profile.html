@@ -32,6 +32,7 @@
             </dl>
             {% if current_user.integration_with_VK %}
                 {% include "vk/vk_disintegration.html" %}
+                <div id="vk_integration"></div>
             {% else %}
                 {% include "vk/vk_integration.html" %}
                 <div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">

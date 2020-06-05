@@ -26,8 +26,8 @@ function registration() {
                        async: false
                    }).done(function(r) {
                        if (r.success) {
-                            $("#vk_login_button").prop("onclick", null);
-                            $("#vk_login_button").text("Страница успешно привязана");
+                            $("#vk_integration").prop("onclick", null);
+                            $("#vk_integration").addClass("hidden");
 
                             let vkInfo = $("#vk_notification");
                             vkInfo.removeClass("hidden");

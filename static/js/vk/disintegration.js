@@ -9,6 +9,8 @@ function VKdisintegration() {
         $("#vk_disintegration").addClass("hidden");
         $("#vk_notifications").addClass("hidden");
 
+        $("#vk_integration").load('vk_integration.html');
+
         makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
     })
 }
