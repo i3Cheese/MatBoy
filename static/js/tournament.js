@@ -166,13 +166,13 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
             } else if (newStatus === 1) {
                 card.html($($('template#visible-card-post').html()).html());
             }
+            if (now) {
+                now = false;
+                notifications(data, true);
+            }
             generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus, now, tourId);
         } else {
             card.remove();
-        }
-        if (now) {
-            now = false;
-            notifications(data, true);
         }
         if (container.children('div').length === 0) {
             reloadLoader();
