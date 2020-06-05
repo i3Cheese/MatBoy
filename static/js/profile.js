@@ -34,11 +34,14 @@ $(document).on('submit', '#edit-password-form', function (event) {
     event.preventDefault();
     let errorInputTemplate = $($('template#error-input-template').html())
     let closeModalButton = $('#close-password-modal');
+    let submitButton = $('#edit-password-submit');
+    submitButton.attr('disabled', true);
     $.ajax({
         url: '/edit-password',
         type: 'POST',
         data: $(this).serialize()
     }).always(function () {
+        submitButton.attr('disabled', false);
         $('.active-error').remove();
     }).done(function (data) {
         closeModalButton.click();
@@ -61,15 +64,18 @@ $(document).on('submit', '#edit-email-form', function (event) {
     event.preventDefault();
     let errorInputTemplate = $($('template#error-input-template').html())
     let closeModalButton = $('#close-email-modal');
+    let submitButton = $('#edit-email-submit');
+    submitButton.attr('disabled', true);
     $.ajax({
         url: '/edit-email',
         type: 'POST',
         data: $(this).serialize()
     }).always(function () {
+        submitButton.attr('disabled', false);
         $('.active-error').remove();
     }).done(function (data) {
         closeModalButton.click();
-        makeSuccessToast('Почта успешно изменена');
+        makeSuccessToast('Следуйте инструкциям на почте');
     }).fail(function (response) {
         let errors = response.responseJSON
         for (let key in errors) {
