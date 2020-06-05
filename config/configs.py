@@ -20,9 +20,11 @@ class BaseConfig:
 
     VK_GROUP_ID = '193140435'
 
+    # Recaptcha settings
     RECAPTCHA_PUBLIC_KEY = '6LfcguUUAAAAAMWvFiu8rpazGR61ZxuIDbtkaG65'
     RECAPTCHA_PRIVATE_KEY = '6LfcguUUAAAAAEWzpN78kxcUj31kU8FAuQn2UG8S'
 
+    # Mail settings
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
@@ -45,7 +47,6 @@ class BaseConfig:
     LOGGING_LEVEL = logging.WARNING
 
     LOCALE = 'ru'
-
 
     @classmethod
     def setup(cls):

@@ -3,12 +3,12 @@ import bot.messages as msg
 from bot import keyboards as kb
 import re
 
-
-COMMANDS = {'уведомления': ['включить', 'выключить'], 
+COMMANDS = {'уведомления': ['включить', 'выключить'],
             'подписка': ['информация', 'отписаться', 'подписаться'],
             'помощь': [],
             'выход': []}
 tournaments = {}
+
 
 def get_user_tournaments(user, info=False):
     tournaments.clear()
@@ -18,7 +18,7 @@ def get_user_tournaments(user, info=False):
         text += '{}. {}\n'.format(str(n + 1), str(tour))
         tournaments[n + 1] = tour.id
     if not info:
-        text += '\nСледом отправьте номер турнира, который необходимо удалить из подписок.\n'  \
+        text += '\nСледом отправьте номер турнира, который необходимо удалить из подписок.\n' \
                 'Если список пуст - отправьте любое число.'
     return text
 
@@ -34,7 +34,7 @@ def get_free_tournaments(user, session):
             text += '{}. {}\n'.format(str(n), str(tour))
             tournaments[n] = tour.id
             n += 1
-    text += '\nСледом отправьте номер турнира, который необходимо добавить в подписки.\n'  \
+    text += '\nСледом отправьте номер турнира, который необходимо добавить в подписки.\n' \
             'Если список пусть - отправьте любое число.'
     return text
 
@@ -55,12 +55,12 @@ def handler(uid, text, users_info):
         elif text == 'выход':
             users_info[uid] = ''
             msg.exit_message(uid)
-        elif text == 'уведомления' or users_info[uid] == 'уведомления': 
+        elif text == 'уведомления' or users_info[uid] == 'уведомления':
             users_info[uid] = 'уведомления'
             notifications(uid, user, text)
             session.commit()
-        elif text == 'подписка' or users_info[uid] == 'подписка'  \
-             or (users_info[uid] in COMMANDS['подписка'] and re.search(r'\d+', text)):
+        elif text == 'подписка' or users_info[uid] == 'подписка' \
+                or (users_info[uid] in COMMANDS['подписка'] and re.search(r'\d+', text)):
             if not users_info[uid] or text == 'подписка': users_info[uid] = 'подписка'
             users_info[uid] = subscribe(uid, user, session, text, users_info[uid])
             session.commit()
@@ -94,8 +94,8 @@ def subscribe(uid, user, session, command, user_status):
         user_status = 'подписаться'
         msg.send_message(uid, get_free_tournaments(user, session))
     elif user_status in COMMANDS['подписка']:
-        get_subscribe(uid, user, session, 
-                      tour_id=int(command), 
+        get_subscribe(uid, user, session,
+                      tour_id=int(command),
                       delete=False if user_status == 'подписаться' else True)
         user_status = 'подписка'
     else:
@@ -114,7 +114,7 @@ def turn_on_notification(uid, user):
 
 def turn_off_notification(uid, user):
     if not user.vk_notifications:
-        text ='У Вас отключены уведомления.'
+        text = 'У Вас отключены уведомления.'
     else:
         user.vk_notifications = False
         text = 'Уведомления успешно отключены.'
@@ -123,7 +123,7 @@ def turn_off_notification(uid, user):
 
 def get_subscribe(uid, user, session, tour_id, delete=True):
     if tour_id > len(tournaments.keys()) or tour_id <= 0:
-        msg.send_message(uid, 'Ошибка выполнения. Начните сначала.', 
+        msg.send_message(uid, 'Ошибка выполнения. Начните сначала.',
                          keyboard=kb.subscribe_keyboard.get_keyboard())
         return
     tour = session.query(Tournament).filter(Tournament.id == tournaments[tour_id]).first()
@@ -133,5 +133,5 @@ def get_subscribe(uid, user, session, tour_id, delete=True):
     else:
         if user not in tour.users_subscribe_vk:
             tour.users_subscribe_vk.append(user)
-    msg.send_message(uid, 'Команда успешло выполнена.', 
+    msg.send_message(uid, 'Команда успешло выполнена.',
                      keyboard=kb.subscribe_keyboard.get_keyboard())

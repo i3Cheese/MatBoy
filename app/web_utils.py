@@ -10,7 +10,7 @@ from random import choice
 from threading import Thread
 import bot
 
-blueprint = Blueprint('web_utils', 
+blueprint = Blueprint('web_utils',
                       __name__,
                       template_folder=config.TEMPLATES_FOLDER,
                       static_folder=config.STATIC_FOLDER,
@@ -142,30 +142,30 @@ def subscribe_vk():
 @blueprint.route('/notifications_sending', methods=['POST'])
 def notifications_sending():
     data = request.form
-    
+
     session = create_session()
     tour = session.query(Tournament).filter(Tournament.id == data.get('tour_id')).first()
     post = session.query(Post).filter(Post.id == data.get('post_id')).first()
 
-    subscribe_email = list(filter(lambda user: user.email_notifications, 
-                                 tour.users_subscribe_email))
+    subscribe_email = list(filter(lambda user: user.email_notifications,
+                                  tour.users_subscribe_email))
     emails = list(map(lambda user: user.email, subscribe_email))
 
-    subscribe_vk = list(filter(lambda user: user.vk_notifications, 
-                              tour.users_subscribe_vk))
+    subscribe_vk = list(filter(lambda user: user.vk_notifications,
+                               tour.users_subscribe_vk))
     vk_uids = list(map(lambda user: user.vk_id, subscribe_vk))
 
     msg = Message(
-                subject='Отбновление в новостях турнира MatBoy',
-                recipients=list(emails),
-                sender=config.MAIL_DEFAULT_SENDER,
-                html=render_template('mails/email/new_post.html',
-                                     post=post, tour=tour)
-            )
+        subject='Отбновление в новостях турнира MatBoy',
+        recipients=list(emails),
+        sender=config.MAIL_DEFAULT_SENDER,
+        html=render_template('mails/email/new_post.html',
+                             post=post, tour=tour)
+    )
     thr_email = Thread(target=send_message, args=[msg])
     thr_vk = Thread(target=bot.notification_message,
                     args=[render_template('mails/vk/new_post.vkmsg',
-                                        tour=tour), vk_uids])
+                                          tour=tour), vk_uids])
     thr_email.start()
     thr_vk.start()
     return jsonify({'success': 'ok'})

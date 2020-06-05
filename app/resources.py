@@ -193,7 +193,7 @@ class TeamResource(Resource):
         session = create_session()
         team = get_team(session, team_id)
 
-        if not(args['league.id'] is None and args['status'] is None):
+        if not (args['league.id'] is None and args['status'] is None):
             if not team.tournament.have_permission(current_user):
                 abort(403, message="You haven't access to tournament")
             if args['league.id'] is not None:
@@ -206,7 +206,7 @@ class TeamResource(Resource):
             if team.status >= 2 and team.league is None:
                 abort(400, message="Принятая команда должна быть привязана к лиге")
 
-        if not(args['name'] is None and args['motto'] is None) or args['send_info']:
+        if not (args['name'] is None and args['motto'] is None) or args['send_info']:
             if not team.have_permission(current_user):
                 abort(403, message="You haven't access to team")
             if args['name'] is not None:
@@ -404,7 +404,7 @@ class GameResource(Resource):
                                   user_id=args['judge.id'],
                                   email=args['judge.email'], )
 
-        if not(args['team1.id'] is None and args['team2.id'] is None):
+        if not (args['team1.id'] is None and args['team2.id'] is None):
             if args['team1.id'] is not None:
                 game.team1 = get_team(session, args['team1.id'])
             if args['team2.id'] is not None:
@@ -525,7 +525,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                [len(rounds) * 12 - sum(teams_points), ]
+                                      [len(rounds) * 12 - sum(teams_points), ]
             game.protocol['stars'] = teams_stars
 
         session.merge(game)
