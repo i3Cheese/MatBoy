@@ -6,12 +6,14 @@ function VKdisintegration() {
         async: false
     }).done(function (r) {
         if (r.success) {
-            $("#vk_disintegration").prop("onclick", null);
+            // remove VK disintegration button
+            let button = $("#vk_disintegration");
+            button.prop("onclick", null);
+            button.addClass("hidden");
 
-            $("#vk_disintegration").addClass("hidden");
             $("#vk_notifications").addClass("hidden");
 
-            $("#vk_integration").load(url);
+            $("#vk_integration").load(url);  // adding VK integration button
 
             makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
         }
