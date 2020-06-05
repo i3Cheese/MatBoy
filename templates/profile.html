@@ -30,6 +30,7 @@
                 <dd class="col-sm-3">Возраст:</dd>
                 <dt class="col-sm-9">{{ user.years_old }}</dt>
             </dl>
+        {% if current_user.is_authenticated and current_user.id == user.id %}
             <div class="subscribe mb-3">
                 <div class="subscribe__item">
                     <label for="subscribe-email-input">Уведомления по почте:</label>
@@ -131,6 +132,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <template id="error-input-template">
         <div class="s-error"></div>
     </template>
