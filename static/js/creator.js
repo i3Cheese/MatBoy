@@ -34,7 +34,7 @@ ClassicEditor
         language: 'ru',
         image: {
             // You need to configure the image toolbar, too, so it uses the new style buttons.
-            toolbar: [ 'imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
+            toolbar: ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
 
             styles: [
                 // This option is equal to a situation where no style is applied.

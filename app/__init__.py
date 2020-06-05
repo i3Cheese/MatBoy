@@ -20,7 +20,7 @@ mail = Mail(app)
 
 
 def send_message(msg):
-    """Send message on email"""
+    """Send message on email SMPT"""
     with app.app_context():
         mail.send(msg)
 
@@ -58,7 +58,7 @@ api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
 api.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')
 api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts')
 
-bot_working = os.environ.get('BOT_WORKING', None)
+bot_working = os.environ.get('BOT_WORKING', None)  # Current status working vk bot
 if not bot_working:
     bot_thread = Thread(target=bot_launch)
     bot_thread.start()

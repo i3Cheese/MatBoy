@@ -110,7 +110,6 @@ $(document).on('click', ".team-delete", function (event) {
 });
 
 
-
 function addLeagueForm(league_id) {
     // Добавляет форму для создания или редактирования лиги
     if (league_id === undefined) {
@@ -219,7 +218,7 @@ function sendLeagueForm(event) {
 
                 // Добавляем возможность выбрать лигу у команд
                 let l_option_temp = $(document.querySelector("#league_option_template").content
-                                      ).clone();
+                ).clone();
                 let l_option = l_option_temp.find("option");
                 l_option.attr("value", info['id']);
                 l_option.text(info['title']);

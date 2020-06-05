@@ -22,6 +22,7 @@ blueprint = Blueprint('web_utils',
 @blueprint.route('/edit-password', methods=['POST'])
 @login_required
 def edit_password():
+    """Function for changing password from personal account"""
     edit_password_form = EditPassword()
     if edit_password_form.validate_on_submit():
         session = create_session()
@@ -38,6 +39,7 @@ def edit_password():
 @blueprint.route('/edit-email/<string:token>', methods=['POST', 'GET'])
 @login_required
 def edit_email(token=None):
+    """Function for changing email from personal account"""
     if request.method == 'POST' and not token:
         edit_email_form = EditEmail()
         if edit_email_form.validate_on_submit():
@@ -92,6 +94,7 @@ def upload_image_creator():
 @blueprint.route('/subscribe-email-profile', methods=['POST'])
 @login_required
 def subscribe_email():
+    """Function for enable subscribe news by email"""
     try:
         if 'status' in request.form:
             session = create_session()
@@ -130,12 +133,15 @@ def subscribe_email():
 @blueprint.route('/subscribe-vk-profile', methods=['POST'])
 @login_required
 def subscribe_vk():
+    """Function for enable subscribe news by vk"""
     try:
         if 'status' in request.form:
             session = create_session()
             status = request.form.get('status')
             status = bool(int(status))
             user = session.query(User).get(current_user.id)
+            if not user.integration_with_VK:
+                return jsonify({'error': 'User not integration vk'})
             if request.path == '/subscribe-vk-tour' and 'tour_id' in request.form:
                 tour_id = request.form.get('tour_id')
                 tour = session.query(Tournament).get(tour_id)
@@ -166,6 +172,7 @@ def subscribe_vk():
 
 @blueprint.route('/notifications_sending', methods=['POST'])
 def notifications_sending():
+    """Function for notifications subscribed users"""
     data = request.form
 
     session = create_session()

@@ -56,14 +56,14 @@ $(document).ready(function () {
                     data: postForm.serialize()
                 }).done(function (data) {
                     if ('success' in data) {
-                        if (data.status === 1) {
-                            $.ajax({
+                        if (data.status === 1) { // If publication post now
+                            $.ajax({ // Ajax for notifications
                                 url: '/notifications_sending',
                                 type: 'POST',
                                 data: {'tour_id': tourId, "post_id": data.post_id}
                             }).always(function () {
                                 submitButton.attr('disabled', false);
-                            }).done(function() {
+                            }).done(function () {
                                 window.location.href = `/tournament/${tourId}`
                             })
                         } else {
