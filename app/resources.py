@@ -122,19 +122,6 @@ class UserResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    def delete(self, user_id: int):
-        session = create_session()
-        user = session.query(User).filter(User.id == user_id).first()
-        if not user:
-            abort(404)
-        if current_user != user:
-            abort(403)
-        user.vk_id = 0
-        user.integration_with_VK = False
-        user.vk_notifications = False
-        session.commit()
-        return jsonify({"success": "ok"})
-
 
 class UsersResource(Resource):
     reg_pars = reqparse.RequestParser()
