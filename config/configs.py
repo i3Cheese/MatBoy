@@ -15,14 +15,17 @@ class BaseConfig:
 
     SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
     SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'
+    SECURITY_EMAIL_SALT = 'AJGgsfn4325gNSFHOn4tgrjon4neojSAED234'
     CLIENT_ID = '7491040'
     ACCESS_TOKEN = 'd1890a9fb243a245bc230a12dbf7e0b158cabee544a3ed362b16d0520b1ff4192a07fd189e4347fa20786'
 
     VK_GROUP_ID = '193140435'
 
+    # Recaptcha settings
     RECAPTCHA_PUBLIC_KEY = '6LfcguUUAAAAAMWvFiu8rpazGR61ZxuIDbtkaG65'
     RECAPTCHA_PRIVATE_KEY = '6LfcguUUAAAAAEWzpN78kxcUj31kU8FAuQn2UG8S'
 
+    # Mail settings
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
@@ -45,7 +48,6 @@ class BaseConfig:
     LOGGING_LEVEL = logging.WARNING
 
     LOCALE = 'ru'
-
 
     @classmethod
     def setup(cls):

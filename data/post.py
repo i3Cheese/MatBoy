@@ -31,7 +31,6 @@ class Post(BaseModel):
         "author.fullname",
         "created_info"
     )
-    
 
     title = sa.Column(sa.String, nullable=False)
     content = sa.Column(sa.Text, nullable=False)
@@ -52,4 +51,3 @@ class Post(BaseModel):
 
     def have_permission(self, user):
         return user == self.author or self.tournament.have_permission(user)
-    

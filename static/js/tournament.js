@@ -2,7 +2,7 @@ $(document).bind("scroll", scrolling);
 
 let last_id = -1;
 let inpCount = 3;
-let block = false;
+let block = false; // Block live load posts
 let tournamentId = window.location.pathname.split('/')[2];
 let statusPost = 1;
 
@@ -16,7 +16,7 @@ function scrolling() {
 
 
 $(document).ready(function () {
-    let dropDownMenu = $('.dropdown');
+    let dropDownMenu = $('.dropdown'); // Menu select filter posts
     let currentStatus = dropDownMenu.children('button#dropdownMenuButton');
     let allStatusButtons = dropDownMenu.find('button.dropdown-item');
     let container = $('#post_container');
@@ -57,13 +57,13 @@ $(document).ready(function () {
     });
 });
 
-function reloadLoader() {
+function reloadLoader() { // Function for reset settings load posts
     last_id = -1;
     block = false;
     loader();
 }
 
-function generateTemplateCard(card, title, content, datetime_info, post_id, status) {
+function generateTemplateCard(card, title, content, datetime_info, post_id, status) { // Function for fill post card
     card.children(".title").html(title);
     card.children('.content').html(content);
     card.children(".datetime_info").html(datetime_info);
@@ -71,13 +71,13 @@ function generateTemplateCard(card, title, content, datetime_info, post_id, stat
     card.data("status", status);
 }
 
-function loader() {
+function loader() { // Function live load posts
     if (block) {
         return
-    };
+    }
     block = true;
     let type;
-    switch(statusPost) {
+    switch (statusPost) {
         case 0:
             type = 'hidden';
             break;
@@ -89,7 +89,7 @@ function loader() {
             break;
     }
     let url = `tournament/${tournamentId}/posts?type=${type}&offset=${inpCount}`;
-    if (~last_id){
+    if (~last_id) {
         url += `&last_id=${last_id}`;
     }
 
@@ -100,19 +100,19 @@ function loader() {
     ).done(function (data) {
         let container = $('#post_container');
         let posts = data.posts
-        
+
         posts.forEach(post => {
             let card
-            if (post.status === 1) {
+            if (post.status === 1) { // If visible post
                 card = $(document.querySelector('template#visible-card-post').content).children(".post_card").clone();
-            } else if (post.status === 0) {
+            } else if (post.status === 0) { // If not visible post
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
             generateTemplateCard(card, post.title, post.content,
                 post.created_info, post.id, post.status);
-            container.prepend(card);
+            container.prepend(card); // Add post in container
         });
-        if (posts.length < inpCount){
+        if (posts.length < inpCount) {
             block = true;
         } else {
             last_id = posts.pop().id;
@@ -121,14 +121,14 @@ function loader() {
     });
 }
 
-$(document).on('click', '.edit', function (event) {
+$(document).on('click', '.edit', function (event) { // Function for event edit post
     let targetElem = $(event.target);
     let card = targetElem.parents('div.post_card');
     let postId = card.data('post_id');
     window.location.href = `/tournament/${tournamentId}/edit_post/${postId}`;
 });
 
-$(document).on('click', '.hide', function (event) {
+$(document).on('click', '.hide', function (event) { // Function for event hide/visible post
     let targetElem = $(event.target);
     let container = $('#post_container');
     let card = targetElem.parents('div.post_card');
@@ -150,7 +150,7 @@ $(document).on('click', '.hide', function (event) {
             status: newStatus
         }
     }).done(function () {
-        if (statusPost === 10) {
+        if (statusPost === 10) { // If current visible all posts
             card.empty();
             if (newStatus === 0) {
                 card.html($($('template#not-visible-card-post').html()).html());
@@ -168,7 +168,7 @@ $(document).on('click', '.hide', function (event) {
 });
 
 
-$(document).on('click', '.delete', function (event) {
+$(document).on('click', '.delete', function (event) { // Function for event delete post
     let targetElem = $(event.target);
     let card = targetElem.parents('div.post_card');
     let postId = card.data('post_id');

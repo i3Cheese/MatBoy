@@ -2,7 +2,6 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor
 from json import dumps
 from copy import deepcopy
 
-
 empty_keyboard = dumps({"buttons": [], "one_time": True})
 
 basic_keyboard = VkKeyboard(one_time=True)

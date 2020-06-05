@@ -30,6 +30,7 @@
                 <dd class="col-sm-3">Возраст:</dd>
                 <dt class="col-sm-9">{{ user.years_old }}</dt>
             </dl>
+        {% if current_user.is_authenticated and current_user.id == user.id %}
             {% if current_user.integration_with_VK %}
                 {% include "vk/vk_disintegration.html" %}
                 <div id="vk_integration"></div>
@@ -104,7 +105,7 @@
                             id="close-password-modal">Закрыть
                     </button>
                     <input type="submit" class="btn btn-primary" form="edit-password-form"
-                           value="Изменить">
+                           value="Изменить" id="edit-password-submit">
                 </div>
             </div>
         </div>
@@ -134,11 +135,12 @@
                             id="close-email-modal">Закрыть
                     </button>
                     <input type="submit" class="btn btn-primary" form="edit-email-form"
-                           value="Изменить">
+                           value="Изменить" id="edit-email-submit">
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
     <template id="error-input-template">
         <div class="s-error"></div>
     </template>

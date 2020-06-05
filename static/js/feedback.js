@@ -37,16 +37,16 @@ $(document).ready(function () {
     let feedbackForm = $('#feedback-form');
     let submitButton = $('input[type=submit]');
     let titleField = $('#title');
-    feedbackForm.submit(function (event) {
+    feedbackForm.submit(function (event) { // Send feedback message
         event.preventDefault();
         let title = titleField.val();
         let error = false;
-        if (!title) {
+        if (!title) { // If title empty
             makeErrorToast('Тема обращения не заполнена');
             error = true;
         }
         let content = editor.getData();
-        if (!content) {
+        if (!content) { // If content empty
             makeErrorToast('Содержание ображения не заполнено');
             error = true;
         }
@@ -56,12 +56,11 @@ $(document).ready(function () {
                 url: '/feedback',
                 type: 'POST',
                 data: {title: title, content: content}
-            }).done(function () {
-                window.location.href='/'
-            }).fail(function () {
+            }).done(function () { // If send message success
+                window.location.href = '/'
+            }).fail(function () { // If send message fail
                 makeErrorToast('Сообщение не доставлено');
             }).always(function () {
-                submitButton.removeClass('disable-button');
                 submitButton.attr('disabled', false);
             });
         }

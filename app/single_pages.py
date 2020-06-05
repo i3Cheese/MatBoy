@@ -3,7 +3,6 @@ from data import User, Tournament, League, Team, Game, create_session
 from config import config
 import logging
 
-
 blueprint = Blueprint('single_pages',
                       __name__,
                       template_folder=config.TEMPLATES_FOLDER,
@@ -16,7 +15,7 @@ def league_page(league_id, tour_id=None):
     session = create_session()
     league = session.query(League).get(league_id)
     if not league:
-        abort(404) 
+        abort(404)
     return redirect(league.link)
 
 

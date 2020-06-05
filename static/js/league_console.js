@@ -11,22 +11,22 @@ function addGameForm(game_id) {
         }
         form.attrPlus("id", 'new');
         games.append(form);
-        
+
     } else {
         $.ajax({
             type: "GET",
-            url: API_URL + "game/"+game_id,
+            url: API_URL + "game/" + game_id,
             dataType: "json",
-            success: function(data){
+            success: function (data) {
                 // Заполняем форму получеными данными
                 let info = data['game'];
                 form.find(".game-start").attr("value", info["start"]);
                 form.find(".game-place").attr("value", info["place"]);
                 form.find(".game-judge").attr("value", info["judge"]['email']);
                 form.find(`.game-team1 option[value='${info['team1']['id']}']`
-                          ).attr("selected", "selected");
+                ).attr("selected", "selected");
                 form.find(`.game-team2 option[value='${info['team2']['id']}']`
-                          ).attr("selected", "selected");
+                ).attr("selected", "selected");
                 form.attrPlus("id", game_id);
 
                 // Добавляем форму вместо информации о ней
@@ -40,7 +40,7 @@ function addGameForm(game_id) {
 }
 
 
-function fillGame(game, info, is_new=false){
+function fillGame(game, info, is_new = false) {
     id = info["id"];
 
     // Устанавливаем заголовок
@@ -53,10 +53,10 @@ function fillGame(game, info, is_new=false){
     l_judge.attr("title", info["judge"]["email"]);
     l_judge.formatHref(info["judge"]["id"]);
 
-    game.find(".game-start").text(info['start']?info['start']:'Не определенно');
-    game.find(".game-place").text(info["place"]?info['place']:'Не определенно');
-    
-    if (is_new){
+    game.find(".game-start").text(info['start'] ? info['start'] : 'Не определенно');
+    game.find(".game-place").text(info["place"] ? info['place'] : 'Не определенно');
+
+    if (is_new) {
         game.attrPlus('id', id);
         game.find(".game-goto").formatHref(id)  // Устанавливаем ссылку на игру
 
@@ -70,7 +70,7 @@ function fillGame(game, info, is_new=false){
 function sendGameForm(event) {
     let form = event.target;
     event.preventDefault();
-    
+
     let id = form.getAttribute("id");
     let game_id = id.slice(id.indexOf("-") + 1);
     let data = {
@@ -80,7 +80,8 @@ function sendGameForm(event) {
         "league.id": Number($("#league_id").text()),
         "team1.id": form.team1.value,
         "team2.id": form.team2.value,
-        "send_info": true,}
+        "send_info": true,
+    }
     if (game_id == "new") {
         $.ajax({
             type: "POST",
@@ -107,7 +108,7 @@ function sendGameForm(event) {
             data: data,
             dataType: "json",
             success: function (data) {
-                let game = $("#game-"+game_id);
+                let game = $("#game-" + game_id);
                 fillGame(game, data['game']);
 
                 form.remove();
@@ -124,13 +125,13 @@ function removeGameForm(event) {
     event.preventDefault();
     let form = event.target;
     let id = getId($(form));
-    if (id != 'new'){
+    if (id != 'new') {
         $("#game-" + id).removeClass("hidden");
     }
     form.remove();
 }
 
-function deleteGame(game_id){
+function deleteGame(game_id) {
     $.ajax({
         type: "DELETE",
         url: API_URL + "game/" + game_id,
@@ -141,7 +142,7 @@ function deleteGame(game_id){
     });
 }
 
-function getGameId(target){
+function getGameId(target) {
     return getId(target.parents(".game"))
 }
 

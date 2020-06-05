@@ -6,8 +6,7 @@ from flask_mail import Message
 from data import User, Tournament, League, Team, Game, Post, create_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
 from app.forms import ResetPasswordStep1, EditPassword, EditEmail
-from app.token import generate_email_hash, confirm_data, generate_confirmation_token_reset_password
-from app.token import confirm_token
+from app.token import generate_confirmation_token_reset_password, confirm_token_reset_password
 from config import config
 from wtforms import ValidationError
 from typing import List, Tuple
@@ -161,7 +160,7 @@ def reset_password_step_1():
 @blueprint.route('/reset_password_step_2/<token>', methods=["POST", "GET"])
 def reset_password_step_2(token):
     """Processing the second step of changing the password (password change)"""
-    email = confirm_token(token)
+    email = confirm_token_reset_password(token)
     if not email:
         return redirect(url_for('web_pages.reset_password_step_1'))
     form = EditPassword()

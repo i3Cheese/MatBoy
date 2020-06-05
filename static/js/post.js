@@ -1,5 +1,6 @@
 $(document).ready(function () {
     let postForm = $('#ckeditor-form');
+    let submitButton = postForm.find('input[type="submit"]');
     let titleInput = $('#title');
     let tourIdInput = $('input#tour-id');
     let tourId = tourIdInput.val();
@@ -33,6 +34,7 @@ $(document).ready(function () {
             makeErrorToast('Содержание новости не заполнено');
         }
         if (title && content) {
+            submitButton.attr('disabled', true);
             if (postIdInput.length) { // If edit post
                 let postId = postIdInput.val();
                 $.ajax({
@@ -44,6 +46,7 @@ $(document).ready(function () {
                         window.location.href = `/tournament/${tourId}`
                     } else {
                         console.log(data);
+                        submitButton.attr('disabled', false);
                     }
                 })
             } else { // If create post
@@ -53,19 +56,22 @@ $(document).ready(function () {
                     data: postForm.serialize()
                 }).done(function (data) {
                     if ('success' in data) {
-                        if (data.status == 1) {
-                            $.ajax({
+                        if (data.status === 1) { // If publication post now
+                            $.ajax({ // Ajax for notifications
                                 url: '/notifications_sending',
                                 type: 'POST',
                                 data: {'tour_id': tourId, "post_id": data.post_id}
-                            }).done(function() {
+                            }).always(function () {
+                                submitButton.attr('disabled', false);
+                            }).done(function () {
                                 window.location.href = `/tournament/${tourId}`
                             })
                         } else {
+                            submitButton.attr('disabled', false);
                             window.location.href = `/tournament/${tourId}`
                         }
                     } else {
-                        console.log(data);
+                        submitButton.attr('disabled', false);
                     }
                 });
             }

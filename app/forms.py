@@ -196,7 +196,7 @@ class ResetPasswordStep1(BaseForm):
 
 class EditPassword(BaseForm):
     password = PasswordField(
-        'Пароль *', validators=[RuDataRequired(), password_secure_validator])
+        'Новый пароль *', validators=[RuDataRequired(), password_secure_validator])
     password_again = PasswordField(
         'Повторите пароль *', validators=[RuDataRequired(),
                                           EqualTo("password", message="Пароли должны совпадать")])
