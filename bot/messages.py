@@ -1,11 +1,17 @@
 from random import randint
-from data import User, create_session
 from bot import VK_SESSION as vk
 from bot import empty_keyboard, basic_keyboard, notification_keyboard, subscribe_keyboard
 from bot import options_keyboard, options_keyboard_with_help
 
 
 def send_message(uid, text, keyboard=empty_keyboard):
+    """
+    :param uid: VK id of user
+    :param text: text of message
+    :param keyboard: keyboard for conversation
+
+    Template for sending messages
+    """
     vk.messages.send(user_id=uid,
                      message=text,
                      random_id=randint(0, 2 ** 64),
@@ -68,5 +74,11 @@ def subscribe(uid):
 
 
 def notification_message(text, uids: list):
+    """
+    :param text: text of mailing
+    :param uids: list of users to send notifications
+
+    Sending notifications about new post in the tournament to users
+    """
     for user_id in uids:
         send_message(user_id, text)
