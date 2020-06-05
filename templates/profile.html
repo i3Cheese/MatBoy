@@ -30,6 +30,10 @@
                 <dd class="col-sm-3">Возраст:</dd>
                 <dt class="col-sm-9">{{ user.years_old }}</dt>
             </dl>
+            {% if current_user.integration_with_VK %}
+            {% else %}
+                {% include "vk/vk_integration.html" %}
+            {% endif %}
             <div class="subscribe mb-3">
                 <div class="subscribe__item">
                     <label for="subscribe-email-input">Уведомления по почте:</label>
