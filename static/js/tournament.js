@@ -63,12 +63,14 @@ function reloadLoader() { // Function for reset settings load posts
     loader();
 }
 
-function generateTemplateCard(card, title, content, datetime_info, post_id, status) { // Function for fill post card
+function generateTemplateCard(card, title, content, datetime_info, post_id, status, now, tour_id) { // Function for fill post card
     card.children(".title").html(title);
     card.children('.content').html(content);
     card.children(".datetime_info").html(datetime_info);
     card.data("post_id", post_id);
     card.data("status", status);
+    card.data("now", now);
+    card.data("tour_id", tour_id)
 }
 
 function loader() { // Function live load posts
@@ -108,8 +110,9 @@ function loader() { // Function live load posts
             } else if (post.status === 0) { // If not visible post
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
+            console.log(post);
             generateTemplateCard(card, post.title, post.content,
-                post.created_info, post.id, post.status);
+                post.created_info, post.id, post.status, post.now, post.tournament.id);
             container.prepend(card); // Add post in container
         });
         if (posts.length < inpCount) {
@@ -137,11 +140,17 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
     let dateTimeInfo = card.find('.datetime_info').html();
     let postId = card.data('post_id');
     let status = card.data('status');
+    let tourId = card.data('tour_id');
+    let now = card.data('now');
     let newStatus
     if (status === 0) {
         newStatus = 1
     } else if (status === 1) {
         newStatus = 0
+    }
+    let data = {
+        tour_id: tourId,
+        post_id: postId
     }
     $.ajax({
         url: API_URL + `post/${postId}`,
@@ -157,9 +166,13 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
             } else if (newStatus === 1) {
                 card.html($($('template#visible-card-post').html()).html());
             }
-            generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus)
+            generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus, now, tourId);
         } else {
             card.remove();
+        }
+        if (now) {
+            now = false;
+            notifications(data, true);
         }
         if (container.children('div').length === 0) {
             reloadLoader();

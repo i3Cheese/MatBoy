@@ -100,6 +100,23 @@ function holdErrorResponse(data) {
     }
 }
 
+
+function notifications(data, onlyResponse = false) {
+    $.ajax({ // Ajax for notifications
+        url: '/notifications_sending',
+        type: 'POST',
+        data: {'tour_id': data.tour_id, "post_id": data.post_id}
+    }).always(function () {
+        if (!onlyResponse) {
+            submitButton.attr('disabled', false);
+        }
+    }).done(function () {
+        if (!onlyResponse) {
+            window.location.href = `/tournament/${data.tour_id}`
+        }
+    });
+}
+
 $(document).on('click', ".nested-toggler", function (event) {
     target = $(`#${$(event.target).attr("for")}`);
     target.toggleClass('hidden');

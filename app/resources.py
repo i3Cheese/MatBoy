@@ -73,7 +73,7 @@ def get_game(session, game_id, do_abort=True) -> Game:
     return game
 
 
-def get_post(session, post_id, do_abort=True) -> Game:
+def get_post(session, post_id, do_abort=True) -> Post:
     """Get Post from database, abort(404) if do_abort==True and post not found"""
     post = session.query(Post).get(post_id)
     if do_abort and not post:
@@ -106,7 +106,7 @@ class UserResource(Resource):
         else:
             d = user.to_secure_dict()
         return jsonify({"user": d})
-    
+
     def put(self, user_id: int):
         vk_id = request.args.get('vk_id', '')
         if not vk_id:
@@ -134,7 +134,6 @@ class UserResource(Resource):
         user.vk_notifications = False
         session.commit()
         return jsonify({"success": "ok"})
-
 
 
 class UsersResource(Resource):
@@ -607,8 +606,11 @@ class PostResource(Resource):
                         post.__setattr__(key, 0)
             elif value is not None:
                 post.__setattr__(key, value)
+        if post.status:
+            post.now = False
         session.commit()
-        return jsonify({"success": "ok"})
+        return jsonify({"success": "ok", "post_id": post.id, "status": post.status,
+                        "tour_id": post.tournament_id, "now": post.now})
 
     def delete(self, post_id):
         """Deleting a post by id"""
@@ -635,14 +637,17 @@ class PostResource(Resource):
             if key == 'status':
                 if value:
                     post.__setattr__(key, 1)
+                    post.now = False
                 else:
                     post.__setattr__(key, 0)
+                    post.now = True
             else:
                 post.__setattr__(key, value)
         post.author_id = current_user.get_id()
         session.add(post)
         session.commit()
-        return jsonify({"success": "ok", "post_id": post.id, "status": post.status})
+        return jsonify({"success": "ok", "post_id": post.id, "status": post.status,
+                        "tour_id": post.tournament_id, "now": post.now})
 
 
 class TournamentPostsResource(Resource):

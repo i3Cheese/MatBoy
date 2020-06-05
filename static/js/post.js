@@ -1,10 +1,12 @@
+let submitButton
 $(document).ready(function () {
     let postForm = $('#ckeditor-form');
-    let submitButton = postForm.find('input[type="submit"]');
+    submitButton = postForm.find('input[type="submit"]');
     let titleInput = $('#title');
     let tourIdInput = $('input#tour-id');
     let tourId = tourIdInput.val();
     let postIdInput = $('input#post-id');
+    let now
     if (postIdInput.length) {  // If edit post
         let postId = postIdInput.val();
         $.ajax({ // Load data for current post
@@ -15,6 +17,7 @@ $(document).ready(function () {
             if ('post' in data) {
                 let title = data.post.title;
                 let content = data.post.content;
+                now = data.post.now;
                 titleInput.val(title);
                 editor.setData(content);
             } else {
@@ -43,7 +46,11 @@ $(document).ready(function () {
                     data: postForm.serialize()
                 }).done(function (data) {
                     if ('success' in data) {
-                        window.location.href = `/tournament/${tourId}`
+                        if (now && !data.now) {
+                            notifications(data, false);
+                        } else {
+                            window.location.href = `/tournament/${data.tour_id}`
+                        }
                     } else {
                         console.log(data);
                         submitButton.attr('disabled', false);
@@ -57,15 +64,7 @@ $(document).ready(function () {
                 }).done(function (data) {
                     if ('success' in data) {
                         if (data.status === 1) { // If publication post now
-                            $.ajax({ // Ajax for notifications
-                                url: '/notifications_sending',
-                                type: 'POST',
-                                data: {'tour_id': tourId, "post_id": data.post_id}
-                            }).always(function () {
-                                submitButton.attr('disabled', false);
-                            }).done(function () {
-                                window.location.href = `/tournament/${tourId}`
-                            })
+                            notifications(data, false);
                         } else {
                             submitButton.attr('disabled', false);
                             window.location.href = `/tournament/${tourId}`

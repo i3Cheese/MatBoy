@@ -13,6 +13,7 @@ class Post(BaseModel):
         "title",
         "content",
         "status",
+        "now",
         "tournament.id",
         "tournament.title",
         "author.id",
@@ -25,6 +26,7 @@ class Post(BaseModel):
         "title",
         "content",
         "status",
+        "now",
         "tournament.id",
         "tournament.title",
         "author.id",
@@ -35,6 +37,7 @@ class Post(BaseModel):
     title = sa.Column(sa.String, nullable=False)
     content = sa.Column(sa.Text, nullable=False)
     status = sa.Column(sa.Integer, nullable=False, default=1)
+    now = sa.Column(sa.Boolean, nullable=False, default=False)
     author_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'))
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey('tournaments.id'))
 
