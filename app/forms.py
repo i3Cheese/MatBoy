@@ -206,7 +206,7 @@ class EditPassword(BaseForm):
 class EditEmail(BaseForm):
     email = EmailField(
         "E-mail *", validators=[field_data_lower, Email(message="Неправильный формат"),
-                                RuDataRequired()])
+                                RuDataRequired(), unique_email_validator])
     submit = SubmitField("Изменить почту")
 
 
