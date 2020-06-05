@@ -31,6 +31,7 @@
                 <dt class="col-sm-9">{{ user.years_old }}</dt>
             </dl>
             {% if current_user.integration_with_VK %}
+                {% include "vk/vk_disintegration.html" %}
             {% else %}
                 {% include "vk/vk_integration.html" %}
                 <div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">
@@ -46,7 +47,7 @@
                     {% endif %}
                 </div>
                 {% if current_user.integration_with_VK %}
-                    <div class="subscribe__item">
+                    <div class="subscribe__item" id="vk_notifications">
                         <label for="subscribe-vk-input">Уведомления ВК:</label>
                         {% if current_user.vk_notifications %}
                             <input type="checkbox" id="subscribe-vk-input" checked>
