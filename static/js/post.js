@@ -14,7 +14,6 @@ $(document).ready(function () {
             type: 'GET',
             error: holdErrorResponse,
         }).done(function (data) {
-            console.log(data);
             if ('post' in data) {
                 let title = data.post.title;
                 let content = data.post.content;

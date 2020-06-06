@@ -100,7 +100,6 @@ function sendGameForm(event) {
             error: holdErrorResponse,
         })
     } else {
-        console.log(game_id);
         let id = Number(game_id);
         $.ajax({
             type: "PUT",

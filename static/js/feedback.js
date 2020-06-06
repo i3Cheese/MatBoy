@@ -56,7 +56,6 @@ $(document).ready(function () {
                 url: '/feedback',
                 type: 'POST',
                 data: {title: title, content: content},
-                error: holdErrorResponse,
             }).done(function () {  // if sending message is successful
                 window.location.href = '/'
             }).fail(function () {  // if sending message failed

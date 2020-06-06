@@ -27,7 +27,6 @@ function changeStatus(st, func) {
             stat = st;
             func();
         },
-        error: holdErrorResponse,
     });
 }
 
