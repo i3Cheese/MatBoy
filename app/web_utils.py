@@ -207,11 +207,11 @@ def notifications_sending():
     return jsonify({'success': 'ok'})
 
 
-@blueprint.route('/delete_vk_integration', methods=['GET', 'DELETE'])
+@blueprint.route('/vk_disintegration', methods=['GET', 'DELETE'])
 @login_required
 def disintegration():
     if request.method == 'GET':
-        return render_template('vk/vk_integration.html')
+        return render_template('vk/vk_disintegration.html')
     session = create_session()
     user = session.query(User).get(current_user.id)
     user.vk_id = 0

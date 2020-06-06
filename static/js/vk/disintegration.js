@@ -1,5 +1,5 @@
 function VKdisintegration() {
-    let url = '/delete_vk_integration';
+    let url = '/vk_disintegration';
     $.ajax({
         url: url,
         type: 'DELETE',
@@ -8,14 +8,11 @@ function VKdisintegration() {
     }).done(function (r) {
         if (!r.success)
             return;
-        // remove VK disintegration button
-        let button = $("#vk_disintegration");
-        button.prop("onclick", null);
-        button.addClass("hidden");
 
         $("#vk_notifications").addClass("hidden");
+        $("#vk_notification").addClass("hidden");
 
-        $("#vk_menu").load(url);  // adding VK integration button
+        $(".vk_menu").load('/vk_integration');  // adding VK integration button
 
         makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта");
     });

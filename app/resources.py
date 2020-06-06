@@ -110,8 +110,8 @@ class UserResource(Resource):
     def put(self, user_id: int):
         args = self.put_pars.parse_args()
         session = create_session()
-        user = get_user(user_id)
-        if current_user != user or not current_user.is_admin:
+        user = get_user(session, user_id)
+        if current_user != user and not current_user.is_admin:
             abort(403)
         if args['vk_id'] is not None:
             user.vk_id = args['vk_id']

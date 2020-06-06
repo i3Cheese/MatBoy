@@ -4,7 +4,7 @@ function userAuth() {
     // VK auth via Implicit Flow
     let uri = window.location.hostname + window.location.pathname + window.location.search;
     let clientId = $("#clientId").text();
-    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=page&scope=email&response_type=token&revoke=1`;
+    window.location.href = `https://oauth.vk.com/authorize?client_id=${clientId}&redirect_uri=${uri}&display=page&response_type=token&revoke=1`;
 }
 
 function registration() {
@@ -61,7 +61,7 @@ function registration() {
                 );
                 let vkMenu = $(".vk_menu");
                 if (vkMenu) {
-                    vkMenu.load("/vk_integration");
+                    vkMenu.load("/vk_disintegration");
                 }
             });
         }
