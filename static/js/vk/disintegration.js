@@ -6,17 +6,17 @@ function VKdisintegration() {
         async: false,
         error: holdErrorResponse,
     }).done(function (r) {
-        if (r.success) {
-            // remove VK disintegration button
-            let button = $("#vk_disintegration");
-            button.prop("onclick", null);
-            button.addClass("hidden");
+        if (!r.success)
+            return;
+        // remove VK disintegration button
+        let button = $("#vk_disintegration");
+        button.prop("onclick", null);
+        button.addClass("hidden");
 
-            $("#vk_notifications").addClass("hidden");
+        $("#vk_notifications").addClass("hidden");
 
-            $("#vk_integration").load(url);  // adding VK integration button
+        $("#vk_integration").load(url);  // adding VK integration button
 
-            makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
-        }
+        makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
     })
 }
