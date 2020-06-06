@@ -99,7 +99,7 @@ def to_dict(obj):
 
 class UserResource(Resource):
     put_pars = reqparse.RequestParser()
-    put_pars.add_argument('vk_id', type=int, location='args', help="wrong type")
+    put_pars.add_argument('vk_id', type=int, help="wrong type")
 
     def get(self, user_id: int):
         session = create_session()
@@ -131,8 +131,8 @@ class UsersResource(Resource):
     reg_pars.add_argument('password', required=True, type=str)
 
     get_pars = reqparse.RequestParser()
-    get_pars.add_argument('vk_id', type=int, help="wrong type")
-    get_pars.add_argument('check', type=boolean, default=False)
+    get_pars.add_argument('vk_id', type=int, help="wrong type", location='args')
+    get_pars.add_argument('check', type=boolean, default=False, location='args')
 
     def post(self):
         args = UsersResource.reg_pars.parse_args()
@@ -624,10 +624,13 @@ class PostResource(Resource):
 
 class TournamentPostsResource(Resource):
     get_pars = reqparse.RequestParser()
-    get_pars.add_argument('type', type=str, default='visible')
-    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id")
-    get_pars.add_argument('offset', type=int, help="Не правильно указан offset",
-                          default=100)
+    get_pars.add_argument('type', type=str, default='visible', location='args')
+    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id", location='args')
+    get_pars.add_argument('offset',
+                          type=int,
+                          help="Не правильно указан offset",
+                          default=100,
+                          location='args')
 
     def get(self, tour_id):
         """
