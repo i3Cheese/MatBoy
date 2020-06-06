@@ -21,12 +21,12 @@ button.hidden{
 }
 
 .toast_holder{
-    position: fixed; 
+    position: fixed;
     z-index: 1060;
     right: 50px;
     bottom: 50px;
     padding: 10px;
-    width: 350px;    
+    width: 350px;
 }
 
 @media only screen and (max-width:500px){
@@ -209,6 +209,9 @@ textarea.form__field-input {
     margin-top: 28px;
 }
 
+.vk_menu > button{
+    width: 100%;
+}
 
 .buttons-menu{
     display: flex;
@@ -217,7 +220,11 @@ textarea.form__field-input {
 }
 
 .buttons-menu > button{
-    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.buttons-menu > button:first-of-type{
+    margin-left: 0;
 }
 
 

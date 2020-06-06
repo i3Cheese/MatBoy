@@ -213,9 +213,15 @@ def disintegration():
     if request.method == 'GET':
         return render_template('vk/vk_integration.html')
     session = create_session()
-    user = session.query(User).filter(User.id == current_user.id).first()
+    user = session.query(User).get(current_user.id)
     user.vk_id = 0
     user.integration_with_VK = False
     user.vk_notifications = False
     session.commit()
     return jsonify({"success": "ok"})
+
+
+@blueprint.route('/vk_integration', methods=['GET'])
+@login_required
+def integration():
+    return render_template('vk/vk_integration.html')

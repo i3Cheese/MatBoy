@@ -51,21 +51,32 @@
                     </div>
                 {% endif %}
             </div>
-            {% if  current_user.integration_with_VK %}
-                {% include "vk/vk_disintegration.html" %}
-                <div id="vk_integration"></div>
-            {% else %}
-                {% include "vk/vk_integration.html" %}
-                <div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">
-                </div>
-            {% endif %}
-            <div class="buttons-menu edit-user">
-                <button type="button" class="btn btn-secondary btn-sm" id="edit-password"
-                        data-toggle="modal" data-target="#edit-password-modal">
+            <div class="vk_menu w-100">
+                {% if  current_user.integration_with_VK %}
+                    {% include "vk/vk_disintegration.html" %}
+                {% else %}
+                    {% include "vk/vk_integration.html" %}
+                {% endif %}
+            </div>
+            <div id="vk_notification" class="hidden form__field-label"></div>
+
+            <div class="buttons-menu edit-user justify-content-between">
+                <button
+                    type="button"
+                    class="btn btn-secondary btn-sm flex-grow-1"
+                    id="edit-password"
+                    data-toggle="modal"
+                    data-target="#edit-password-modal"
+                >
                     Сменить пароль
-                   </button>
-                   <button type="button" class="btn btn-secondary btn-sm" id="edit-email"
-                        data-toggle="modal" data-target="#edit-email-modal">
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-secondary btn-sm flex-grow-1"
+                    id="edit-email"
+                    data-toggle="modal"
+                    data-target="#edit-email-modal"
+                >
                     Сменить почту
                 </button>
             </div>

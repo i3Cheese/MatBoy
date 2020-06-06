@@ -15,8 +15,8 @@ function VKdisintegration() {
 
         $("#vk_notifications").addClass("hidden");
 
-        $("#vk_integration").load(url);  // adding VK integration button
+        $("#vk_menu").load(url);  // adding VK integration button
 
-        makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
-    })
+        makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта");
+    });
 }

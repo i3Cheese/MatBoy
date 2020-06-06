@@ -1,11 +1,11 @@
 {% include "vk/vk_init.html" %}
 
 <script src="{{url_for('static', filename='js/vk/disintegration.js')}}"></script>
-<div class="s-buttons" id="vk_disintegration">
-    <p
-    class="btn btn-primary" 
-    id="vk_login_button" 
-    onclick="VKdisintegration()">
-    Отвязать страницу ВКонтакте
-    </p>
-</div>
+<button
+  id="vk_disintegration"
+  class="btn btn-primary"
+  id="vk_login_button"
+  onclick="VKdisintegration()"
+>
+  Отвязать страницу ВКонтакте
+</button>

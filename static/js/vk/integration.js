@@ -11,7 +11,11 @@ function registration() {
     if (window.location.hash !== "") {  // checking hash with VK auth info
         let info = getInfo();  // getting info of user
         $.ajax({
-            url: API_URL + `user?vk_id=${info.user_id}&check=true`,
+            url: API_URL + `user`,
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({
+                vk_id: info.user_id,
+                check: true}),
             type: 'GET',
             async: false,
             error: holdErrorResponse,
@@ -33,6 +37,7 @@ function registration() {
                 }).done(function (r) {
                     if (!r.success)
                         return;
+                    makeSuccessToast("Страница ВКонтакте привязана к вашему аккаунту")
 
                     // edit page view
                     let button = $("#vk_integration");
@@ -56,7 +61,10 @@ function registration() {
                             }
                         }
                     );
-                    makeSuccessToast("Страница ВКонтакте привязана к вашему аккаунту")
+                    let vkMenu = $(".vk_menu");
+                    if (vkMenu){
+                        vkMenu.load("/vk_integration");
+                    }
                 });
             }
         )
