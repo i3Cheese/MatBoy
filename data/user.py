@@ -4,6 +4,7 @@ from sqlalchemy import orm
 from data.db_session import BaseModel
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
+import werkzeug
 
 
 class User(BaseModel, UserMixin):
@@ -83,7 +84,7 @@ class User(BaseModel, UserMixin):
         return self.id == 1
 
     def __eq__(self, other):
-        if isinstance(other, (User, AnonymousUser)):
+        if isinstance(other, (User, AnonymousUser, werkzeug.local.LocalProxy)):
             return self.id == other.id
         elif other is None:
             return False
@@ -95,10 +96,4 @@ class AnonymousUser(AnonymousUserMixin):
     id = 0
     is_admin = False
 
-    def __eq__(self, other):
-        if isinstance(other, (User, AnonymousUser)):
-            return self.id == other.id
-        elif other is None:
-            return False
-        else:
-            raise TypeError
+    __eq__ = User.__eq__
