@@ -85,6 +85,10 @@ class User(BaseModel, UserMixin):
     def __eq__(self, other):
         if isinstance(other, (User, AnonymousUser)):
             return self.id == other.id
+        elif other is None:
+            return False
+        else:
+            raise TypeError
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -94,3 +98,7 @@ class AnonymousUser(AnonymousUserMixin):
     def __eq__(self, other):
         if isinstance(other, (User, AnonymousUser)):
             return self.id == other.id
+        elif other is None:
+            return False
+        else:
+            raise TypeError
