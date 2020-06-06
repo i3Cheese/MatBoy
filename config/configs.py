@@ -68,3 +68,4 @@ class DebugConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+    LOCALE = 'ru_RU'
