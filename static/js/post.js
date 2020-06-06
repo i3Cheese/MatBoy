@@ -23,7 +23,7 @@ $(document).ready(function () {
             } else {
                 console.log(data);
             }
-        })
+        });
 
     }
     postForm.submit(function (event) {
@@ -50,13 +50,13 @@ $(document).ready(function () {
                         if (now && !data.now) {
                             notifications(data, false);
                         } else {
-                            window.location.href = `/tournament/${data.tour_id}`
+                            window.location.href = `/tournament/${data.tour_id}`;
                         }
                     } else {
                         console.log(data);
                         submitButton.attr('disabled', false);
                     }
-                })
+                });
             } else {  // checking if create post
                 $.ajax({
                     url: `/api/post`,
@@ -69,7 +69,7 @@ $(document).ready(function () {
                             notifications(data, false);
                         } else {
                             submitButton.attr('disabled', false);
-                            window.location.href = `/tournament/${tourId}`
+                            window.location.href = `/tournament/${tourId}`;
                         }
                     } else {
                         submitButton.attr('disabled', false);

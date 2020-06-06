@@ -158,7 +158,7 @@ function fillLeague(league, info, is_new = false) {
     let l_chief = league.find(".league-chief");
     l_chief.text(info["chief"]["fullname"]);
     l_chief.attr("title", info["chief"]["email"]);
-    l_chief.formatHref(info["chief"]["id"])
+    l_chief.formatHref(info["chief"]["id"]);
 
     let l_title = league.find(".league-title");
     l_title.text(info["title"]);
@@ -245,13 +245,13 @@ function sendLeagueForm(event) {
                 fillLeague(league, info, false);
 
                 // Изменяем название в командах где эта лига выбрана
-                $(`.league_in[value='${id}']`).text(info['title'])
+                $(`.league_in[value='${id}']`).text(info['title']);
 
                 form.remove();
                 league.removeClass('hidden');
             },
             error: holdErrorResponse,
-        })
+        });
     }
 }
 

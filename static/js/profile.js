@@ -8,7 +8,7 @@ $(document).ready(function () {
         if (this.checked) {
             status = 1;
         } else {
-            status = 0
+            status = 0;
         }
         $.ajax({
             url: '/subscribe-email-profile',
@@ -23,7 +23,7 @@ $(document).ready(function () {
         if (this.checked) {
             status = 1;
         } else {
-            status = 0
+            status = 0;
         }
         $.ajax({
             url: '/subscribe-vk-profile',

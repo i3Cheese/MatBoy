@@ -12,7 +12,7 @@ class BaseConfig:
 
     DATA_BASE = 'db/matboy.db'
     DATA_BASE_URL = 'sqlite:///' + \
-        os.path.abspath('db/matboy.db') + '?check_same_thread=False'
+                    os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
     SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
     SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'

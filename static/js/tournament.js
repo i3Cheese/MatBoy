@@ -156,9 +156,9 @@ $(document).on('click', '.hide', function (event) {
 
     let newStatus;
     if (status === 0) {
-        newStatus = 1
+        newStatus = 1;
     } else if (status === 1) {
-        newStatus = 0
+        newStatus = 0;
     }
 
     let data = {

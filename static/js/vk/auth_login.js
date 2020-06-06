@@ -10,6 +10,7 @@ function userAuth() {
 function registration() {
     if (window.location.hash !== "") {  // checking hash with VK auth info
         let info = getInfo();  // getting info of user
+        let vkId = info.user_id;
         $.ajax({
             url: API_URL + `user`,
             data: {vk_id: vkId, check: true},
@@ -82,7 +83,7 @@ function registration() {
                 // remove page's refresh
                 window.history.replaceState(null, null, href);
             }
-        )
+        );
     }
 }
 
@@ -95,5 +96,5 @@ function getInfo() {
         info[temp[0]] = temp[1];
     }
     window.location.hash = '';
-    return info
+    return info;
 }

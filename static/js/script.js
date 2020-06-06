@@ -9,7 +9,7 @@ if (typeof (String.prototype.strip) === "undefined") {
         } else {
             return String(this).replace(new RegExp(`^${char}+|${char}+$`, "g"), '');
         }
-    };
+    }
 }
 
 String.prototype.format = String.prototype.f = function () {
@@ -29,14 +29,14 @@ $.fn.attrPlus = function (name, value) {
 };
 
 $.fn.formatHref = function () {
-    this.attr('href', this.attr('href').format(arguments))
+    this.attr('href', this.attr('href').format(arguments));
 };
 
 function getHref(target) {
     // searching href in elem or its parents
     let href = target.attr("href");
     if (typeof (href) === 'undefined') {
-        return target.parents("[href]").attr("href")
+        return target.parents("[href]").attr("href");
     } else {
         return href
     }
@@ -86,7 +86,7 @@ function makeSuccessToast(message) {
 function holdErrorResponse(data) {
     console.error(data);
     let resjson = data.responseJSON;
-    if (resjson === undefined){
+    if (resjson === undefined) {
         makeErrorToast("Что-то пошло не так");
         return;
     }

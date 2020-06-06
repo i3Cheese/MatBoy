@@ -68,16 +68,16 @@ function saveGame(finish = false) {
                 if (stat === 2) {
                     changeStatus(3, red);
                 } else {
-                    red()
+                    red();
                 }
             }
         },
-    })
+    });
 }
 
 function rowCount() {
     // count of rounds
-    return Number($("#protocol").find(".row_number:last").text())
+    return Number($("#protocol").find(".row_number:last").text());
 }
 
 function addRow() {

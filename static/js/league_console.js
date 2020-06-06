@@ -98,9 +98,8 @@ function sendGameForm(event) {
                 $("#games").append(game);
             },
             error: holdErrorResponse,
-        })
+        });
     } else {
-        let id = Number(game_id);
         $.ajax({
             type: "PUT",
             url: API_URL + "game/" + game_id,
@@ -114,7 +113,7 @@ function sendGameForm(event) {
                 game.removeClass('hidden');
             },
             error: holdErrorResponse,
-        })
+        });
     }
 }
 
@@ -141,7 +140,7 @@ function deleteGame(game_id) {
 }
 
 function getGameId(target) {
-    return getId(target.parents(".game"))
+    return getId(target.parents(".game"));
 }
 
 $(document).on('click', '.game-edit', function (event) {
