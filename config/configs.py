@@ -48,7 +48,7 @@ class BaseConfig:
     LOGGING_FILE = "matboy.log"
     LOGGING_LEVEL = logging.WARNING
 
-    LOCALE = 'ru'
+    LOCALE = 'ru_RU'
 
     @classmethod
     def setup(cls):
@@ -69,3 +69,4 @@ class DebugConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     DEBUG = False
     LOCALE = 'ru_RU'
+
