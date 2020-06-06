@@ -342,6 +342,7 @@ def team_request(tour_id: int):
                 if not user:
                     field.errors.append("Пользователь не найден.")
                     raise ValidationError
+                team.players.append(user)
                 if user.integration_with_VK:
                     vk_uids.append(user.id)
             session.add(team)
