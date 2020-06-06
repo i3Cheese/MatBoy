@@ -2,6 +2,7 @@ from random import randint
 from bot import VK_SESSION as vk
 from bot import empty_keyboard, basic_keyboard, notification_keyboard, subscribe_keyboard
 from bot import options_keyboard, options_keyboard_with_help
+import logging
 
 
 def send_message(uid, text, keyboard=empty_keyboard):
@@ -16,6 +17,7 @@ def send_message(uid, text, keyboard=empty_keyboard):
                      message=text,
                      random_id=randint(0, 2 ** 64),
                      keyboard=keyboard)
+    logging.info('Bot sent a message to the user with id {}'.format(uid))
 
 
 def welcome_message(uid):
