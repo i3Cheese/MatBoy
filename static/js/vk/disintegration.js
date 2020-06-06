@@ -3,7 +3,8 @@ function VKdisintegration() {
     $.ajax({
         url: url,
         type: 'DELETE',
-        async: false
+        async: false,
+        error: holdErrorResponse,
     }).done(function (r) {
         if (r.success) {
             // remove VK disintegration button

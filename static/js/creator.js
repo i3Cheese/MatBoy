@@ -32,18 +32,18 @@ ClassicEditor
             ]
         },
         language: 'ru',
-        image: {
-            // You need to configure the image toolbar, too, so it uses the new style buttons.
+        image: {  // configure image toolbar
+            // CKeditor uses the new style buttons
             toolbar: ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
 
             styles: [
-                // This option is equal to a situation where no style is applied.
+                // this option is equal to the situation when style is not applied
                 'full',
 
-                // This represents an image aligned to the left.
+                // style to align-left image
                 'alignLeft',
 
-                // This represents an image aligned to the right.
+                // style to align-right image
                 'alignRight'
             ]
         },
@@ -56,7 +56,7 @@ ClassicEditor
         },
         licenseKey: '',
         ckfinder: {
-            // Upload the images to the server using the CKFinder QuickUpload command.
+            // uploading images to the server using the CKFinder QuickUpload command
             uploadUrl: '/upload-image?command=QuickUpload&type=Files&responseType=json'
         },
         mediaEmbed: {

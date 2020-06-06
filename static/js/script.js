@@ -1,5 +1,5 @@
-// Base settings
-const API_URL = "/api/"
+// base settings
+const API_URL = "/api/";
 
 
 if (typeof (String.prototype.strip) === "undefined") {
@@ -13,7 +13,7 @@ if (typeof (String.prototype.strip) === "undefined") {
 }
 
 String.prototype.format = String.prototype.f = function () {
-    var args;
+    let args;
     if (arguments[0] instanceof Object) {
         args = arguments[0];
     } else {
@@ -24,23 +24,17 @@ String.prototype.format = String.prototype.f = function () {
     });
 };
 
-
 $.fn.attrPlus = function (name, value) {
     this.attr(name, this.attr(name) + value);
-}
+};
 
 $.fn.formatHref = function () {
     this.attr('href', this.attr('href').format(arguments))
-}
-
-
-function logData(data) {
-    console.log(data);
-}
+};
 
 function getHref(target) {
-    // Находит href в элементе или его родителях
-    let href = target.attr("href")
+    // searching href in elem or its parents
+    let href = target.attr("href");
     if (typeof (href) === 'undefined') {
         return target.parents("[href]").attr("href")
     } else {
@@ -49,7 +43,7 @@ function getHref(target) {
 }
 
 function redirectWithStep(event) {
-    // Передают в параметрах текущую страницу
+    // passing current page in the params
     event.preventDefault();
     let path = getHref($(event.target));
     let url = new URL(document.location.href);
@@ -102,10 +96,11 @@ function holdErrorResponse(data) {
 
 
 function notifications(data, onlyResponse = false) {
-    $.ajax({ // Ajax for notifications
+    $.ajax({ // ajax for sending notifications
         url: '/notifications_sending',
         type: 'POST',
-        data: {'tour_id': data.tour_id, "post_id": data.post_id}
+        data: {'tour_id': data.tour_id, "post_id": data.post_id},
+        error: holdErrorResponse,
     }).always(function () {
         if (!onlyResponse) {
             submitButton.attr('disabled', false);
@@ -123,5 +118,6 @@ $(document).on('click', ".nested-toggler", function (event) {
 });
 
 $(document).ready(function () {
-    $('.on_ready_toast').toast('show'); // Показываем тосты
+    // displaying toasts
+    $('.on_ready_toast').toast('show');
 });

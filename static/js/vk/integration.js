@@ -13,7 +13,8 @@ function registration() {
         $.ajax({
             url: API_URL + `user?vk_id=${info.user_id}&check=true`,
             type: 'GET',
-            async: false
+            async: false,
+            error: holdErrorResponse,
         }).done(function (r) {  // checking an existing VK user page
                 if (r.exist) {
                     makeErrorToast("Эта страница уже зарегистрирована")
@@ -23,7 +24,8 @@ function registration() {
                         $.ajax({
                             url: API_URL + `user/${userId}?vk_id=${vkId}`,
                             type: 'PUT',
-                            async: false
+                            async: false,
+                            error: holdErrorResponse,
                         }).done(function (r) {
                             if (r.success) {
                                 // edit page view
