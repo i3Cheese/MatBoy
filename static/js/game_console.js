@@ -132,11 +132,6 @@ $(document).on('click', '.star.remove', removeStar)
 
 $(document).ready(function (jqs) {
     stat = gameStatus();
-    switch (stat) {
-        case 1:
-            toggleProtocol(1);
-            break;
-        case 3:
-            toggleProtocol(1);
-    }
+    if (stat == 1 || stat == 3)
+        toggleProtocol(1); // prohibiting editing
 });

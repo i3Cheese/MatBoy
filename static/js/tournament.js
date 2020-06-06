@@ -110,7 +110,6 @@ function loader() { // Function live load posts
             } else if (post.status === 0) { // If not visible post
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
-            console.log(post);
             generateTemplateCard(card, post.title, post.content,
                 post.created_info, post.id, post.status, post.now, post.tournament.id);
             container.prepend(card); // Add post in container

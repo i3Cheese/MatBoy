@@ -86,5 +86,5 @@ $(document).on('submit', '#edit-email-form', function (event) {
             currentErrorDiv.html(error);
             input.after(currentErrorDiv);
         }
-    })
-})
+    });
+});

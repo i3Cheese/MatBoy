@@ -44,6 +44,7 @@ class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
         return self.to_dict(only=self.secure_serialize_only)
 
     def have_permission(self, user):
+        """Check if user can edit self"""
         return user.is_admin
 
 

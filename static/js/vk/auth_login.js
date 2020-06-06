@@ -10,7 +10,9 @@ function registration() {
     if (window.location.hash !== "") {
         let info = getInfo();
         $.ajax({
-            url: API_URL + `user?vk_id=${info.user_id}&check=true`,
+            url: API_URL + `user`,
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({vk_id: vkId, check: true}),
             type: 'GET',
             async: false
         }).done(function (r) {
@@ -54,7 +56,7 @@ function registration() {
                         function (r) {
                             if (r.response) {
                                 vkLink = r.response[0].screen_name;
-                                vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте, 
+                                vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте,
                                 напишите в сообщения <a href="https://vk.com/${vkLink}">сообщества</a>`)
                             };
                         }

@@ -31,15 +31,7 @@
                 <dt class="col-sm-9">{{ user.years_old }}</dt>
             </dl>
         {% if current_user.is_authenticated and current_user.id == user.id %}
-            {% if current_user.integration_with_VK %}
-                {% include "vk/vk_disintegration.html" %}
-                <div id="vk_integration"></div>
-            {% else %}
-                {% include "vk/vk_integration.html" %}
-                <div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">
-                </div>
-            {% endif %}
-            <div class="subscribe mb-3">
+            <div class="subscribe">
                 <div class="subscribe__item">
                     <label for="subscribe-email-input">Уведомления по почте:</label>
                     {% if current_user.email_notifications %}
@@ -59,19 +51,23 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="edit-user">
-                <div class="button-container mb-3">
-                    <button type="button" class="btn btn-secondary btn-sm" id="edit-password"
-                            data-toggle="modal" data-target="#edit-password-modal">
-                        Сменить пароль
-                    </button>
+            {% if  current_user.integration_with_VK %}
+                {% include "vk/vk_disintegration.html" %}
+                <div id="vk_integration"></div>
+            {% else %}
+                {% include "vk/vk_integration.html" %}
+                <div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">
                 </div>
-                <div class="button-container">
-                    <button type="button" class="btn btn-secondary btn-sm" id="edit-email"
-                            data-toggle="modal" data-target="#edit-email-modal">
-                        Сменить почту
-                    </button>
-                </div>
+            {% endif %}
+            <div class="buttons-menu edit-user">
+                <button type="button" class="btn btn-secondary btn-sm" id="edit-password"
+                        data-toggle="modal" data-target="#edit-password-modal">
+                    Сменить пароль
+                   </button>
+                   <button type="button" class="btn btn-secondary btn-sm" id="edit-email"
+                        data-toggle="modal" data-target="#edit-email-modal">
+                    Сменить почту
+                </button>
             </div>
         </div>
     </div>

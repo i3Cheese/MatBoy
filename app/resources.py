@@ -91,34 +91,31 @@ def abort_if_email_exist(session, email):
 
 def to_dict(obj):
     """Serialize object with check permissions"""
-    if obj.have_permission(current_user):
+    if obj.have_permission(current_user) or (isinstance(obj, User) and obj == current_user):
         return obj.to_dict()
     else:
         return obj.to_secure_dict()
 
 
 class UserResource(Resource):
+    put_pars = reqparse.RequestParser()
+    put_pars.add_argument('vk_id', type=int, location='args', help="wrong type")
+
     def get(self, user_id: int):
         session = create_session()
         user = get_user(session, user_id)
-        if current_user.is_admin:
-            d = user.to_dict()
-        else:
-            d = user.to_secure_dict()
+        d = to_dict(user)
         return jsonify({"user": d})
 
     def put(self, user_id: int):
-        vk_id = request.args.get('vk_id', '')
-        if not vk_id:
-            abort(400, message="Должен быть указан id страницы ВКонтакте")
+        args = self.put_pars.parse_args()
         session = create_session()
-        user = session.query(User).filter(User.id == user_id).first()
-        if not user:
-            abort(404)
-        if current_user != user:
+        user = get_user(user_id)
+        if current_user != user or not current_user.is_admin:
             abort(403)
-        user.vk_id = int(vk_id)
-        user.integration_with_VK = True
+        if args['vk_id'] is not None:
+            user.vk_id = args['vk_id']
+            user.integration_with_VK = True
         session.commit()
         return jsonify({"success": "ok"})
 
@@ -146,6 +143,10 @@ class UsersResource(Resource):
     reg_pars.add_argument('email', required=True, type=str)
     reg_pars.add_argument('password', required=True, type=str)
 
+    get_pars = reqparse.RequestParser()
+    get_pars.add_argument('vk_id', type=int, help="wrong type")
+    get_pars.add_argument('check', type=boolean, default=False)
+
     def post(self):
         args = UsersResource.reg_pars.parse_args()
         session = create_session()
@@ -164,10 +165,10 @@ class UsersResource(Resource):
 
     def get(self):
         session = create_session()
-        if request.args.get('vk_id'):
-            user = session.query(User).filter(
-                User.vk_id == int(request.args.get('vk_id'))).first()
-            if request.args.get('check', 'false') == 'true':
+        args = self.get_pars.parse_args()
+        if args['vk_id']:
+            user = session.query(User).filter(User.vk_id == args['vk_id']).first()
+            if args['check']:
                 json_resp = {'exist': user is not None}
             else:
                 if not user:
@@ -193,23 +194,7 @@ class TeamResource(Resource):
     def get(self, team_id: int):
         session = create_session()
         team = get_team(session, team_id)
-        if team.have_permission(current_user):
-            return jsonify({'team': team.to_dict()})
-        else:
-            return jsonify({'team': team.to_dict(
-                only=("id",
-                      "name",
-                      "motto",
-                      "status",
-                      "trainer.id",
-                      "trainer.fullname",
-                      "tournament.id",
-                      "tournament.title",
-                      "league.id",
-                      "league.title",
-                      "link",
-                      )
-            )})
+        return jsonify(to_dict(team))
 
     @login_required
     def put(self, team_id):
@@ -652,12 +637,10 @@ class PostResource(Resource):
 
 class TournamentPostsResource(Resource):
     get_pars = reqparse.RequestParser()
-    get_pars.add_argument('type', type=str, default='visible',
-                          location='args')
-    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id",
-                          location='args')
+    get_pars.add_argument('type', type=str, default='visible')
+    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id")
     get_pars.add_argument('offset', type=int, help="Не правильно указан offset",
-                          default=100, location='args')
+                          default=100)
 
     def get(self, tour_id):
         """
@@ -665,7 +648,7 @@ class TournamentPostsResource(Resource):
         Request args:
         type 'hidden' - get hidden posts for current tournament
         type 'visible' - get visible posts for current tournament
-        tupe 'all' - get all posts for current tournament
+        type 'all' - get all posts for current tournament
         """
         args = self.get_pars.parse_args()
         logging.info(f"Posts get request: {args}")
@@ -691,5 +674,4 @@ class TournamentPostsResource(Resource):
         offset = args['offset']
         posts = query.order_by(Post.created_at.desc()).limit(offset)
 
-        return jsonify({'posts': list(
-            map(to_dict, posts))})
+        return jsonify({'posts': list(map(to_dict, posts))})

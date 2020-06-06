@@ -11,7 +11,9 @@ function registration() {
         let info = getInfo();
         let vkId = info.user_id;
         $.ajax({
-            url: API_URL + `user?vk_id=${vkId}&check=true`,
+            url: API_URL + `user`,
+            contentType: 'application/json; charset=UTF-8',
+            data: JSON.stringify({vk_id: vkId, check: true}),
             type: 'GET',
             async: false
         }).done(function (r) {
@@ -21,7 +23,9 @@ function registration() {
                 if (typeof info['error'] === "undefined") {
                    let userId = getUserId();
                    $.ajax({
-                       url: API_URL +  `user/${userId}?vk_id=${vkId}`,
+                       url: API_URL +  `user/${userId}`,
+                       contentType: 'application/json; charset=UTF-8',
+                       data: JSON.stringify({vk_id: vkId}),
                        type: 'PUT',
                        async: false
                    }).done(function(r) {
@@ -40,7 +44,7 @@ function registration() {
                                 function (r) {
                                     if (r.response) {
                                         vkLink = r.response[0].screen_name;
-                                        vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте, 
+                                        vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте,
                                         напишите в сообщения <a href="https://vk.com/${vkLink}">сообщества</a>`)
                                     };
                                 }

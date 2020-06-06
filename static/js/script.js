@@ -88,15 +88,23 @@ function makeSuccessToast(message) {
     $("#toasts").append(toast);
 }
 
+
 function holdErrorResponse(data) {
     console.error(data);
-    message = data.responseJSON.message;
+    let resjson = data.responseJSON;
+    if (resjson === undefined){
+        makeErrorToast("Что-то пошло не так");
+        return;
+    }
+    let message = data.responseJSON.message;
     if (typeof (message) == "string") {
         makeErrorToast(message);
     } else if (typeof (message) == "object") {
         for (key in message) {
             makeErrorToast(message[key]);
         }
+    } else {
+        makeErrorToast("Что-то пошло не так");
     }
 }
 

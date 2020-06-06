@@ -423,6 +423,7 @@ button, input {
 
 .square-tiny{
     max-width: 300px;
+    min-height: 300px;
 }
 
 .info_in_box{
