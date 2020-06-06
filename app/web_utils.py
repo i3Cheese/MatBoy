@@ -225,3 +225,23 @@ def disintegration():
 @login_required
 def integration():
     return render_template('vk/vk_integration.html')
+
+
+@blueprint.route('/vk_integration_notification')
+@login_required
+def vk_integration_notification():
+    """Function for notify user about VK integration"""
+    user_id = request.args.get('user_id')
+    link = 'https://vk.com/' + request.args.get('screen_name')
+    session = create_session()
+    user = session.query(User).get(user_id)
+
+    msg = Message(
+        subject='Привязка ВКонтакте - MatBoy',
+        recipients=[user.email],
+        sender=config.MAIL_DEFAULT_SENDER,
+        html=render_template('mails/email/vk_notifications.html', link=link, user_id=user_id)
+    )
+    thr_email = Thread(target=send_message, args=[msg])
+    thr_email.start()
+    return jsonify({'success': 'ok'})

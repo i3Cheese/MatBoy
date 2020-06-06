@@ -7,6 +7,7 @@ from data.user import AnonymousUser
 from config import config
 from bot import bot_launch
 from threading import Thread
+import logging
 import os
 
 config.setup()
@@ -62,3 +63,4 @@ bot_working = os.environ.get('BOT_WORKING', None)  # Current status working vk b
 if not bot_working:
     bot_thread = Thread(target=bot_launch)
     bot_thread.start()
+    logging.info('Bot is working!')
