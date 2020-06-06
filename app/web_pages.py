@@ -362,7 +362,7 @@ def team_request(tour_id: int):
             thr_vk.start()
             return redirect(team.link)
     except ValidationError:
-        session.delete(team)
+        pass
 
     return render_template("team_request.html",
                            tour=tour,
