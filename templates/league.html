@@ -11,7 +11,7 @@
   <h1 class="page_title">
     {{league.title}}
   </h1>
-  {% if current_user.id in (1, league.tournament.chief_id, league.chief_id,) %}
+  {% if league.have_permission(current_user) %}
     <div class="link_menu">
       <a class="link-small" href='{{league.link}}/console'>
         управлять
@@ -72,8 +72,8 @@
       Команды
     </div>
     {% for team in league.teams | sort(reverse=True, attribute="created_at") if team.status == 2 %}
-      <div class="centered_block block_link" 
-            onclick="redirect(event)" 
+      <div class="centered_block block_link"
+            onclick="redirect(event)"
             href="{{team.link}}"
       >
         <h2 class="item_title">{{team.name}}</h2>
@@ -89,8 +89,8 @@
     </div>
     {% for game in league.games | selectattr("is_deleted", "false")
                                 | sort(reverse=true, attribute="created_at") %}
-      <div class="centered_block block_link" 
-           onclick="redirect(event)" 
+      <div class="centered_block block_link"
+           onclick="redirect(event)"
            href="{{game.link}}"
       >
         <h2 class="item_title">{{game.title}}</h2>
