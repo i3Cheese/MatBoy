@@ -205,3 +205,17 @@ def notifications_sending():
 
         thr_vk.start()
     return jsonify({'success': 'ok'})
+
+
+@blueprint.route('/delete_vk_integration', methods=['GET', 'DELETE'])
+@login_required
+def disintegration():
+    if request.method == 'GET':
+        return render_template('vk/vk_integration.html')
+    session = create_session()
+    user = session.query(User).filter(User.id == current_user.id).first()
+    user.vk_id = 0
+    user.integration_with_VK = False
+    user.vk_notifications = False
+    session.commit()
+    return jsonify({"success": "ok"})

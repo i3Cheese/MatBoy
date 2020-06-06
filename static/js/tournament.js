@@ -2,7 +2,7 @@ $(document).bind("scroll", scrolling);
 
 let last_id = -1;
 let inpCount = 3;
-let block = false; // Block live load posts
+let block = false; // block live loading posts
 let tournamentId = window.location.pathname.split('/')[2];
 let statusPost = 1;
 
@@ -16,7 +16,7 @@ function scrolling() {
 
 
 $(document).ready(function () {
-    let dropDownMenu = $('.dropdown'); // Menu select filter posts
+    let dropDownMenu = $('.dropdown'); // menu of selecting posts' filter
     let currentStatus = dropDownMenu.children('button#dropdownMenuButton');
     let allStatusButtons = dropDownMenu.find('button.dropdown-item');
     let container = $('#post_container');
@@ -29,8 +29,9 @@ $(document).ready(function () {
 
     let subscribeEmailInput = $('#subscribe-email-input');
     let subscribeVkInput = $('#subscribe-vk-input');
+    // email notification turn on/off
     subscribeEmailInput.bind('change', function () {
-        let status
+        let status;
         if (this.checked) {
             status = 1;
         } else {
@@ -39,11 +40,13 @@ $(document).ready(function () {
         $.ajax({
             url: '/subscribe-email-tour',
             type: 'POST',
-            data: {status: status, tour_id: tournamentId}
+            data: {status: status, tour_id: tournamentId},
+            error: holdErrorResponse,
         });
     });
+    // VK notification turn on/off
     subscribeVkInput.bind('change', function () {
-        let status
+        let status;
         if (this.checked) {
             status = 1;
         } else {
@@ -52,18 +55,20 @@ $(document).ready(function () {
         $.ajax({
             url: '/subscribe-vk-tour',
             type: 'POST',
-            data: {status: status, tour_id: tournamentId}
+            data: {status: status, tour_id: tournamentId},
+            error: holdErrorResponse,
         });
     });
 });
 
-function reloadLoader() { // Function for reset settings load posts
+function reloadLoader() { // reset settings of loading posts
     last_id = -1;
     block = false;
     loader();
 }
 
-function generateTemplateCard(card, title, content, datetime_info, post_id, status, now, tour_id) { // Function for fill post card
+function generateTemplateCard(card, title, content, datetime_info, post_id, status, now, tour_id) {
+    // completing post card
     card.children(".title").html(title);
     card.children('.content').html(content);
     card.children(".datetime_info").html(datetime_info);
@@ -73,12 +78,13 @@ function generateTemplateCard(card, title, content, datetime_info, post_id, stat
     card.data("tour_id", tour_id)
 }
 
-function loader() { // Function live load posts
+function loader() { // function for live loading posts
     if (block) {
         return
     }
     block = true;
     let type;
+    // get post's status
     switch (statusPost) {
         case 0:
             type = 'hidden';
@@ -98,22 +104,25 @@ function loader() { // Function live load posts
     $.ajax({
             url: API_URL + url,
             type: 'GET',
+            error: holdErrorResponse,
         }
     ).done(function (data) {
         let container = $('#post_container');
-        let posts = data.posts
+        let posts = data.posts;
 
         posts.forEach(post => {
-            let card
-            if (post.status === 1) { // If visible post
+            let card;
+            if (post.status === 1) { // checking if post is visible
                 card = $(document.querySelector('template#visible-card-post').content).children(".post_card").clone();
-            } else if (post.status === 0) { // If not visible post
+            } else if (post.status === 0) { // checking if post is invisible
                 card = $(document.querySelector('template#not-visible-card-post').content).children(".post_card").clone();
             }
+            // create a post card
             generateTemplateCard(card, post.title, post.content,
                 post.created_info, post.id, post.status, post.now, post.tournament.id);
-            container.prepend(card); // Add post in container
+            container.prepend(card); // adding post in container
         });
+        // checking loading process
         if (posts.length < inpCount) {
             block = true;
         } else {
@@ -123,17 +132,20 @@ function loader() { // Function live load posts
     });
 }
 
-$(document).on('click', '.edit', function (event) { // Function for event edit post
+$(document).on('click', '.edit', function (event) {
+    // opening post's edit page
     let targetElem = $(event.target);
     let card = targetElem.parents('div.post_card');
     let postId = card.data('post_id');
     window.location.href = `/tournament/${tournamentId}/edit_post/${postId}`;
 });
 
-$(document).on('click', '.hide', function (event) { // Function for event hide/visible post
+$(document).on('click', '.hide', function (event) {
+    // editing post's status (visible/invisible)
     let targetElem = $(event.target);
     let container = $('#post_container');
     let card = targetElem.parents('div.post_card');
+
     let title = card.find('.title').html();
     let content = card.find('.content').html();
     let dateTimeInfo = card.find('.datetime_info').html();
@@ -141,24 +153,27 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
     let status = card.data('status');
     let tourId = card.data('tour_id');
     let now = card.data('now');
-    let newStatus
+
+    let newStatus;
     if (status === 0) {
         newStatus = 1
     } else if (status === 1) {
         newStatus = 0
     }
+
     let data = {
         tour_id: tourId,
         post_id: postId
-    }
-    $.ajax({
+    };
+    $.ajax({  // changing post's status
         url: API_URL + `post/${postId}`,
         type: 'PUT',
         data: {
             status: newStatus
-        }
+        },
+        error: holdErrorResponse,
     }).done(function () {
-        if (statusPost === 10) { // If current visible all posts
+        if (statusPost === 10) { // checking if post's filter is 'all'
             card.empty();
             if (newStatus === 0) {
                 card.html($($('template#not-visible-card-post').html()).html());
@@ -167,7 +182,7 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
             }
             if (now) {
                 now = false;
-                notifications(data, true);
+                notifications(data, true);  // sending email & VK notifications about a new post
             }
             generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus, now, tourId);
         } else {
@@ -180,14 +195,16 @@ $(document).on('click', '.hide', function (event) { // Function for event hide/v
 });
 
 
-$(document).on('click', '.delete', function (event) { // Function for event delete post
+$(document).on('click', '.delete', function (event) {
+    // deleting post
     let targetElem = $(event.target);
     let card = targetElem.parents('div.post_card');
     let postId = card.data('post_id');
     let container = $('#post_container');
     $.ajax({
         url: API_URL + `post/${postId}`,
-        type: 'DELETE'
+        type: 'DELETE',
+        error: holdErrorResponse,
     }).done(function () {
         card.remove();
     }).always(function () {

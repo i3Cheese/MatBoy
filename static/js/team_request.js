@@ -3,7 +3,7 @@ const MAX_FIELDS = 8;
 
 
 function addUserEmailField() {
-    // Добавляет поле если их меньше MAX_FIELDS
+    // adding a new field if theirs count is less than MAX_FIELDS
 
     let last_field = $("#players").children().last().children("input").last();
     let last_id = last_field.attr("id");
@@ -23,7 +23,7 @@ function addUserEmailField() {
 }
 
 function deleteUserEmailField() {
-    // Удаляем последнее поле если их осталось > MIN_FIELDS
+    // deleting last field if theirs count is more than MIN_FIELDS
 
     let last_li = $("#players").children().last();
     let last_field = last_li.children("input").last();

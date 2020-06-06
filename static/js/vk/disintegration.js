@@ -1,21 +1,22 @@
 function VKdisintegration() {
-    let userId = getUserId();
+    let url = '/delete_vk_integration';
     $.ajax({
-        url: API_URL +  `user/${userId}`,
+        url: url,
         type: 'DELETE',
-        async: false
-    }).done(function(r) {
-        $("#vk_disintegration").prop("onclick", null);
-        $("#vk_disintegration").addClass("hidden");
-        $("#vk_notifications").addClass("hidden");
+        async: false,
+        error: holdErrorResponse,
+    }).done(function (r) {
+        if (r.success) {
+            // remove VK disintegration button
+            let button = $("#vk_disintegration");
+            button.prop("onclick", null);
+            button.addClass("hidden");
 
-        $("#vk_integration").load('vk_integration.html');
+            $("#vk_notifications").addClass("hidden");
 
-        makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
+            $("#vk_integration").load(url);  // adding VK integration button
+
+            makeSuccessToast("Страница ВКонтакте была отвязана от аккаунта")
+        }
     })
-}
-
-function getUserId() {
-    let path = window.location.pathname.split('/');
-    return path[2]
 }

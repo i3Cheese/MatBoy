@@ -1,5 +1,5 @@
 function addGameForm(game_id) {
-    // Добавляет форму для создания или редактирования игры
+    // adding a form for creating or editing a game
     let temp_form = $(document.querySelector("#game_form_template").content).clone();
     let form = temp_form.find("form");
     let games = $("#games");
@@ -7,7 +7,7 @@ function addGameForm(game_id) {
 
     if (game_id === undefined) {
         if ($("#game_form-new").length) {
-            return;  // Нельзя добавить вторую форму для новой игры
+            return;  // you can't add a second form for the game
         }
         form.attrPlus("id", 'new');
         games.append(form);
@@ -18,7 +18,7 @@ function addGameForm(game_id) {
             url: API_URL + "game/" + game_id,
             dataType: "json",
             success: function (data) {
-                // Заполняем форму получеными данными
+                // completing a form via data
                 let info = data['game'];
                 form.find(".game-start").attr("value", info["start"]);
                 form.find(".game-place").attr("value", info["place"]);
@@ -29,7 +29,7 @@ function addGameForm(game_id) {
                 ).attr("selected", "selected");
                 form.attrPlus("id", game_id);
 
-                // Добавляем форму вместо информации о ней
+                // adding a form instead of info about it
                 let game = games.find(`#game-${game_id}`);
                 game.after(form);
                 game.addClass("hidden");
@@ -43,11 +43,11 @@ function addGameForm(game_id) {
 function fillGame(game, info, is_new = false) {
     id = info["id"];
 
-    // Устанавливаем заголовок
+    // setting a title
     let l_title = game.find(".game-title");
     l_title.text(`${info["team1"]["name"]} — ${info["team2"]["name"]}`);
 
-    // Заполняем информацию о судье
+    // filling in information about the judge
     let l_judge = game.find(".game-judge");
     l_judge.text(info["judge"]["fullname"]);
     l_judge.attr("title", info["judge"]["email"]);
@@ -58,9 +58,9 @@ function fillGame(game, info, is_new = false) {
 
     if (is_new) {
         game.attrPlus('id', id);
-        game.find(".game-goto").formatHref(id)  // Устанавливаем ссылку на игру
+        game.find(".game-goto").formatHref(id);  // installing a link to the game
 
-        // Настраиваем тоглер
+        // setting up togler
         l_title.attrPlus("for", id);
         game.find(".game-info").attrPlus("id", id);
     }
@@ -81,8 +81,8 @@ function sendGameForm(event) {
         "team1.id": form.team1.value,
         "team2.id": form.team2.value,
         "send_info": true,
-    }
-    if (game_id == "new") {
+    };
+    if (game_id === "new") {
         $.ajax({
             type: "POST",
             url: API_URL + "game",
@@ -119,13 +119,12 @@ function sendGameForm(event) {
     }
 }
 
-
 function removeGameForm(event) {
-    // Убираем форму и показываем информацию о игре если она была
+    // removing a form and displaying info about the game
     event.preventDefault();
     let form = event.target;
     let id = getId($(form));
-    if (id != 'new') {
+    if (id !== 'new') {
         $("#game-" + id).removeClass("hidden");
     }
     form.remove();

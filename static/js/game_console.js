@@ -1,4 +1,4 @@
-var stat, disabled;
+let stat, disabled;
 
 function gameId() {
     return Number($("#game_id").text());
@@ -22,6 +22,7 @@ function changeStatus(st, func) {
         url: API_URL + `game/${gameId()}`,
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(data),
+        error: holdErrorResponse,
         success: function () {
             stat = st;
             func();
@@ -31,7 +32,7 @@ function changeStatus(st, func) {
 }
 
 function saveGame(finish = false) {
-    // Собираем данные
+    // collecting game info
     let rounds_json = [];
     $("#protocol").find(".round_form").each(function (index) {
         let form = $(this);
@@ -42,6 +43,7 @@ function saveGame(finish = false) {
         round.teams[1].points = Number(form.find('[name="team2_points"]').val());
         round.teams[0].player = Number(form.find('[name="team1_players"]').val());
         round.teams[1].player = Number(form.find('[name="team2_players"]').val());
+
         round.teams[0].stars = form.find("[name='team1_stars']").find(".remove").length;
         round.teams[1].stars = form.find("[name='team2_stars']").find(".remove").length;
         round.additional = form.find('[name="additional"]').val();
@@ -50,20 +52,21 @@ function saveGame(finish = false) {
     let data = {rounds: rounds_json};
     data.captain_winner = $('[name="captain_winner"]').val();
 
-    // Отправляем данные
+    // sending the game protocol to the server
     $.ajax({
         type: "PUT",
         url: API_URL + `game/${gameId()}/protocol`,
         contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(data),
         dataType: "json",
+        error: holdErrorResponse,
         success: function () {
             makeSuccessToast("Протокол сохранён");
             if (finish) {
                 let red = function () {
                     window.location.href = window.location.href.strip('/console');
                 };
-                if (stat == 2) {
+                if (stat === 2) {
                     changeStatus(3, red);
                 } else {
                     red()
@@ -74,7 +77,7 @@ function saveGame(finish = false) {
 }
 
 function rowCount() {
-    // Кол-во раундов
+    // count of rounds
     return Number($("#protocol").find(".row_number:last").text())
 }
 
@@ -85,12 +88,12 @@ function addRow() {
 }
 
 function recountPoints(event) {
-    // Устанавливаем кол-во баллов судье
+    // setting judge's points
     let row = $(event.target).parents(".round_form");
     let sum = 0;
     row.find(".points_input").each(function () {
         sum += Number(this.value);
-    })
+    });
     row.find(".judge_points").text(12 - sum);
 }
 
@@ -106,17 +109,24 @@ function removeStar(event) {
 }
 
 $(document).on('click', '.add_round', function () {
+    // adding round
     saveGame();
     addRow();
 });
+
 $(document).on('click', '.save', function () {
+    // saving game
     saveGame();
 });
+
 $(document).on('click', '.end_editing', function () {
+    // function to end editing
     saveGame(finish = true);
 });
+
 $(document).on('click', '.start_editing', function (e) {
-    if (stat == 1) {
+    // function to start editing
+    if (stat === 1) {
         changeStatus(2, function () {
             $(event.target).remove();
             toggleProtocol(0);
@@ -125,10 +135,11 @@ $(document).on('click', '.start_editing', function (e) {
         toggleProtocol(0);
         $(event.target).remove();
     }
-})
+});
+
 $(document).on('input keyup', '.points_input', recountPoints);
 $(document).on('click', '.star.add', addStar);
-$(document).on('click', '.star.remove', removeStar)
+$(document).on('click', '.star.remove', removeStar);
 
 $(document).ready(function (jqs) {
     stat = gameStatus();
