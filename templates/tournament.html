@@ -33,18 +33,22 @@
             {% endif %}
         </div>
     </div>
-    <div class="page_description box">
-        {{ tour.description }}
-    </div>
+    {% if tour.description %}
+        <div class="page_description box">
+            {{ tour.description }}
+        </div>
+    {% endif %}
+
     <div class="box_container box_container-covid">
         <div class="box box-large">
             <div class="shadow-box__title">
                 Лиги
             </div>
             {% for league in tour.leagues | sort(reverse=True, attribute="created_at") %}
-                <div class="centered_block block_link"
-                     onclick="redirect(event)"
-                     href="{{ league.link }}"
+                <div
+                  class="centered_block block_link"
+                  onclick="redirect(event)"
+                  href="{{ league.link }}"
                 >
                     <h2 class="item_title">{{ league.title }}</h2>
                     <div class="description">

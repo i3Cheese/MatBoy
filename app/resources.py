@@ -589,7 +589,7 @@ class PostResource(Resource):
         session = create_session()
         post = session.query(Post).filter(Post.id == post_id).first()
         if not post.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
         if post:
             session.delete(post)
             session.commit()
@@ -604,7 +604,7 @@ class PostResource(Resource):
         post = Post()
         tour = get_tour(session, args['tournament_id'])
         if not tour.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
         for key, value in args.items():
             if key == 'status':
                 if value:

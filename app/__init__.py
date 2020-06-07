@@ -18,13 +18,7 @@ app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
 app.config.from_object(config)
 
 mail = Mail(app)
-
-
-def send_message(msg):
-    """Send message on email SMPT"""
-    with app.app_context():
-        mail.send(msg)
-
+from .mails import send_message, send_messages
 
 login_manager = LoginManager()
 login_manager.init_app(app)
