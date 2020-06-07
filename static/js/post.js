@@ -24,8 +24,8 @@ $(document).ready(function () {
                 console.log(data);
             }
         });
-
     }
+
     postForm.submit(function (event) {
         event.preventDefault();
         let title = titleInput.val();
@@ -54,8 +54,9 @@ $(document).ready(function () {
                         }
                     } else {
                         console.log(data);
-                        submitButton.attr('disabled', false);
                     }
+                }).always(function () {
+                    submitButton.attr('disabled', false);
                 });
             } else {  // checking if create post
                 $.ajax({
@@ -68,12 +69,13 @@ $(document).ready(function () {
                         if (data.status === 1) {  // if post's publication is now
                             notifications(data, false);
                         } else {
-                            submitButton.attr('disabled', false);
                             window.location.href = `/tournament/${tourId}`;
                         }
                     } else {
                         submitButton.attr('disabled', false);
                     }
+                }).always(function () {
+                    submitButton.attr('disabled', false);
                 });
             }
         }
