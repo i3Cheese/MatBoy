@@ -1,3 +1,6 @@
+@import "ck-editor.css";
+
+
 body {
     height: 100%;
     background: #f4f4f4;
@@ -15,6 +18,28 @@ button.hidden{
     width: 0;
     position: absolute;
     bottom: 0;
+}
+
+.toast_holder{
+    position: fixed;
+    z-index: 1060;
+    right: 50px;
+    bottom: 50px;
+    padding: 10px;
+    width: 350px;
+}
+
+@media only screen and (max-width:500px){
+    .toast_holder{
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        padding: 0;
+    }
+    .toast{
+        width: 100%;
+        max-width: none;
+    }
 }
 
 .link{
@@ -184,6 +209,9 @@ textarea.form__field-input {
     margin-top: 28px;
 }
 
+.vk_menu > button{
+    width: 100%;
+}
 
 .buttons-menu{
     display: flex;
@@ -192,7 +220,11 @@ textarea.form__field-input {
 }
 
 .buttons-menu > button{
-    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.buttons-menu > button:first-of-type{
+    margin-left: 0;
 }
 
 
@@ -341,7 +373,7 @@ button, input {
     flex-wrap: wrap-reverse;
     flex-direction: row;
     margin: 60px 0px 10px 0px;
-    padding: 0;
+    padding: 0 5px;
 }
 
 /* Сохраняет расстояние между элементами */
@@ -349,16 +381,6 @@ button, input {
     justify-content: space-between;
 }
 
-@media only screen and (max-width: 700px){
-    .box_container{
-        justify-content: center;
-        margin-top: 0px;
-        padding: 0px 5px;
-    }
-    .box_container > div{
-        width: 100%;
-    }
-}
 
 .box-label{
     font-size: 3em;
@@ -385,12 +407,6 @@ button, input {
     margin: 60px 10px 10px 10px;
 }
 
-@media (max-width: 1000px){
-    .box{
-        max-width: none !important;
-    }
-}
-
 .box-tiny{
     max-width: 400px;
 }
@@ -414,13 +430,32 @@ button, input {
 
 .square-tiny{
     max-width: 300px;
-    height: 300px;
+    min-height: 300px;
 }
 
 .info_in_box{
     width: 100%;
     padding: 20px 0;
     height: 100%;
+}
+
+@media (max-width: 1000px){
+    .box{
+        max-width: none !important;
+    }
+}
+
+@media only screen and (max-width: 700px){
+    .box_container{
+        justify-content: center;
+        margin-top: 0px;
+    }
+    .box_container > div{
+        width: 100%;
+    }
+    .non_space_box{
+        padding: 2px;
+    }
 }
 
 @media (min-width: 300px){
@@ -486,16 +521,24 @@ button, input {
     display: inline;
 }
 
-.protocol-table{
+.info_table{
     text-align: center;
+    width: 98%;
+}
+.protocol_in, .big_table_container{
+    overflow: auto;
+    align-content: center;
 }
 
-.protocol-table, .protocol-table td, .protocol-table th{
+.info_table, .info_table td, .info_table th{
     border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.protocol-table td{
+.info_table td{
     height: 30px;
+}
+.info_table th{
+    padding: 0 5px;
 }
 
 .protocol-table input, .protocol-table select, .protocol-table textarea{
@@ -504,6 +547,11 @@ button, input {
     width: 100%;
     box-sizing: border-box;
     font: inherit;
+    text-align: inherit;
+}
+
+.protocol-table textarea{
+    text-align: left;
 }
 
 textarea:disabled, .protocol-table select:not(.custom-select){
@@ -520,10 +568,63 @@ textarea:disabled, .protocol-table select:not(.custom-select){
     text-align: center;
 }
 
-.protocol-table .player{
-    width: 300px;
+.protocol-table .player select{
+    width: 200px;
 }
 
+.protocol-table .player{
+    white-space: nowrap;
+    position: relative;
+    padding: 5px;
+}
+
+.shadow_link{
+    color: inherit;
+}
+
+.captain_winner_name{
+    font-size: 1.2em;
+    text-decoration: underline;
+    padding: 0 5px;
+}
+
+.captain_winner span{
+    vertical-align: middle;
+    line-height: 100%;
+}
+
+.corner-lt{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.stars{
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    display: flex;
+    margin-top: -5px
+}
+
+.star{
+    font-size: 27px;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.star.enabled:hover{
+    cursor: pointer;
+}
+
+.star.add{
+    color: rgba(0, 0, 0, 0.5);
+}
 
 .shadow_list{
     list-style-type: none;
@@ -554,4 +655,8 @@ fieldset{
 
 input[type='checkbox']{
     cursor: pointer;
+}
+
+.g-recaptcha div {
+    margin: 0 auto;
 }

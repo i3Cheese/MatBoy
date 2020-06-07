@@ -1,0 +1,11 @@
+**/__pycache__
+*.pyc
+*.log
+tasks.md
+venv/
+.vscode/
+alembic/versions/
+ngrok.exe
+*.idea
+static/img/*.*
+vk_info.json

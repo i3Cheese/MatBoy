@@ -1,0 +1,2 @@
+class StatusError(Exception):
+    pass

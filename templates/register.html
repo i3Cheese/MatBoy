@@ -9,6 +9,9 @@
     method="post"
     data-remote="true"
 >
+{% include "vk/vk_reg.html" %}
+<div id="vk_notification" class="hidden form__field-label" style="margin-top: 10px">
+</div>
 {{form.hidden_tag()}}
   <fieldset class="form__fields">
     {% from "form_macroses.html" import form_field, field_errors %}
@@ -19,9 +22,12 @@
         
         autofocus="",
         type="email",
-        id="email_field",
+        id="email_field"
       )}}
       {{field_errors(form.email)}}
+    </div>
+    <div id="email_notifications_div" class="form__field-label" style="margin-top: 10px">
+      {{form.email_notifications}} {{form.email_notifications.label}}
     </div>
     {{form_field(form.surname)}}
       {{form.surname.label(for="surname_field", class="form__field-label")}}
@@ -29,7 +35,7 @@
         type="text",
         
         class="form__field-input",
-        id="surname_field",
+        id="surname_field"
       )}}
       {{field_errors(form.surname)}}
     </div>
@@ -39,7 +45,7 @@
         type="text",
         
         class="form__field-input",
-        id="name_field",
+        id="name_field"
       )}}
       {{field_errors(form.name)}}
     </div>
@@ -82,7 +88,7 @@
         
         class="form__field-input",
         id="password_field",
-        autocomplete="off",
+        autocomplete="off"
       )}}
       {{field_errors(form.password)}}
     </div>
@@ -97,6 +103,11 @@
       )}}
       {{field_errors(form.password_again)}}
     </div>
+      {{form_field(form.recaptcha)}}
+      {{form.recaptcha.label(for="password_repeat", class="form__field-label")}}
+      {{form.recaptcha(id="recaptcha")}}
+      {{field_errors(form.recaptcha)}}
+      </div>
     <div class="form__buttons s-buttons">
       {{form.submit(
         type="submit",

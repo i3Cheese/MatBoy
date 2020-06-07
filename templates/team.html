@@ -11,40 +11,14 @@
     {{team.name}}
   </h1>
 </div>
-<div class="page_description box">
-  {{team.motto}}
-</div>
+
+{% if team.motto %}
+  <div class="page_description box">
+    {{team.motto}}
+  </div>
+{% endif %}
+
 <div class="box_container">
-  <div class="box">
-    <div class="shadow-box__title">
-      Игры
-    </div>
-    {% for game in team.games | selectattr("is_deleted", "false") 
-                              | sort(reverse=True, attribute="created_at") %}
-    <div class="centered_block block_link" 
-         onclick="redirect(event)" 
-         href="/game/{{game.id}}"
-    >
-      <h2 class="item_title">{{game.title}}</h2>
-      <div class="description">
-        {{formated_datetime(game.start)}}
-      </div>
-    </div>
-    {% endfor %}
-  </div>
-  <div class="box box-tiny">
-    <div class="shadow-box__title">
-      Игроки
-    </div>
-    {% for player in team.players %}
-      <div class="centered_block block_link" 
-           onclick="redirect(event)" 
-           href="/profile/{{player.id}}"
-      >
-        <h5 class="item_title">{{player.fullname}}</h5>
-      </div>
-    {% endfor %}
-  </div>
   {% set border_class =  "border-success" 
                           if team.status == 2 else 
                           "border-warning"
@@ -58,13 +32,45 @@
       <dt class="col-sm-9">{{team_status(team)}}</dt>
       <dd class="col-sm-3">Турнир:</dd>
       <dt class="col-sm-9">
-        <a href="/tournament/{{team.tournament.id}}">
+        <a href="{{team.tournament.link}}">
           {{team.tournament.title}}
         </a>
       </dt>
       <dd class="col-sm-3">Лига:</dd>
       <dt class="col-sm-9">{{team_league(team)}}</dt>
     </dl>
+  </div>
+
+  <div class="box box-tiny">
+    <div class="shadow-box__title">
+      Игроки
+    </div>
+    {% for player in team.players %}
+      <div class="centered_block block_link" 
+           onclick="redirect(event)" 
+           href="{{player.link}}"
+      >
+        <h5 class="item_title">{{player.fullname}}</h5>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <div class="box">
+    <div class="shadow-box__title">
+      Игры
+    </div>
+    {% for game in team.games | selectattr("is_deleted", "false") 
+                              | sort(reverse=True, attribute="created_at") %}
+    <div class="centered_block block_link" 
+         onclick="redirect(event)" 
+         href="{{game.link}}"
+    >
+      <h2 class="item_title">{{game.title}}</h2>
+      <div class="description">
+        {{formated_datetime(game.start)}}
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </div>
 

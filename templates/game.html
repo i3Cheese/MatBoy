@@ -9,13 +9,19 @@
 
 <div class="box d-flex flex-wrap justify-content-between">
   <div class="mdr-2">
-    <a class="btn button_primary" href="/league/{{game.league.id}}">
+    <a class="btn button_primary" href="{{game.league.link}}">
       <– Лига
     </a>
     {% if game.have_permission(current_user) and not game.is_deleted %}
-      <a class="btn button_primary" href="/prepare_to_game/{{game.id}}">
-        Судить
-      </a>
+      {% if game.started() %}
+        <a class="btn button_primary" href="{{game.link}}/console">
+          Редактировать протокол
+        </a>
+      {% else %}
+        <a class="btn button_primary" href="{{game.link}}/prepare">
+          Подготовка к игре
+        </a>
+      {% endif %}
     {% endif %}
   </div>
   <div class="mdlr-2 h4">
@@ -26,9 +32,9 @@
   </div>
 </div>
 
-<div class="box_container">
-  <div class="box">
-    {% if game.protocol['rounds'] and not game.deleted %}
+<div class="box_container protocol_in">
+  <div class="box w-100">
+    {% if game.started() %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
         {% set t_d = game.protocol['teams'][loop.index0] %}
@@ -53,70 +59,87 @@
         {% endfor %}
       </div>
       {% set rounds = game.protocol['rounds'] %}
+      {% macro stars_block(i, val=0) %}
+        <div class="corner-lt stars" name="team{{i}}_stars">
+          {% for _ in range(val) %}
+            <div class="star disabled">*</div>
+          {% endfor %}
+        </div>
+      {% endmacro %}
       {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
-      <table class="protocol-table m-2 rounded" id="protocol">
-        <tr class="table_header">
-          <th>№</th>
-          <th>Команда</th>
-          <th>Баллы</th>
-          <th>Задача</th>
-          <th>Вызов</th>
-          <th>Баллы</th>
-          <th>Команда</th>
-          <th>Жюри</th>
-          <th>Дополнительная информация</th>
-        </tr>
-        {% for round in rounds %}
+      {% if game.captain_winner %}
+        <div class="w-100 m-2 captain_winner">
+          Победил капитан команды
+          <span class="captain_winner_name">{{game.captain_winner.name}}</span>
+        </div>
+      {% endif %}
+      <div class="protocol_in big_table_container">
+        <table class="info_table protocol-table m-2 rounded" id="protocol">
+          <tr class="table_header">
+            <th>№</th>
+            <th>Команда</th>
+            <th>Баллы</th>
+            <th>Задача</th>
+            <th>Вызов</th>
+            <th>Баллы</th>
+            <th>Команда</th>
+            <th>Жюри</th>
+            <th>Дополнительная информация</th>
+          </tr>
+          {% for round in rounds %}
+            <tr class="round_form">
+              <td class="row_number symbols">{{loop.index}}</td>
+              <td class="player">
+                {{round['teams'][0]['player']['fullname']}}
+                {{stars_block(1, round['teams'][0].get('stars', 0))}}
+              </td>
+              <td class="points symbols">
+                {{round['teams'][0]['points']}}
+              </td>
+              <td class="symbols">
+                {{round['problem']}}
+              </td>
+              <td class="type symbols">
+                {{round_types[round['type'] - 1][1]}}
+              </td>
+              <td class="points symbols">
+                {{round['teams'][1]['points']}}
+              </td>
+              <td class="player">
+                {{round['teams'][1]['player']['fullname']}}
+                {{stars_block(2, round['teams'][1].get('stars', 0))}}
+              </td>
+              <td class="points judge_points symbols">
+                {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
+              </td>
+              <td><textarea name="additional" disabled>{{round['additional']}}</textarea></td>
+            </tr>
+          {% endfor %}
           <tr class="round_form">
-            <td class="row_number symbols">{{loop.index}}</td>
-            <td class="player">
-              {{round['teams'][0]['player']['fullname']}}
+            <td class="row_number symbols">Итого</td>
+            <td>
             </td>
             <td class="points symbols">
-              {{round['teams'][0]['points']}}
+              {{game.protocol['points'][0]}}
             </td>
-            <td class="symbols">
-              {{round['problem']}}
+            <td>
+
             </td>
             <td class="type symbols">
-              {{round_types[round['type'] - 1][1]}}
+
             </td>
             <td class="points symbols">
-              {{round['teams'][1]['points']}}
+              {{game.protocol['points'][1]}}
             </td>
-            <td class="player">
-              {{round['teams'][1]['player']['fullname']}}
+            <td>
             </td>
             <td class="points judge_points symbols">
-              {{12 - round['teams'][0]['points'] - round['teams'][1]['points']}}
+              {{game.protocol['points'][2]}}
             </td>
-            <td><textarea name="additional" disabled>{{round['additional']}}</textarea></td>
+            <td></td>
           </tr>
-        {% endfor %}
-        <tr class="round_form">
-          <td class="row_number symbols">Итого</td>
-          <td>
-          </td>
-          <td class="points symbols">
-            {{game.protocol['points'][0]}}
-          </td>
-          <td>
-
-          </td>
-          <td class="type symbols">
-
-          </td>
-          <td class="points symbols">
-            {{game.protocol['points'][1]}}
-          </td>
-          <td>
-          </td>
-          <td class="points judge_points symbols">
-            {{game.protocol['points'][2]}}
-          </td>
-          <td></td>
-        </tr>
-      </table>
+        </table>
+      </div>
   {% elif game.is_deleted %}
   <h4 style="color: red;">Игра удаленна</h4>
   {% else %}

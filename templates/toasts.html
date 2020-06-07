@@ -1,0 +1,87 @@
+<template id="error_toast_template">
+  <div role="alert" 
+        aria-live="assertive" 
+        aria-atomic="true" 
+        class="toast" 
+        data-autohide="true"
+        data-delay="4096">
+    <div class="toast-header bg-danger">
+      <strong class="mr-auto text-white">Ошибка!</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <span class="message"></span>
+    </div>
+  </div>
+</template>
+
+<template id="success_toast_template">
+  <div role="alert" 
+        aria-live="assertive" 
+        aria-atomic="true" 
+        class="toast" 
+        data-autohide="true"
+        data-delay="4096">
+    <div class="toast-header bg-success">
+      <strong class="mr-auto text-white">Успех!</strong>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <span class="message"></span>
+    </div>
+  </div>
+</template>
+
+
+<div aria-live="polite" 
+      aria-atomic="true" 
+      class="toast_holder" 
+      id="toasts">
+
+  {%- with errors = get_flashed_messages(category_filter=["error"]) %}
+    {%- for msg in errors -%}
+      <div role="alert"
+          aria-live="assertive" 
+          aria-atomic="true" 
+          class="toast on_ready_toast" 
+          data-autohide="true"
+          data-delay="4096">
+        <div class="toast-header bg-danger">
+          <strong class="mr-auto text-white">Ошибка!</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body">
+          <span class="message">{{msg}}</span>
+        </div>
+      </div>
+    {%- endfor -%}
+  {%- endwith -%}
+
+  {%- with sucs = get_flashed_messages(category_filter=["success"]) -%}
+    {%- for msg in sucs -%}
+      <div role="alert" 
+           aria-live="assertive"
+           aria-atomic="true"
+           class="toast on_ready_toast"
+           data-autohide="true"
+           data-delay="4096">
+        <div class="toast-header bg-success">
+          <strong class="mr-auto text-white">Успех!</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body">
+          <span class="message">{{msg}}</span>
+        </div>
+      </div>
+    {%- endfor -%}
+  {%- endwith -%}
+
+</div>

@@ -11,33 +11,72 @@
   <h1 class="page_title">
     {{league.title}}
   </h1>
-  <h5>
-    <a href="/tournament/{{league.tournament.id}}">
-      {{league.tournament.title}}
-    </a>
-  </h5>
-  {% if current_user.id in (1, league.tournament.chief_id, league.chief_id,) %}
+  {% if league.have_permission(current_user) %}
     <div class="link_menu">
-      <a class="link link-small" href='/league_console/{{league.id}}'>
+      <a class="link-small" href='{{league.link}}/console'>
         управлять
       </a>
     </div>
   {% endif %}
 </div>
-<div class="box_container" style="margin-top: 0;">
-  <div class="page_description box">
-    {{league.description}}
+
+{% if league.description %}
+  <div class="box_container" style="margin-top: 0;">
+    <div class="page_description box">
+      {{league.description}}
+    </div>
   </div>
-</div>
+{% endif %}
+
+{% set teams, table, result = league.get_table() %}
+{% macro team_th(team) %}
+  <th class="team_name"><a class="shadow_link" href="{{team.link}}">{{team.name}}</a></th>
+{% endmacro %}
+{% if teams %}
+  <div class="box_container">
+    <div class="box w-100">
+      <div class="shadow-box__title">
+        Результаты
+      </div>
+      <div class="big_table_container">
+        <table class="info_table league_table m-2 rounded">
+          <tr>
+            <td></td>
+            {% for team in teams %}
+              {{team_th(team)}}
+            {% endfor %}
+            <td>Сумма баллов</td>
+          </tr>
+          {% for row in table %}
+            <tr>
+              {{team_th(teams[loop.index0])}}
+              {% for cell in row %}
+                <td class="game_cell">
+                  {% for res, game in cell %}
+                    <a class="shadow_link" href="{{game.link}}">
+                      {{res}}{% if not loop.last %}, {% endif %}
+                    </a>
+                  {% endfor %}
+                </td>
+              {% endfor %}
+              <td class="team_points">{{result[loop.index0]}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 <div class="box_container">
   <div class="box box-tiny">
     <div class="shadow-box__title">
       Команды
     </div>
     {% for team in league.teams | sort(reverse=True, attribute="created_at") if team.status == 2 %}
-      <div class="centered_block block_link" 
-            onclick="redirect(event)" 
-            href="/team/{{team.id}}"
+      <div class="centered_block block_link"
+            onclick="redirect(event)"
+            href="{{team.link}}"
       >
         <h2 class="item_title">{{team.name}}</h2>
         <div class="description">
@@ -52,9 +91,9 @@
     </div>
     {% for game in league.games | selectattr("is_deleted", "false")
                                 | sort(reverse=true, attribute="created_at") %}
-      <div class="centered_block block_link" 
-           onclick="redirect(event)" 
-           href="/game/{{game.id}}"
+      <div class="centered_block block_link"
+           onclick="redirect(event)"
+           href="{{game.link}}"
       >
         <h2 class="item_title">{{game.title}}</h2>
         <div class="description">
@@ -64,5 +103,6 @@
     {% endfor %}
   </div>
 </div>
+
 
 {% endblock content %}

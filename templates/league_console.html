@@ -12,189 +12,199 @@
         {{league.title}}
       </h3>
     </div>
-    <div class="box_container box_container-covid">
-      <div class="box box-tiny">
-        <label class="box-label">
-          Команды
-        </label>
-        {% for team in league.teams if team.status == 2 %}
-          <div class="box_item team" id="team-{{team.id}}">
-            <label class="box_item-title team-title nested-toggler" for="team_info-{{team.id}}">
-              {{team.name}}
-            </label>
-            <div class="info_bar team-info hidden" id="team_info-{{team.id}}">
-              <i class="team-motto like_list">{{team.motto}}</i>
-              <label class="label-bold">
-                Заявку отправил:
-              </label>
-              <a class="team-sender link link-shadow like_list" href="/profile/{{team.trainer.id}}">
-                {{team.trainer}}
-              </a>
-              <label class="label-bold">
-                Почта:
-              </label>
-              <a class="team-mail link link-mail like_list" href="mailto:{{team.trainer.email}}">
-                {{team.trainer.email}}
-              </a>
-              <label class="label-bold">
-                Участники:
-              </label>
-              <ul class="team-players shadow_list">
-                {% for player in team.players %}
-                  <li>
-                    <a class="link link-shadow team-player" href="/profile/{{player.id}}">
-                      {{player}}
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-
-      <div class="box box-middle">
-        <div id="games">
-          <label class="box-label">
-            Игры
+    {% if not league.teams %}
+      <div class="box_container">
+        <div class="box w-100">
+          <label class="box-label text-danger">
+            В лиге нет команд. Консоль заблокирована.
           </label>
-
-          <template id="game_form_template">
-            <form class="box_item game_form"
-                  id="game_form-"
-                  accept-charset="utf-8"
-                  autocomplete="off">
-              <label class="label-bold">Место проведения:</label>
-              <input class="input-wide game-place editor-text"
-                    type="text"
-                    name="place"
-              />
-              <label class="label-bold">Время начала:</label>
-              <input class="input-wide game-start editor-time datepicker-here"
-                     type="text"
-                     name="start"
-                     data-timepicker="true"
-              />
-              <label class="label-bold">Команды:</label>
-              <fieldset class="input-wide" name="teams">
-                <select class="selector game-team1 team_selector" name="team1">
-                  {% include 'team_options.html' %}
-                </select>
-                -
-                <select class="selector game-team2 team_selector" name="team2">
-                  {% include 'team_options.html' %}
-                </select>
-              </fieldset>
-              <label class="label-bold">Судья:</label>
-              <input class="input-wide game-judge editor-email" 
-                     name="judge_email"
-                     type="email" 
-                     required/>
-
-              <div class="buttons-menu">
-                <button class="button button_success" type="submit" name="submit">
-                  Сохранить
-                </button>
-                <button class="button button_danger" type="reset" name="reset">
-                  Отменить
-                </button>
-              </div>
-            </form>
-          </template>
-          <template id="game_template">
-            <div class="box_item game" id="game-">
-              <label class="box_item-title game-title nested-toggler" for="game_info-">
-
+        </div>
+      </div>
+    {% else %}
+      <div class="box_container box_container-covid">
+        <div class="box box-tiny">
+          <label class="box-label">
+            Команды
+          </label>
+          {% for team in league.teams if team.status == 2 %}
+            <div class="box_item team" id="team-{{team.id}}">
+              <label class="box_item-title team-title nested-toggler" for="team_info-{{team.id}}">
+                {{team.name}}
               </label>
-              <div class="link_menu">
-                <a class="link link-small game-goto" href='/game/'>
-                  перейти на страницу
-                </a>
-              </div>
-              <div class="info_bar game-info" id="game_info-">
+              <div class="info_bar team-info hidden" id="team_info-{{team.id}}">
+                <i class="team-motto like_list">{{team.motto}}</i>
                 <label class="label-bold">
-                  Судья:
+                  Заявку отправил:
                 </label>
-                <a class="game-judge link link-shadow info_value like_list"
-                    href="/profile/" 
-                    title="">
-
+                <a class="team-sender link link-shadow like_list" href="{{team.trainer.link}}">
+                  {{team.trainer}}
                 </a>
                 <label class="label-bold">
-                  Дата начала
+                  Почта:
                 </label>
-                <p class="game-start info_value">
-
-                </p>
-                <label class="label-bold">
-                  Место проведения
-                </label>
-                <p class="game-place info_value">
-
-                </p>
-                <div class="buttons-menu">
-                  <button class="button button_warning game-edit">
-                    Редактировать
-                  </button>
-                  <button class="button button_danger game-delete">
-                    Удалить
-                  </button>
-                </div>
-              </div>
-            </div>
-          </template>
-
-          {% for game in league.games | selectattr("is_deleted", "false")
-                                      | sort(reverse=true, attribute="created_at") %}
-            <div class="box_item game" id="game-{{game.id}}">
-              <label class="box_item-title game-title nested-toggler" for="game_info-{{game.id}}">
-                {{game.team1.name}} — {{game.team2.name}}
-              </label>
-              <div class="link_menu">
-                <a class="link link-small game-goto" href='/game/{{game.id}}'>
-                  перейти на страницу
-                </a>
-              </div>
-              <div class="info_bar game-info hidden" id="game_info-{{game.id}}">
-                <label class="label-bold">
-                  Судья:
-                </label>
-                <a class="game-judge link link-shadow info_value like_list"
-                    href="/profile/{{game.judge.id}}" 
-                    title="{{game.judge.email}}">
-                  {{game.judge.fullname}}
+                <a class="team-mail link link-mail like_list" href="mailto:{{team.trainer.email}}">
+                  {{team.trainer.email}}
                 </a>
                 <label class="label-bold">
-                  Дата начала:
+                  Участники:
                 </label>
-                <p class="game-start info_value like_list">
-                  {{game.start if game.start else "Не определенно"}}
-                </p>
-                <label class="label-bold">
-                  Место проведения:
-                </label>
-                <p class="game-place info_value like_list">
-                  {{game.place if game.place else "Не определенно"}}
-                </p>
-                <div class="buttons-menu">
-                  <button class="button button_warning game-edit">
-                    Редактировать
-                  </button>
-                  <button class="button button_danger game-delete">
-                    Удалить
-                  </button>
-                </div>
+                <ul class="team-players shadow_list">
+                  {% for player in team.players %}
+                    <li>
+                      <a class="link link-shadow team-player" href="{{player.link}}">
+                        {{player}}
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
               </div>
             </div>
           {% endfor %}
         </div>
-        <div class="buttons-menu">
-          <button class="button button_success game-add">
-            Добавить игру
-          </button>
+
+        <div class="box box-middle">
+          <div id="games">
+            <label class="box-label">
+              Игры
+            </label>
+
+            <template id="game_form_template">
+              <form class="box_item game_form"
+                    id="game_form-"
+                    accept-charset="utf-8"
+                    autocomplete="off">
+                <label class="label-bold">Место проведения:</label>
+                <input class="input-wide game-place editor-text"
+                      type="text"
+                      name="place"
+                />
+                <label class="label-bold">Время начала:</label>
+                <input class="input-wide game-start editor-time datepicker-here"
+                      type="text"
+                      name="start"
+                      data-timepicker="true"
+                />
+                <label class="label-bold">Команды:</label>
+                <fieldset class="input-wide" name="teams">
+                  <select class="selector game-team1 team_selector" name="team1">
+                    {% include 'team_options.html' %}
+                  </select>
+                  -
+                  <select class="selector game-team2 team_selector" name="team2">
+                    {% include 'team_options.html' %}
+                  </select>
+                </fieldset>
+                <label class="label-bold">Судья: *</label>
+                <input class="input-wide game-judge editor-email" 
+                      name="judge_email"
+                      type="email" 
+                      required/>
+
+                <div class="buttons-menu">
+                  <button class="button button_success" type="submit" name="submit">
+                    Сохранить
+                  </button>
+                  <button class="button button_danger" type="reset" name="reset">
+                    Отменить
+                  </button>
+                </div>
+              </form>
+            </template>
+            <template id="game_template">
+              <div class="box_item game" id="game-">
+                <label class="box_item-title game-title nested-toggler" for="game_info-">
+
+                </label>
+                <div class="link_menu">
+                  <a class="link link-small game-goto" href="{{league.link}}/game/{{'{0}'}}">
+                    перейти на страницу
+                  </a>
+                </div>
+                <div class="info_bar game-info" id="game_info-">
+                  <label class="label-bold">
+                    Судья:
+                  </label>
+                  <a class="game-judge link link-shadow info_value like_list"
+                      href="/profile/{{'{0}'}}" 
+                      title="">
+
+                  </a>
+                  <label class="label-bold">
+                    Дата начала
+                  </label>
+                  <p class="game-start info_value">
+
+                  </p>
+                  <label class="label-bold">
+                    Место проведения
+                  </label>
+                  <p class="game-place info_value">
+
+                  </p>
+                  <div class="buttons-menu">
+                    <button class="button button_warning game-edit">
+                      Редактировать
+                    </button>
+                    <button class="button button_danger game-delete">
+                      Удалить
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            {% for game in league.games | selectattr("is_deleted", "false")
+                                        | sort(reverse=true, attribute="created_at") %}
+              <div class="box_item game" id="game-{{game.id}}">
+                <label class="box_item-title game-title nested-toggler" for="game_info-{{game.id}}">
+                  {{game.team1.name}} — {{game.team2.name}}
+                </label>
+                <div class="link_menu">
+                  <a class="link link-small game-goto" href="{{game.link}}">
+                    перейти на страницу
+                  </a>
+                </div>
+                <div class="info_bar game-info hidden" id="game_info-{{game.id}}">
+                  <label class="label-bold">
+                    Судья:
+                  </label>
+                  <a class="game-judge link link-shadow info_value like_list"
+                      href="/profile/{{game.judge.id}}" 
+                      title="{{game.judge.email}}">
+                    {{game.judge.fullname}}
+                  </a>
+                  <label class="label-bold">
+                    Дата начала:
+                  </label>
+                  <p class="game-start info_value like_list">
+                    {{game.start if game.start else "Не определенно"}}
+                  </p>
+                  <label class="label-bold">
+                    Место проведения:
+                  </label>
+                  <p class="game-place info_value like_list">
+                    {{game.place if game.place else "Не определенно"}}
+                  </p>
+                  <div class="buttons-menu">
+                    <button class="button button_warning game-edit">
+                      Редактировать
+                    </button>
+                    <button class="button button_danger game-delete">
+                      Удалить
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="buttons-menu">
+            <button class="button button_success game-add">
+              Добавить игру
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    {% endif %}
     <script src="{{url_for('static', filename='js/league_console.js')}}"></script>
   </main>
 {% endblock main %}

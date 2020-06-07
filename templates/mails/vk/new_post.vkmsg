@@ -1,0 +1,2 @@
+Новый пост в турнире "{{tour.title}}"
+Переходите по ссылке, чтобы прочитать его {{ url_for('web_pages.tournament_page', tour_id=tour.id, _external=True) }}

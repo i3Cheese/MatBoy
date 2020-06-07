@@ -1,0 +1,8 @@
+<h1>Обратная связь от пользователя {{ current_user.name }} {{ current_user.surname }} - MatBoy</h1>
+{{ content|safe }}
+<h3>Пользователь:</h3>
+<p>
+  Имя: {{ current_user.name }}<br>
+  Фамилия: {{ current_user.surname }}<br>
+  Email: {{ current_user.email }}
+</p>
