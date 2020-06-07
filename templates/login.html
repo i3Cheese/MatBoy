@@ -3,48 +3,48 @@
 {% block title_layout %} Вход {% endblock title_layout %}
 {% block form %}
 
-    <form
-            class="form form_login s-form validateble"
-            id="login_form"
-            method="post"
-            data-remote="true"
-    >
-        {% include "vk/vk_auth.html" %}
-        {{ form.hidden_tag() }}
-        <fieldset class="form__fields">
-            {% from "form_macroses.html" import form_field, field_errors %}
-            {{ form_field(form.email) }}
-            {{ form.email.label(for="email_field", class="form__field-label") }}
-            {{ form.email(class="form__field-input",
+  <form
+    class="form form_login s-form validateble"
+    id="login_form"
+    method="post"
+    data-remote="true"
+  >
+    {% include "vk/vk_auth.html" %}
+    {{ form.hidden_tag() }}
+    <fieldset class="form__fields">
+      {% from "form_macroses.html" import form_field, field_errors %}
+      {{ form_field(form.email) }}
+      {{ form.email.label(for="email_field", class="form__field-label") }}
+      {{ form.email(class="form__field-input",
 
-                    autofocus="",type="email",id="email_field",
-                    )}}
-            {{ field_errors(form.email) }}
-            </div>
-            {{ form_field(form.password) }}
-            {{ form.password.label(for="password_field", class="form__field-label") }}
-            {{ form.password(type="password",
+          autofocus="",type="email",id="email_field",
+          )}}
+      {{ field_errors(form.email) }}
+      </div>
+      {{ form_field(form.password) }}
+      {{ form.password.label(for="password_field", class="form__field-label") }}
+      {{ form.password(type="password",
 
-                    class="form__field-input",id="password_field",autocomplete="off",
-                    )}}
-            {{ field_errors(form.password) }}
-            </div>
+          class="form__field-input",id="password_field",autocomplete="off",
+          )}}
+      {{ field_errors(form.password) }}
+      </div>
 
-            <div class="form__buttons s-buttons">
-                {{ form.submit(
-        type="submit",
-        id="registration_button",
-        class="button button_wide button_primary"
+      <div class="form__buttons s-buttons">
+        {{ form.submit(
+    type="submit",
+    id="registration_button",
+    class="button button_wide button_primary"
       ) }}
-            </div>
-        </fieldset>
-    </form>
+      </div>
+    </fieldset>
+  </form>
 {% endblock form %}
 {% block link_to %}
 
-    Ещё нет аккаунта?&nbsp;
-    <a href="/register" class="form-additional-message__link">Зарегистрируйтесь</a><br>
-    Забыли пароль?
-    <a href="{{ url_for('web_pages.reset_password_step_1') }}"
+  Ещё нет аккаунта?&nbsp;
+  <a href="/register" class="form-additional-message__link">Зарегистрируйтесь</a><br>
+  Забыли пароль?
+  <a href="{{ url_for('web_pages.reset_password_step_1') }}"
        class="form-additional-message__link">Восстановить</a>
 {% endblock link_to %}

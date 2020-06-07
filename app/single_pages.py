@@ -1,3 +1,5 @@
+# Pages with short links
+
 from flask import Blueprint, redirect, abort
 from data import User, Tournament, League, Team, Game, create_session
 from config import config

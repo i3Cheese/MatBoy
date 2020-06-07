@@ -1,43 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <style>
-    #editor {
-        width: 100%;
-        border: 1px solid #ced4da;
-        margin-top: 25px;
-    }
-    #editor
-    </style>
-    <div class="title_container">
-        <h1 class="page_title">
-            Обратная связь
-        </h1>
-    </div>
+  <style>
+  #editor {
+    width: 100%;
+    border: 1px solid #ced4da;
+    margin-top: 25px;
+  }
+  </style>
+  <div class="title_container">
+    <h1 class="page_title">
+      Обратная связь
+    </h1>
+  </div>
 
-    <div class="box_container">
-        <div class="box" style="max-width: 100%">
-            <form method="post" id="feedback-form" novalidate>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"
-                              id="inputGroup-sizing-default">Тема вопроса</span>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Sizing example input"
-                           aria-describedby="inputGroup-sizing-default" name="title" id="title">
-                </div>
-                <div class="input-group mb-3">
-                    <div id="editor" class="feedback-field"></div>
-                </div>
-                <div class="input-group justify-content-end">
-                    <input type="submit" class="btn btn-primary">
-                </div>
-            </form>
+  <div class="box_container">
+    <div class="box w-100">
+      <form method="post" id="feedback-form" novalidate>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"
+                  id="inputGroup-sizing-default">Тема вопроса</span>
+          </div>
+          <input type="text" class="form-control" aria-label="Sizing example input"
+                 aria-describedby="inputGroup-sizing-default" name="title" id="title">
         </div>
+        <div class="input-group mb-3">
+          <div id="editor" class="feedback-field"></div>
+        </div>
+        <div class="input-group justify-content-end">
+          <input type="submit" class="btn btn-primary">
+        </div>
+      </form>
     </div>
-    <script src="{{ url_for('static', filename='ckeditor5_feedback/build/ckeditor.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
-    <script>
+  </div>
+  <script src="{{ url_for('static', filename='ckeditor5_feedback/build/ckeditor.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+  <script>
 
-    </script>
+  </script>
 {% endblock %}

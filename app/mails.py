@@ -9,6 +9,7 @@ def send_message(msg):
 
 
 def send_messages(subject, recipients, html, sender=config.MAIL_DEFAULT_SENDER, ):
+    """Send emails to all recipients one by one"""
     with app.app_context():
         for recipient in recipients:
             msg = Message(

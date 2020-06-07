@@ -9,8 +9,8 @@
 
 {% macro field_errors(field) %}
 {% for error in field.errors %}
-    <div class="s-error">
-      {{error}}
-    </div>
+  <div class="s-error">
+    {{error}}
+  </div>
 {% endfor %}
 {% endmacro %}

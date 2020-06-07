@@ -1,60 +1,60 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <style>
-        .ck.ck-editor {
-            width: 100%;
-        }
-    </style>
-    <div class="title_container">
-        <h1 class="page_title">
-            Новость для турнира "{{ tour.title }}"
-        </h1>
-    </div>
+  <style>
+    .ck.ck-editor {
+      width: 100%;
+    }
+  </style>
+  <div class="title_container">
+    <h1 class="page_title">
+      Новость для турнира "{{ tour.title }}"
+    </h1>
+  </div>
 
-    <div class="box_container">
-        <div class="box w-100">
-            <form method="post" id="ckeditor-form" novalidate>
-                <input type="hidden" value="{{ tour.id }}" id="tour-id" name="tournament_id">
-                {% if post %}
-                    <input type="hidden" value="{{ post.id }}" id="post-id">
-                {% endif %}
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"
+  <div class="box_container">
+    <div class="box w-100">
+      <form method="post" id="ckeditor-form" novalidate>
+        <input type="hidden" value="{{ tour.id }}" id="tour-id" name="tournament_id">
+        {% if post %}
+          <input type="hidden" value="{{ post.id }}" id="post-id">
+        {% endif %}
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text"
                               id="inputGroup-sizing-default">Заголовок</span>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Sizing example input"
-                           aria-describedby="inputGroup-sizing-default" name="title" id="title">
-                </div>
-                <div class="input-group mb-3">
-                    <textarea name="content" id="editor" placeholder="Контент" required></textarea>
-                </div>
-                <div class="input-group mb-3">
-                    <label for="status" class="align-top ml-2">
-                        {% if post %}
-                            {% if post.status|int == 1 %}
-                                <input class="pr-2" type="checkbox" name="status" id="status"
-                                       checked>
-                            {% else %}
-                                <input class="pr-2" type="checkbox" name="status" id="status">
-                            {% endif %}
-                        {% else %}
-                            <input class="pr-2" type="checkbox" name="status" id="status" checked>
-                        {% endif %}
-                        Опубликовать</label>
-                </div>
-                <div class="input-group justify-content-end">
-                    {% if post %}
-                        <input type="submit" class="btn btn-primary" value="Редактировать">
-                    {% else %}
-                        <input type="submit" class="btn btn-primary" value="Создать">
-                    {% endif %}
-                </div>
-            </form>
+          </div>
+          <input type="text" class="form-control" aria-label="Sizing example input"
+                 aria-describedby="inputGroup-sizing-default" name="title" id="title">
         </div>
+        <div class="input-group mb-3">
+          <textarea name="content" id="editor" placeholder="Контент" required></textarea>
+        </div>
+        <div class="input-group mb-3">
+          <label for="status" class="align-top ml-2">
+            {% if post %}
+              {% if post.status|int == 1 %}
+                <input class="pr-2" type="checkbox" name="status" id="status"
+                       checked>
+              {% else %}
+                <input class="pr-2" type="checkbox" name="status" id="status">
+              {% endif %}
+            {% else %}
+              <input class="pr-2" type="checkbox" name="status" id="status" checked>
+            {% endif %}
+            Опубликовать</label>
+        </div>
+        <div class="input-group justify-content-end">
+          {% if post %}
+            <input type="submit" class="btn btn-primary" value="Редактировать">
+          {% else %}
+            <input type="submit" class="btn btn-primary" value="Создать">
+          {% endif %}
+        </div>
+      </form>
     </div>
-    <script src="{{ url_for('static', filename='js/post.js') }}"></script>
-    <script src="{{ url_for('static', filename='ckeditor5/build/ckeditor.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/creator.js') }}"></script>
+  </div>
+  <script src="{{ url_for('static', filename='js/post.js') }}"></script>
+  <script src="{{ url_for('static', filename='ckeditor5/build/ckeditor.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/creator.js') }}"></script>
 {% endblock %}

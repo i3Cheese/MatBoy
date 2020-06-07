@@ -113,7 +113,7 @@ class UserResource(Resource):
         user = get_user(session, user_id)
         if current_user != user and not current_user.is_admin:
             abort(403)
-        if args['vk_id'] is not None:
+        if args['vk_id'] is not None:  # integrate user with vk
             user.vk_id = args['vk_id']
             user.integration_with_VK = True
         session.commit()
@@ -135,6 +135,7 @@ class UsersResource(Resource):
     get_pars.add_argument('check', type=boolean, default=False, location='args')
 
     def post(self):
+        """Add new user to db"""
         args = UsersResource.reg_pars.parse_args()
         session = create_session()
         abort_if_email_exist(session, args['email'])
@@ -151,6 +152,7 @@ class UsersResource(Resource):
         return jsonify({"success": "ok"})
 
     def get(self):
+        """Return the user you are looking for If unique args passed else all users"""
         session = create_session()
         args = self.get_pars.parse_args()
         if args['vk_id']:
@@ -185,8 +187,10 @@ class TeamResource(Resource):
 
     @login_required
     def put(self, team_id):
-        """If trainer.id and trainer.email specified in the same time
-           trainer was looking by trainer.id"""
+        """
+        If trainer.id and trainer.email specified in the same time
+        trainer was looking by trainer.id.
+        """
         args = self.put_pars.parse_args()
         logging.info(f"Team put request with args {args}")
 
@@ -194,6 +198,7 @@ class TeamResource(Resource):
         team = get_team(session, team_id)
 
         if not (args['league.id'] is None and args['status'] is None):
+            # Change league and status can only tour chief
             if not team.tournament.have_permission(current_user):
                 abort(403, message="You haven't access to tournament")
             if args['league.id'] is not None:
@@ -219,12 +224,13 @@ class TeamResource(Resource):
         session.commit()
 
         response = {'success': 'ok'}
-        if args['send_info']:
+        if args['send_info']:  # Send info about team if requested
             response['team'] = team.to_dict()
         return response
 
     @login_required
     def delete(self, team_id):
+        """Sets the status of team to zero. Thats mean that the team request was refused"""
         session = create_session()
         team = get_team(session, team_id)
         if not team.have_permission(current_user):
@@ -313,9 +319,7 @@ class LeaguesResource(Resource):
         'title', type=str, required=True, help="Необходимо указать название")
     post_pars.replace_argument('tournament.id', type=int, required=True)
 
-    @login_required
     def post(self):
-        """Handle request to create league."""
         args = self.post_pars.parse_args()
         logging.info(f"League post request with args {args}")
 
@@ -336,6 +340,7 @@ class LeaguesResource(Resource):
         league.title = args['title']
         if args['description'] is not None:
             league.description = args['description']
+
         session.add(league)
         session.commit()
 
@@ -371,16 +376,15 @@ class GameResource(Resource):
             d = game.to_short_dict()
         return jsonify({'game': d})
 
-    @login_required
     def put(self, game_id):
-        """Handle request to change game."""
+        """Handle request to change game. Can't change protocol"""
         args = self.put_pars.parse_args()
         logging.info(f"Game put request: {args}")
 
         session = create_session()
         game = get_game(session, game_id)
         if not game.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
 
         if args['place'] is not None:
             game.place = args['place']
@@ -423,13 +427,12 @@ class GameResource(Resource):
         logging.info(f"Game put response: {response}")
         return jsonify(response)
 
-    @login_required
     def delete(self, game_id):
         """Sets the status of game to zero. Thats mean that the game is canceled"""
         session = create_session()
         game = get_game(session, game_id)
         if not game.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
         game.status = 0
         session.merge(game)
         session.commit()
@@ -444,7 +447,6 @@ class GamesResource(Resource):
     post_pars.replace_argument('team2.id', type=int,
                                required=True, help="Неправильно указана команда")
 
-    @login_required
     def post(self):
         """Handle request to change game."""
         args = self.post_pars.parse_args()
@@ -453,7 +455,7 @@ class GamesResource(Resource):
         session = create_session()
         league = get_league(session, args['league.id'])
         if not league.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
 
         game = Game()
         game.league = league
@@ -478,19 +480,18 @@ class GamesResource(Resource):
         response = {"success": "ok"}
         if args['send_info']:
             response["game"] = game.to_dict()
-        logging.info(f"Game post response: {response}")
+        logging.info("Game post response: " + str(response))
         return jsonify(response)
 
 
 class ProtocolResource(Resource):
-    @login_required
     def put(self, game_id):
         """Gets parts of protocol and complements it"""
         session = create_session()
         game = get_game(session, game_id)
-        logging.info(f"Protocol put with json {request.json}")
+        logging.info("Protocol put with json " + str(request.json))
         if not game.have_permission(current_user):
-            abort(403, message="Permission denied")
+            abort(403)
 
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
@@ -525,7 +526,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                                      [len(rounds) * 12 - sum(teams_points), ]
+                                      [len(rounds) * 12 - sum(teams_points), ] # Count judje points
             game.protocol['stars'] = teams_stars
 
         session.merge(game)
@@ -551,21 +552,16 @@ class PostResource(Resource):
     post_parse.add_argument('status')
 
     def get(self, post_id):
-        """Get a post by id"""
         session = create_session()
         post = get_post(session, post_id)
-        if post.have_permission(current_user):
-            d = post.to_dict()
-        else:
-            d = post.to_secure_dict()
-        return jsonify({'post': d})
+        return jsonify({'post': to_dict(post)})
 
     def put(self, post_id):
-        """Edit a post by id"""
         session = create_session()
         post = get_post(session, post_id)
         if not post.have_permission(current_user):
             abort(403, message="Permission denied")
+
         args = self.put_parse.parse_args()
         for key, value in args.items():
             if key == 'status':
@@ -598,7 +594,6 @@ class PostResource(Resource):
             abort(404, message="Post not found")
 
     def post(self):
-        """Create post"""
         session = create_session()
         args = self.post_parse.parse_args()
         post = Post()
@@ -629,7 +624,7 @@ class TournamentPostsResource(Resource):
     get_pars.add_argument('offset',
                           type=int,
                           help="Не правильно указан offset",
-                          default=100,
+                          default=10,
                           location='args')
 
     def get(self, tour_id):
@@ -654,7 +649,7 @@ class TournamentPostsResource(Resource):
             query = query.filter_by(status=status)
 
         last_id = args['last_id']
-        if last_id is not None:
+        if last_id is not None:  # Send only posts that were created earlier then Post#post_id
             created_at = get_post(session, last_id).created_at
             query = query.filter(
                 Post.created_at <= created_at, Post.id != last_id)

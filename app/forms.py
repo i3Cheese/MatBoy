@@ -29,11 +29,15 @@ class NullableDateField(DateField):
 
 
 class RuDataRequired(DataRequired):
+    """DataRequired but with russian message"""
+
     def __init__(self, message="Это поле обязательно"):
         super().__init__(message)
 
 
 class RuDateField(DateField):
+    """DateField but with russian message"""
+
     def process_formdata(self, valuelist):
         if valuelist:
             date_str = ' '.join(valuelist)
@@ -64,28 +68,33 @@ class FillWith:
 
     def __call__(self, form, field):
         if field.data:
-            try:
-                other = form[self.fieldname]
-            except KeyError:
-                raise ValidationError(field.gettext(
-                    "Invalid field name '%s'.") % self.fieldname)
-            if not other.data:
-                d = {
-                    'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
-                    'other_name': self.fieldname,
-                    'this_label': hasattr(self, 'label') and self.label.text or field.name,
-                    'this_name': field.name,
-                }
-                other_msg = self.other_msg
-                if other_msg is None:
-                    other_msg = field.gettext(
-                        'Поле "%(this_label)s" заполнено и это должно')
-                this_msg = self.this_msg
-                if this_msg is None:
-                    this_msg = field.gettext(
-                        'Поле "%(other_label)s" должно быть тоже заполнено')
-                other.errors.append(other_msg)
-                raise ValidationError(this_msg % d)
+            return
+
+        try:  # Get other form field
+            other = form[self.fieldname]
+        except KeyError:
+            raise ValidationError(field.gettext(
+                "Invalid field name '%s'.") % self.fieldname)
+        if not other.data:
+            d = {
+                'other_label': hasattr(other, 'label') and other.label.text or self.fieldname,
+                'other_name': self.fieldname,
+                'this_label': hasattr(field, 'label') and field.label.text or field.name,
+                'this_name': field.name,
+            }
+            # Add error to other field
+            other_msg = self.other_msg
+            if other_msg is None:
+                other_msg = field.gettext(
+                    'Поле "%(this_label)s" заполнено и это должно')
+            other.errors.append(other_msg)
+
+            # Raise error
+            this_msg = self.this_msg
+            if this_msg is None:
+                this_msg = field.gettext(
+                    'Поле "%(other_label)s" должно быть тоже заполнено')
+            raise ValidationError(this_msg % d)
 
 
 def field_data_lower(form, field):
@@ -174,6 +183,7 @@ class TournamentInfoForm(BaseForm):
 
 
 class TeamForm(BaseForm):
+    """Form for team request"""
     name = StringField("Название команды *", validators=[RuDataRequired()])
     motto = TextAreaField("Девиз команды")
     players = FieldList(EmailField(label="E-mail участника *",
@@ -217,13 +227,13 @@ class PlayerBooleanField(BooleanField):
 
 
 def PrepareToGameForm(game: Game):
-    """Generate FlaskForm"""
+    """Generate FlaskForm for game"""
 
     class PrepareToGameForm(BaseForm):
         def __init__(self, *args, **kwargs):
             """Add fields to lists"""
             super().__init__(*args, **kwargs)
-            for team in self.teams.values():
+            for team in self.teams.values():  # Add initialized fields to dict
                 team['players'] = []
                 for field_name in team['_players']:
                     team['players'].append(getattr(self, field_name))
@@ -254,6 +264,7 @@ def PrepareToGameForm(game: Game):
             if selected_ids is None or player.id in selected_ids:
                 checked = "checked"
 
+            # Add attr to class
             field = PlayerBooleanField(player.fullname,
                                        default=checked,
                                        player_id=player.id)
@@ -276,6 +287,8 @@ def PrepareToGameForm(game: Game):
                              coerce=int, choices=deputy_choices)
         teams[i]['_captain'] = f'team{i}_captain'
         teams[i]['_deputy'] = f'team{i}_deputy'
+
+        # Add attr to class
         setattr(PrepareToGameForm, teams[i]['_captain'], cap)
         setattr(PrepareToGameForm, teams[i]['_deputy'], deputy)
 

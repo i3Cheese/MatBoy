@@ -36,30 +36,30 @@
     {% if game.protocol['teams'] %}
       <div class="d-flex flex-wrap">
         {% for team in (game.team1, game.team2) %}
-        {% set t_d = game.protocol['teams'][loop.index0] %}
-        <div class="border-dark border rounded flex-grow-1 m-2 p-2">
-          <h4>
-            {{team.name}}
-          </h4>
-          <label class="form__field-label">Состав команды</label>
-          <ul class="shadow_list">
-            {% for player in t_d['players'] %}
-              <li>
-                {{player['surname'] + ' ' + player['name']}}
-                {% if player['id'] == t_d['captain']['id'] %}
-                  — <b>Капитан</b>
-                {% elif player['id'] == t_d['deputy']['id'] %}
-                  — <b>Заместитель</b>
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
+          {% set t_d = game.protocol['teams'][loop.index0] %}
+          <div class="border-dark border rounded flex-grow-1 m-2 p-2">
+            <h4>
+              {{team.name}}
+            </h4>
+            <label class="form__field-label">Состав команды</label>
+            <ul class="shadow_list">
+              {% for player in t_d['players'] %}
+                <li>
+                  {{player['surname'] + ' ' + player['name']}}
+                  {% if player['id'] == t_d['captain']['id'] %}
+                    — <b>Капитан</b>
+                  {% elif player['id'] == t_d['deputy']['id'] %}
+                    — <b>Заместитель</b>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
         {% endfor %}
       </div>
       <div class="w-100 m-2 captain_winner">
         Победил капитан команды
-        <select class="ml-2 captain_winner_name" name="captain_winner">  
+        <select class="ml-2 captain_winner_name" name="captain_winner">
           <option {{'selected' if game.captain_winner is none else ''}} value="0"></option>
           <option {{'selected' if game.captain_winner == game.team1 else ''}}
                   value="{{game.team1.id}}">

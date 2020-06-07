@@ -53,12 +53,6 @@ def make_menu(session=None, *,
     return menu
 
 
-@login_manager.user_loader
-def load_user(user_id) -> User:
-    session = create_session()
-    return session.query(User).get(user_id)
-
-
 @blueprint.route("/")
 @blueprint.route("/index")
 def index_page():
@@ -71,37 +65,42 @@ def index_page():
 def login_page():
     form = LoginForm()
     try:
+        # Try login user using vk
         args = request.args
         uid, hash_st = args.get('uid'), args.get('hash')
         if uid and hash_st:
+            # Check security
             if md5((config.CLIENT_ID + uid +
                     config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
-                raise ValidationError
+                raise ValidationError("Not valide vk hash")
+
             session = create_session()
             try:
                 user = session.query(User).filter(
                     User.vk_id == int(args.get('uid'))).first()
             except ValueError:
-                raise ValidationError
+                raise ValidationError("Not valid uid")
             if not user:
                 flash('Пользователь не найден', "error")
-                raise ValidationError
+                raise ValidationError("User not found")
             login_user(user, remember=True)
             return back_redirect()
-        if form.validate_on_submit():
-            session = create_session()
-            user = session.query(User).filter(
-                User.email == form.email.data).first()
-            if not user:
-                form.email.errors.append(
-                    "Пользователь с таким e-mail не зарегестрирован")
-            elif not user.check_password(form.password.data):
-                form.password.errors.append("Неправильный пароль")
-            else:
-                login_user(user, remember=True)
-                return back_redirect()
     except ValidationError:
         return redirect("/login?comefrom={}".format(request.args.get("comefrom", "/")))
+
+    if form.validate_on_submit():
+        session = create_session()
+        user = session.query(User).filter(
+            User.email == form.email.data).first()
+        if not user:
+            form.email.errors.append(
+                "Пользователь с таким e-mail не зарегестрирован")
+        elif not user.check_password(form.password.data):
+            form.password.errors.append("Неправильный пароль")
+        else:
+            login_user(user, remember=True)
+            return back_redirect()
+
     return render_template("login.html", form=form)
 
 
@@ -168,6 +167,8 @@ def reset_password_step_2(token):
         password = form.password.data
         session = create_session()
         user = session.query(User).filter(User.email == email).first()
+        if not user:
+            abort(404)
         user.set_password(password)
         session.merge(user)
         session.commit()
@@ -179,7 +180,7 @@ def reset_password_step_2(token):
 @blueprint.route('/feedback', methods=["POST", "GET"])
 @login_required
 def feedback():
-    """The feedback page"""
+    """The feedback page. Send posted content to feedback mail"""
     if request.method == 'POST':
         title = request.form.get('title')
         content = request.form.get('content')
@@ -228,7 +229,7 @@ def tournament_creator_page():
         abort(403)
     form = TournamentInfoForm()
     try:
-        if form.validate_on_submit():
+        if form.validate_on_submit():  # Validate posted data. Create tour
             session = create_session()
             if session.query(Tournament).filter(Tournament.title == form.title.data).first():
                 form.title.errors.append(
@@ -323,7 +324,7 @@ def team_request(tour_id: int):
     if not tour:
         abort(404)
     try:
-        if form.validate_on_submit():
+        if form.validate_on_submit():  # Validate posted data
             team = Team().fill(
                 name=form.name.data,
                 motto=form.motto.data,
@@ -332,7 +333,7 @@ def team_request(tour_id: int):
             )
             emails = set()
             vk_uids = []
-            for field in form.players.entries:
+            for field in form.players.entries:  # Check playes
                 email = field.data.lower()
                 if email in emails:
                     field.errors.append("Участник указан несколько раза")
@@ -348,6 +349,7 @@ def team_request(tour_id: int):
             session.add(team)
             session.commit()
 
+            # Send notifications to players
             msg = Message(
                 subject='Участие в турнире MatBoy',
                 recipients=list(emails),
@@ -465,7 +467,7 @@ def prepare_to_game(tour_id, league_id, game_id):
     form = PrepareToGameForm(game)
 
     if form.validate_on_submit():
-        try:  # Convert form to json
+        try:  # Validate form, convert form to json(add players info to protocol)
             if game.protocol is None:
                 game.protocol = {'teams': []}
 

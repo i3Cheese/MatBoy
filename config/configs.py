@@ -17,10 +17,10 @@ class BaseConfig:
     SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
     SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'
     SECURITY_EMAIL_SALT = 'AJGgsfn4325gNSFHOn4tgrjon4neojSAED234'
-    CLIENT_ID = '7491040'
-    ACCESS_TOKEN = 'd1890a9fb243a245bc230a12dbf7e0b158cabee544a3ed362b16d0520b1ff4192a07fd189e4347fa20786'
 
+    CLIENT_ID = '7491040'
     VK_GROUP_ID = '193140435'
+    ACCESS_TOKEN = 'd1890a9fb243a245bc230a12dbf7e0b158cabee544a3ed362b16d0520b1ff4192a07fd189e4347fa20786'
 
     # Recaptcha settings
     RECAPTCHA_PRIVATE_KEY = '6Lf0HgEVAAAAABFBFsqx4gUo3K8aptl05LspxMlb'
@@ -68,5 +68,4 @@ class DebugConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-    LOCALE = 'ru_RU'
 
