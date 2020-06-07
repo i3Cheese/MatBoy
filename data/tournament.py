@@ -1,4 +1,3 @@
-import datetime
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.db_session import BaseModel

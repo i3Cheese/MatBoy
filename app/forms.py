@@ -174,7 +174,7 @@ class LoginForm(BaseForm):
 class TournamentInfoForm(BaseForm):
     title = StringField("Название *", validators=[RuDataRequired()])
     description = TextAreaField("Дополнительная информация")
-    place = StringField("Местро проведения")
+    place = StringField("Место проведения")
     start = NullableDateField("Начало турнира", format=DATE_FORMAT)
     end = NullableDateField("Конец турнира",
                             format=DATE_FORMAT,

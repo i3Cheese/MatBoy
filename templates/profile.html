@@ -29,8 +29,12 @@
         <dt class="col-sm-9">{{ check_specified(user.city) }}</dt>
         <dd class="col-sm-3">Возраст:</dd>
         <dt class="col-sm-9">{{ user.years_old }}</dt>
+        {% if current_user == user %}
+          <dd class="col-sm-3">Почта:</dd>
+          <dt class="col-sm-9">{{ user.email }}</dt>
+        {% endif %}
       </dl>
-    {% if current_user.is_authenticated and current_user.id == user.id %}
+    {% if current_user == user %}
       <div class="subscribe">
         <div class="subscribe__item">
           <label for="subscribe-email-input">Уведомления по почте:</label>
