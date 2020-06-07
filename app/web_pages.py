@@ -123,6 +123,17 @@ def register_page():
             user.integration_with_VK = True
         session.add(user)
         session.commit()
+        if user.integration_with_VK:
+            link = 'https://vk.com/' + request.args.get('screen_name')
+            msg = Message(
+                subject='Привязка ВКонтакте - MatBoy',
+                recipients=[user.email],
+                sender=config.MAIL_DEFAULT_SENDER,
+                html=render_template('mails/email/vk_notifications.html',
+                                     link=link, user_id=user.id)
+            )
+            thr_email = Thread(target=send_message, args=[msg])
+            thr_email.start()
         return redirect("/login")
     return render_template("register.html", form=form)
 

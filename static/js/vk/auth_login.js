@@ -69,19 +69,20 @@ function registration() {
                         if (r.response) {
                             vkLink = r.response[0].screen_name;
                             vkInfo.html(`Для того, чтобы получать уведомления через ВКонтакте,
-                        напишите в сообщения <a href="https://vk.com/${vkLink}">сообщества</a>`)
+                        напишите в сообщения <a href="https://vk.com/${vkLink}">сообщества</a>`);
+
+                            // adding VK id to complete registration with comefrom info
+                            let href = window.location.pathname + window.location.search;
+                            if (window.location.search === '') {
+                                href = href + `?user_id=${info.user_id}&screen_name=${vkLink}`;
+                            } else {
+                                href = href + `&user_id=${info.user_id}&screen_name=${vkLink}`;
+                            }
+                            // remove page's refresh
+                            window.history.replaceState(null, null, href);
                         }
                     }
                 );
-                // adding VK id to complete registration with comefrom info
-                let href = window.location.pathname + window.location.search;
-                if (window.location.search === '') {
-                    href = href + `?user_id=${info.user_id}`;
-                } else {
-                    href = href + `&user_id=${info.user_id}`;
-                }
-                // remove page's refresh
-                window.history.replaceState(null, null, href);
             }
         );
     }
