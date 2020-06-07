@@ -67,7 +67,7 @@ class FillWith:
         self.this_msg = this_msg
 
     def __call__(self, form, field):
-        if field.data:
+        if not field.data:
             return
 
         try:  # Get other form field

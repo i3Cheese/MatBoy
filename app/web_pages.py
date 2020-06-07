@@ -268,24 +268,30 @@ def tournament_edit_page(tour_id: int):
         abort(403)
     form = TournamentInfoForm()
     if form.validate_on_submit():
-        new_title = form.title.data
-        # if title changed and new_title exist
-        if (new_title != tour.title) and (
-                session.query(Tournament).filter(Tournament.title == new_title).first()):
-            form.title.errors.append("Турнир с таким названием уже существует")
-            return render_template("tournament_editor.html", form=form)
+        try:
+            new_title = form.title.data
+            # if title changed and new_title exist
+            if (new_title != tour.title) and (
+                    session.query(Tournament).filter(Tournament.title == new_title).first()):
+                form.title.errors.append("Турнир с таким названием уже существует")
+                return render_template("tournament_editor.html", form=form)
 
-        # Change tour values
-        tour.title = new_title
-        tour.description = form.description.data
-        tour.place = form.place.data
-        tour.start = form.start.data
-        tour.end = form.end.data
-        session.merge(tour)
-        session.commit()
+            if form.end.data and form.start.data > form.end.data:
+                form.end.errors.append("Турнир заканчивается слишком рано.")
+                raise ValidationError
 
-        return back_redirect("{0}/console".format(tour.link))
+            # Change tour values
+            tour.title = new_title
+            tour.description = form.description.data
+            tour.place = form.place.data
+            tour.start = form.start.data
+            tour.end = form.end.data
+            session.merge(tour)
+            session.commit()
 
+            return back_redirect("{0}/console".format(tour.link))
+        except ValidationError:
+            pass
     elif not form.is_submitted():
         form.title.data = tour.title
         form.description.data = tour.description
