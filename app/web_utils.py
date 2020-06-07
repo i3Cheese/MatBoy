@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, Post, create_session
 from config import config
-from app import send_message
+from app import send_message, send_messages
 from app.forms import EditPassword, EditEmail
 from app.token import generate_confirmation_token_reset_email, confirm_token_edit_email
 from string import ascii_letters, digits
@@ -188,14 +188,13 @@ def notifications_sending():
     vk_uids = list(map(lambda user: user.vk_id, subscribe_vk))
 
     if emails:
-        msg = Message(
-            subject='Обновление в новостях турнира MatBoy',
-            recipients=emails,
-            sender=config.MAIL_DEFAULT_SENDER,
-            html=render_template('mails/email/new_post.html',
+        kwargs = {
+            'subject': 'Обновление в новостях турнира MatBoy',
+            'recipients': emails,
+            'html': render_template('mails/email/new_post.html',
                                  post=post, tour=tour)
-        )
-        thr_email = Thread(target=send_message, args=[msg])
+        }
+        thr_email = Thread(target=send_messages, kwargs=kwargs)
         thr_email.start()
 
     if vk_uids:

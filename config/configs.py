@@ -23,8 +23,8 @@ class BaseConfig:
     VK_GROUP_ID = '193140435'
 
     # Recaptcha settings
-    RECAPTCHA_PRIVATE_KEY = '6LfcguUUAAAAAEWzpN78kxcUj31kU8FAuQn2UG8S'
-    RECAPTCHA_PUBLIC_KEY = '6LfcguUUAAAAAMWvFiu8rpazGR61ZxuIDbtkaG65'
+    RECAPTCHA_PRIVATE_KEY = '6Lf0HgEVAAAAABFBFsqx4gUo3K8aptl05LspxMlb'
+    RECAPTCHA_PUBLIC_KEY = '6Lf0HgEVAAAAAECdCWH8mheSbcONisCL-98IAd4B'
 
     # Mail settings
     FEEDBACK_MAIL = 'ebedak2003@yandex.ru'
