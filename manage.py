@@ -1,9 +1,6 @@
 from manager import Manager
 from data import global_init, create_session, User
-from config import config
-from pprint import pprint
 import datetime as dt
-import requests
 
 manager = Manager()
 global_init()
@@ -67,11 +64,11 @@ def make_robots():
     for i, name in enumerate(names):
         user = User()
         user.fill(
-            surname  = 'Маск',
-            name     = name,
-            city     = 'Владивосток',
-            birthday = dt.date(1970, 1, 1),
-            email    = 'robot{0}@facto.ry'.format(i),
+            surname='Маск',
+            name=name,
+            city='Владивосток',
+            birthday=dt.date(1970, 1, 1),
+            email='robot{0}@facto.ry'.format(i),
         )
         user.set_password('31415926')
         print(repr(user))

@@ -68,4 +68,3 @@ class DebugConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-

@@ -19,9 +19,9 @@ def send_message(uid, text, keyboard=empty_keyboard):
 
     if str(uid) in users_info.keys():
         vk.messages.send(user_id=uid,
-                        message=text,
-                        random_id=randint(0, 2 ** 64),
-                        keyboard=keyboard)
+                         message=text,
+                         random_id=randint(0, 2 ** 64),
+                         keyboard=keyboard)
         logging.info('Bot sent a message to the user with id {}'.format(uid))
 
 

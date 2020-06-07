@@ -32,7 +32,7 @@ function registration() {
                     },
                     function (r) {
                         if (typeof info['email'] !== "undefined") {
-                            $("#email_field").val(info.email)
+Refactor                             $("#email_field").val(info.email);
                         }
                         if (!r.response)
                             return;
@@ -76,9 +76,9 @@ function registration() {
                 // adding VK id to complete registration with comefrom info
                 let href = window.location.pathname + window.location.search;
                 if (window.location.search === '') {
-                    href = href + `?user_id=${info.user_id}`
+                    href = href + `?user_id=${info.user_id}`;
                 } else {
-                    href = href + `&user_id=${info.user_id}`
+                    href = href + `&user_id=${info.user_id}`;
                 }
                 // remove page's refresh
                 window.history.replaceState(null, null, href);

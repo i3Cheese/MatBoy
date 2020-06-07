@@ -25,7 +25,7 @@ def get_user_tournaments(user, user_info, command=True):
     for n, tour in enumerate(users_tournaments):
         text += '{}. {}\n'.format(str(n + 1), str(tour))
         # for user-friendly tournament choice
-        user_info['tournaments'][str(n + 1)] = tour.id 
+        user_info['tournaments'][str(n + 1)] = tour.id
     if command:  # adding explanatory text if user select command
         text += '\nСледом отправьте номер турнира, который необходимо удалить из подписок.\n' \
                 'Если список пуст - отправьте любое число.'
@@ -69,7 +69,7 @@ def handler(vk_id, text):
     """
     with open('vk_info.json', 'r') as f:
         users_info = json.load(f)
-    
+
     uid = str(vk_id)
 
     if uid not in users_info:  # bot's greetings to the new user
@@ -93,15 +93,15 @@ def handler(vk_id, text):
             users_info[uid]['command_info'] = 'notification'  # set command status to the user
             notifications(uid, user, session, text)
         elif text == 'подписка' or users_info[uid]['command_info'] == 'subscription' \
-                or (users_info[uid]['command_info'] in COMMANDS['subscription'] 
-                and re.search(r'\d+', text)):
+                or (users_info[uid]['command_info'] in COMMANDS['subscription']
+                    and re.search(r'\d+', text)):
             if not users_info[uid]['command_info'] or text == 'subscription':
                 # set command status to the user  
                 users_info[uid]['command_info'] = 'subscription'  # subscribe menu
             users_info[uid] = subscribe(uid, user, session, text, users_info[uid])
         else:
             msg.auto_answer(uid)
-    # if some command chanched user's info 
+        # if some command chanched user's info
         with open('vk_info.json', 'w') as f:
             json.dump(users_info, f, ensure_ascii=False, indent=4)
     return

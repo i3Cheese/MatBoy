@@ -526,7 +526,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                                      [len(rounds) * 12 - sum(teams_points), ] # Count judje points
+                                      [len(rounds) * 12 - sum(teams_points), ]  # Count judje points
             game.protocol['stars'] = teams_stars
 
         session.merge(game)

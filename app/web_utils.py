@@ -192,7 +192,7 @@ def notifications_sending():
             'subject': 'Обновление в новостях турнира MatBoy',
             'recipients': emails,
             'html': render_template('mails/email/new_post.html',
-                                 post=post, tour=tour)
+                                    post=post, tour=tour)
         }
         thr_email = Thread(target=send_messages, kwargs=kwargs)
         thr_email.start()
