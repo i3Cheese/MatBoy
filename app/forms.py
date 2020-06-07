@@ -1,10 +1,10 @@
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
-from wtforms import BooleanField, TextAreaField, SubmitField, DateField, FieldList, SelectField
-from wtforms.fields.html5 import EmailField, IntegerField
+from wtforms import TextAreaField, SubmitField, DateField, FieldList, SelectField
+from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
-from data import User, Game, Tournament, create_session
+from data import User, Game, create_session
 from config import config
 
 DATE_FORMAT = config.DATE_FORMAT

@@ -1,9 +1,8 @@
 # Pages with short links
 
 from flask import Blueprint, redirect, abort
-from data import User, Tournament, League, Team, Game, create_session
+from data import Tournament, League, Team, Game, create_session
 from config import config
-import logging
 
 blueprint = Blueprint('single_pages',
                       __name__,

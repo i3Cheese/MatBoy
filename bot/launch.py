@@ -3,7 +3,6 @@ from bot import LONGPOLL
 from bot.utils import handler
 import logging
 import os
-import json
 
 
 def bot_launch():

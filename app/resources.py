@@ -131,8 +131,10 @@ class UsersResource(Resource):
     reg_pars.add_argument('password', required=True, type=str)
 
     get_pars = reqparse.RequestParser()
-    get_pars.add_argument('vk_id', type=int, help="wrong type", location='args')
-    get_pars.add_argument('check', type=boolean, default=False, location='args')
+    get_pars.add_argument(
+        'vk_id', type=int, help="wrong type", location='args')
+    get_pars.add_argument('check', type=boolean,
+                          default=False, location='args')
 
     def post(self):
         """Add new user to db"""
@@ -156,7 +158,8 @@ class UsersResource(Resource):
         session = create_session()
         args = self.get_pars.parse_args()
         if args['vk_id']:
-            user = session.query(User).filter(User.vk_id == args['vk_id']).first()
+            user = session.query(User).filter(
+                User.vk_id == args['vk_id']).first()
             if args['check']:
                 json_resp = {'exist': user is not None}
             else:
@@ -526,7 +529,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                                      [len(rounds) * 12 - sum(teams_points), ] # Count judje points
+                [len(rounds) * 12 - sum(teams_points), ]  # Count judje points
             game.protocol['stars'] = teams_stars
 
         session.merge(game)
@@ -620,7 +623,8 @@ class PostResource(Resource):
 class TournamentPostsResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument('type', type=str, default='visible', location='args')
-    get_pars.add_argument('last_id', type=int, help="Не правильно указан last_id", location='args')
+    get_pars.add_argument('last_id', type=int,
+                          help="Не правильно указан last_id", location='args')
     get_pars.add_argument('offset',
                           type=int,
                           help="Не правильно указан offset",

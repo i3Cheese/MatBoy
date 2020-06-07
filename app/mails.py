@@ -2,6 +2,7 @@ from flask_mail import Message
 from app import app, mail
 from config import config
 
+
 def send_message(msg):
     """Send message on email SMPT"""
     with app.app_context():
@@ -14,7 +15,7 @@ def send_messages(subject, recipients, html, sender=config.MAIL_DEFAULT_SENDER, 
         for recipient in recipients:
             msg = Message(
                 subject=subject,
-                recipients=[recipient,],
+                recipients=[recipient, ],
                 sender=sender,
                 html=html,
             )

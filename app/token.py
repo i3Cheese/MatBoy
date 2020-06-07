@@ -1,5 +1,5 @@
 from flask import flash
-from itsdangerous import URLSafeSerializer, SignatureExpired, BadSignature, URLSafeTimedSerializer
+from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 
 from app import app
 
