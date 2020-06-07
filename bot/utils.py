@@ -2,12 +2,12 @@ from data import User, Tournament, create_session
 import bot.messages as msg
 from bot import keyboards as kb
 import re
+import logging
+import json
 
 # existing commands
-COMMANDS = {'уведомления': ['включить', 'выключить'],
-            'подписка': ['информация', 'отписаться', 'подписаться'],
-            'помощь': [],
-            'выход': []}
+COMMANDS = {'notification': ['turn on', 'turn off'],
+            'subscription': ['info', 'unsubscribe', 'subscribe']}
 
 
 def get_user_tournaments(user, user_info, command=True):
@@ -24,7 +24,8 @@ def get_user_tournaments(user, user_info, command=True):
     text = 'Список турниров в Ваших подписках:\n'
     for n, tour in enumerate(users_tournaments):
         text += '{}. {}\n'.format(str(n + 1), str(tour))
-        user_info['tournaments'][n + 1] = tour.id  # for user-friendly tournament choice
+        # for user-friendly tournament choice
+        user_info['tournaments'][str(n + 1)] = tour.id 
     if command:  # adding explanatory text if user select command
         text += '\nСледом отправьте номер турнира, который необходимо удалить из подписок.\n' \
                 'Если список пуст - отправьте любое число.'
@@ -48,14 +49,15 @@ def get_free_tournaments(user, user_info, session):
     for tour in all_tournaments:
         if tour not in users_tournaments:  # if tournament not in user's subscription
             text += '{}. {}\n'.format(str(n), str(tour))
-            user_info['tournaments'][n] = tour.id  # for user-friendly tournament choice
+            # for user-friendly tournament choice
+            user_info['tournaments'][str(n)] = tour.id
             n += 1
     text += '\nСледом отправьте номер турнира, который необходимо добавить в подписки.\n' \
             'Если список пуст - отправьте любое число.'
     return text
 
 
-def handler(uid, text, users_info):
+def handler(vk_id, text):
     """
     :param uid: user's id
     :param text: user's text from message
@@ -65,14 +67,20 @@ def handler(uid, text, users_info):
 
     Handle user's messages (commands)
     """
-    if uid not in users_info.keys():  # bot's greetings to the new user
+    with open('vk_info.json', 'r') as f:
+        users_info = json.load(f)
+    
+    uid = str(vk_id)
+
+    if uid not in users_info:  # bot's greetings to the new user
         # tournaments is a dict for tournaments info which using in subscription commands
         users_info[uid] = {'tournaments': {}, 'command_info': ''}
+        with open('vk_info.json', 'w') as f:  # 'cause send_message checks uid
+            json.dump(users_info, f, ensure_ascii=False, indent=4)
         msg.welcome_message(uid)
-        return
     else:
         session = create_session()
-        user = session.query(User).filter(User.vk_id == uid).first()
+        user = session.query(User).filter(User.vk_id == vk_id).first()
         if not user:  # auto answer for a user without VK integration
             msg.without_integration(uid)
             return
@@ -81,18 +89,22 @@ def handler(uid, text, users_info):
         elif text == 'выход':
             users_info[uid]['command_info'] = ''  # delete command status
             msg.exit_message(uid)
-        elif text == 'уведомления' or users_info[uid]['command_info'] == 'уведомления':
-            users_info[uid]['command_info'] = 'уведомления'  # set command status to the user
+        elif text == 'уведомления' or users_info[uid]['command_info'] == 'notification':
+            users_info[uid]['command_info'] = 'notification'  # set command status to the user
             notifications(uid, user, session, text)
-        elif text == 'подписка' or users_info[uid]['command_info'] == 'подписка' \
-                or (users_info[uid]['command_info'] in COMMANDS['подписка'] 
+        elif text == 'подписка' or users_info[uid]['command_info'] == 'subscription' \
+                or (users_info[uid]['command_info'] in COMMANDS['subscription'] 
                 and re.search(r'\d+', text)):
-            if not users_info[uid] or text == 'подписка':  # set command status to the user
-                users_info[uid]['command_info'] = 'подписка'  # subscribe menu
-            users_info[uid]['command_info'] = subscribe(uid, user, session, text, users_info[uid])
+            if not users_info[uid]['command_info'] or text == 'subscription':
+                # set command status to the user  
+                users_info[uid]['command_info'] = 'subscription'  # subscribe menu
+            users_info[uid] = subscribe(uid, user, session, text, users_info[uid])
         else:
             msg.auto_answer(uid)
-        return
+    # if some command chanched user's info 
+        with open('vk_info.json', 'w') as f:
+            json.dump(users_info, f, ensure_ascii=False, indent=4)
+    return
 
 
 def notifications(uid, user, session, command):
@@ -131,6 +143,7 @@ def subscribe(uid, user, session, command, user_info):
 
     Handle subscribe commands
     """
+
     if command == 'подписка':
         msg.subscribe(uid)  # send message with an explanation
     elif command == 'информация':
@@ -138,21 +151,21 @@ def subscribe(uid, user, session, command, user_info):
         msg.send_message(uid, get_user_tournaments(user, user_info, command=False))
         msg.subscribe(uid)
     elif command == 'отписаться':
-        user_info['command_info'] = 'отписаться'  # set a current subscribe command status
+        user_info['command_info'] = 'unsubscribe'  # set a current subscribe command status
         msg.send_message(uid, get_user_tournaments(user, user_info))
     elif command == 'подписаться':
-        user_info['command_info'] = 'подписаться'  # --||--
+        user_info['command_info'] = 'subscribe'  # --||--
         msg.send_message(uid, get_free_tournaments(user, user_info, session))
-    elif user_info['command_info'] in COMMANDS['подписка']:  # checking a current command
+    elif user_info['command_info'] in COMMANDS['subscription']:  # checking a current command
         # handling a current subscribe command
         get_subscribe(uid, user_info['tournaments'], user, session,
                       tour_id=int(command),
-                      delete=False if user_info['command_info'] == 'подписаться' else True)
+                      delete=False if user_info['command_info'] == 'subscribe' else True)
         session.commit()
-        user_info['command_info'] = 'подписка'  # set a global subscribe command status
+        user_info['command_info'] = 'subscription'  # set a global subscribe command status
     else:
         msg.auto_answer(uid)
-    return user_info['command_info']
+    return user_info
 
 
 def turn_on_notifications(uid, user):
@@ -201,7 +214,7 @@ def get_subscribe(uid, tournaments, user, session, tour_id, delete=True):
                          keyboard=kb.subscribe_keyboard.get_keyboard())
         return
     # getting tournament for actions
-    tour = session.query(Tournament).filter(Tournament.id == tournaments[tour_id]).first()
+    tour = session.query(Tournament).filter(Tournament.id == tournaments[str(tour_id)]).first()
     if delete:
         if user in tour.users_subscribe_vk:
             tour.users_subscribe_vk.remove(user)

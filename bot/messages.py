@@ -2,8 +2,8 @@ from random import randint
 from bot import VK_SESSION as vk
 from bot import empty_keyboard, basic_keyboard, notification_keyboard, subscribe_keyboard
 from bot import options_keyboard, options_keyboard_with_help
-from bot import USERS_INFO
 import logging
+import json
 
 
 def send_message(uid, text, keyboard=empty_keyboard):
@@ -14,7 +14,10 @@ def send_message(uid, text, keyboard=empty_keyboard):
 
     Template for sending messages
     """
-    if uid in USERS_INFO.keys():
+    with open('vk_info.json', 'r') as f:
+        users_info = json.load(f)
+
+    if str(uid) in users_info.keys():
         vk.messages.send(user_id=uid,
                         message=text,
                         random_id=randint(0, 2 ** 64),
