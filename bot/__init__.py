@@ -2,6 +2,9 @@ import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll
 from config import config
 
+# dict for storing info about commands
+USERS_INFO = {}
+
 # initialization VK bot
 vk_session = vk_api.VkApi(token=config.ACCESS_TOKEN)
 LONGPOLL = VkBotLongPoll(vk_session, config.VK_GROUP_ID)

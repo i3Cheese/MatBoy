@@ -1,11 +1,8 @@
 from vk_api.bot_longpoll import VkBotEventType
-from bot import LONGPOLL
+from bot import LONGPOLL, USERS_INFO
 from bot.utils import handler
 import logging
 import os
-
-# dict for storing info about commands
-USERS_INFO = {}
 
 
 def bot_launch():
