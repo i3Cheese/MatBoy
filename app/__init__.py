@@ -37,6 +37,7 @@ from . import errorhandlers
 from . import web_pages
 from . import single_pages
 from . import web_utils
+
 app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
 app.register_blueprint(web_utils.blueprint)
@@ -45,6 +46,7 @@ api = Api(app)
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
 from .resources import GameResource, GamesResource, ProtocolResource
 from .resources import PostResource, TournamentPostsResource
+
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/user')
 api.add_resource(TeamResource, '/api/team/<int:team_id>')
