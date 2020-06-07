@@ -134,6 +134,7 @@ def register_page():
             )
             thr_email = Thread(target=send_message, args=[msg])
             thr_email.start()
+            flash('Для активации бота следуйте интрукциям на почте', 'success')
         return redirect("/login")
     return render_template("register.html", form=form)
 
