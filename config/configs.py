@@ -14,25 +14,25 @@ class BaseConfig:
     DATA_BASE_URL = 'sqlite:///' + \
                     os.path.abspath('db/matboy.db') + '?check_same_thread=False'
 
-    SECRET_KEY = 'GsxXaaCMycS9HVRPlR7h'
-    SECURITY_PASSWORD_SALT = 'ADFGpkem4332qreFfdsg424123FSGfmf'
-    SECURITY_EMAIL_SALT = 'AJGgsfn4325gNSFHOn4tgrjon4neojSAED234'
+    SECRET_KEY = None
+    SECURITY_PASSWORD_SALT = None
+    SECURITY_EMAIL_SALT = None
 
-    CLIENT_ID = '7491040'
-    VK_GROUP_ID = '193140435'
-    ACCESS_TOKEN = 'd1890a9fb243a245bc230a12dbf7e0b158cabee544a3ed362b16d0520b1ff4192a07fd189e4347fa20786'
+    CLIENT_ID = None
+    VK_GROUP_ID = None
+    ACCESS_TOKEN = None
 
     # Recaptcha settings
-    RECAPTCHA_PRIVATE_KEY = '6LdXLAEVAAAAAG2uPNCF-dxCpHnW7r9VLr0xoibB'
-    RECAPTCHA_PUBLIC_KEY = '6LdXLAEVAAAAAJ8P5IgVnWdz-3jXAGzCf7-3ikqY'
+    RECAPTCHA_PUBLIC_KEY = None
+    RECAPTCHA_PRIVATE_KEY = None
 
     # Mail settings
-    FEEDBACK_MAIL = 'ebedak2003@yandex.ru'
-    MAIL_DEFAULT_SENDER = 'blogflask89@gmail.com'
-    MAIL_PASSWORD = 'av8-JJm-JFY-jiS'
-    MAIL_PORT = 465
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_USERNAME = 'blogflask89@gmail.com'
+    FEEDBACK_MAIL = None
+    MAIL_DEFAULT_SENDER = None
+    MAIL_PASSWORD = None
+    MAIL_PORT = None
+    MAIL_SERVER = None
+    MAIL_USERNAME = None
     MAIL_USE_SSL = True
     MAIL_USE_TLS = False
 

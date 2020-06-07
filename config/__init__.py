@@ -1,1 +1,1 @@
-from .configs import DebugConfig as config
+from .configs import ProductionConfig as config

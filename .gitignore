@@ -1,6 +1,5 @@
 **/__pycache__
 *.pyc
-*.db
 *.log
 tasks.md
 venv/
@@ -9,3 +8,4 @@ alembic/versions/
 ngrok.exe
 *.idea
 static/img/*.*
+vk_info.json
