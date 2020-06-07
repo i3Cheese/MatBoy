@@ -173,16 +173,16 @@ $(document).on('click', '.hide', function (event) {
         },
         error: holdErrorResponse,
     }).done(function () {
+        if (now) {
+            now = false;
+            notifications(data, true);  // sending email & VK notifications about a new post
+        }
         if (statusPost === 10) { // checking if post's filter is 'all'
             card.empty();
             if (newStatus === 0) {
                 card.html($($('template#not-visible-card-post').html()).html());
             } else if (newStatus === 1) {
                 card.html($($('template#visible-card-post').html()).html());
-            }
-            if (now) {
-                now = false;
-                notifications(data, true);  // sending email & VK notifications about a new post
             }
             generateTemplateCard(card, title, content, dateTimeInfo, postId, newStatus, now, tourId);
         } else {
