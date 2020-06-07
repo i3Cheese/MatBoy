@@ -32,7 +32,7 @@ function registration() {
                     },
                     function (r) {
                         if (typeof info['email'] !== "undefined") {
-Refactor                             $("#email_field").val(info.email);
+                            $("#email_field").val(info.email);
                         }
                         if (!r.response)
                             return;
