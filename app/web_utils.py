@@ -10,7 +10,6 @@ from app.token import generate_confirmation_token_reset_email, confirm_token_edi
 from string import ascii_letters, digits
 from random import choice
 from threading import Thread
-import bot
 
 blueprint = Blueprint('web_utils',
                       __name__,
@@ -196,13 +195,6 @@ def notifications_sending():
         }
         thr_email = Thread(target=send_messages, kwargs=kwargs)
         thr_email.start()
-
-    if vk_uids:
-        thr_vk = Thread(target=bot.notification_message,
-                        args=[render_template('mails/vk/new_post.vkmsg',
-                                              tour=tour), vk_uids])
-
-        thr_vk.start()
     return jsonify({'success': 'ok'})
 
 

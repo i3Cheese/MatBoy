@@ -12,7 +12,6 @@ from wtforms import ValidationError
 from typing import List, Tuple
 from threading import Thread
 from hashlib import md5
-import bot
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -376,11 +375,7 @@ def team_request(tour_id: int):
                                      team=team, tour=tour)
             )
             thr_email = Thread(target=send_message, args=[msg])
-            thr_vk = Thread(target=bot.notification_message,
-                            args=[render_template('mails/vk/invite_team.vkmsg',
-                                                  team=team, tour=tour), vk_uids])
             thr_email.start()
-            thr_vk.start()
             return redirect(team.link)
     except ValidationError:
         pass
