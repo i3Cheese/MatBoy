@@ -76,3 +76,8 @@ class RegRu(ProductionConfig):
     VK_GROUP_ID = "198509476"
     ACCESS_TOKEN = "e73db2ec7a34dfbc140cc6cacebecfa0293855a767e16f623cd121df839b866bdcee413a7306f69450fec"
     
+    
+    # Recaptcha settings
+    RECAPTCHA_PUBLIC_KEY = "6LebjsgZAAAAAD_nT-WR8P3L-XtdlZQIvOgpcoFA"
+    RECAPTCHA_PRIVATE_KEY = "6LebjsgZAAAAAGdlfXaNLzd2wRCjo4M4LRNye5H8"
+    
