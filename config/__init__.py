@@ -1,1 +1,1 @@
-from .configs import ProductionConfig as config
+from .configs import RegRu as config

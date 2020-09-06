@@ -68,3 +68,11 @@ class DebugConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+    
+class RegRu(ProductionConfig):
+    SECRET_KEY = "taTFlcNv3ojMKjsg2TPo"
+    
+    CLIENT_ID = "7588530"
+    VK_GROUP_ID = "198509476"
+    ACCESS_TOKEN = "e73db2ec7a34dfbc140cc6cacebecfa0293855a767e16f623cd121df839b866bdcee413a7306f69450fec"
+    
