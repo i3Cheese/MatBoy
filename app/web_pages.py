@@ -548,3 +548,8 @@ def game_console(tour_id, league_id, game_id):
                                           league_id=league_id,
                                           game_id=game_id,
                                           now='Консоль'))
+
+
+@blueprint.route("/credits")
+def credits():
+    return render_template("credits.html")

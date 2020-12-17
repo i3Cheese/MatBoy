@@ -1,0 +1,11 @@
+
+.credits_box {
+    width: 20%;
+}
+
+@media only screen and (max-width:994px) {
+    .credits_box {
+        width: 100%;
+        background-color: aqua;
+    }
+}
