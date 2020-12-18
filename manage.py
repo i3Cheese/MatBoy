@@ -1,5 +1,5 @@
 from manager import Manager
-from data import global_init, create_session, User
+from data import global_init, create_session, User, Tournament
 import datetime as dt
 
 manager = Manager()
@@ -26,6 +26,11 @@ def give_creator(id=None, email=None):
     session.merge(user)
     session.commit()
     print(repr(user), "now is creator")
+
+
+@manager.command
+def login(email, password):
+    pass
 
 
 @manager.command

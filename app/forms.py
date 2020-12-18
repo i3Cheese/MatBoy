@@ -158,8 +158,9 @@ class RegisterForm(BaseForm):
     city = StringField(
         "Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
-    recaptcha = RecaptchaField(
-        validators=[Recaptcha(message='Это поле обязательно')])
+    if not config.DEBUG:
+        recaptcha = RecaptchaField(
+            validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
 
 

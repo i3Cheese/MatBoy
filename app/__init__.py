@@ -43,12 +43,14 @@ app.register_blueprint(single_pages.blueprint)
 app.register_blueprint(web_utils.blueprint)
 
 api = Api(app)
+from .resources import TournamentResource
 from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
 from .resources import GameResource, GamesResource, ProtocolResource
 from .resources import PostResource, TournamentPostsResource
 
 api.add_resource(UserResource, '/api/user/<int:user_id>')
 api.add_resource(UsersResource, '/api/user')
+api.add_resource(TournamentResource, '/api/tournament/<int:tour_id>')
 api.add_resource(TeamResource, '/api/team/<int:team_id>')
 api.add_resource(LeagueResource, '/api/league/<int:league_id>')
 api.add_resource(LeaguesResource, '/api/league')

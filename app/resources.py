@@ -175,6 +175,19 @@ class UsersResource(Resource):
         return jsonify(json_resp)
 
 
+class TournamentResource(Resource):
+    @login_required
+    def delete(self, tour_id):
+        session = create_session()
+        tour = get_tour(session, tour_id)
+        if not tour.have_permission(current_user):
+            abort(403, message="Permission denied")
+        session.delete(tour)
+        session.commit()
+        return jsonify({'success': 'ok'})
+        
+
+
 class TeamResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('name', type=str)

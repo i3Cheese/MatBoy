@@ -9,3 +9,4 @@ ngrok.exe
 *.idea
 static/img/*.*
 vk_info.json
+db/matboy.db

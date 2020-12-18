@@ -61,7 +61,7 @@ function acceptTeam(team_id) {
             team.find(".team-accept").addClass("hidden");
             team.find(".team-delete").addClass("hidden");
 
-            team.find(".status").text("Учавствует в турнире");
+            team.find(".status").text("Участвует в турнире");
 
             // removing possibility of league selection
             league_selector.addClass('hidden');

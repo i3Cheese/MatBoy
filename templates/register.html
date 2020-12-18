@@ -103,11 +103,13 @@
       )}}
       {{field_errors(form.password_again)}}
     </div>
-      {{form_field(form.recaptcha)}}
-      {{form.recaptcha.label(for="password_repeat", class="form__field-label")}}
-      {{form.recaptcha(id="recaptcha")}}
-      {{field_errors(form.recaptcha)}}
-      </div>
+      {% if form.recpatha is defined %}
+        {{form_field(form.recaptcha)}}
+        {{form.recaptcha.label(for="password_repeat", class="form__field-label")}}
+        {{form.recaptcha(id="recaptcha")}}
+        {{field_errors(form.recaptcha)}}
+        </div>
+      {% endif %}
     <div class="form__buttons s-buttons">
       {{form.submit(
         type="submit",
