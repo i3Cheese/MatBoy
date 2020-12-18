@@ -71,7 +71,7 @@ def login_page():
         if uid and hash_st:
             # Check security
             if md5((config.CLIENT_ID + uid +
-                    config.SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
+                    config.VK_SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
                 raise ValidationError("Not valide vk hash")
 
             session = create_session()

@@ -20,6 +20,7 @@ class BaseConfig:
 
     CLIENT_ID = None
     VK_GROUP_ID = None
+    VK_SECRET_KEY = None
     ACCESS_TOKEN = None
 
     # Recaptcha settings

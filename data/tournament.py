@@ -19,7 +19,7 @@ subscribe_user_to_tournament_vk = sa.Table('subscribe_user_to_tournament_vk',
 
 class Tournament(BaseModel):
     __tablename__ = "tournaments"
-    __repr_attrs__ = ["title", "chief"]
+    __repr_attrs__ = ["title", "id"]
     serialize_only = ("id",
                       "title",
                       "chief.id",

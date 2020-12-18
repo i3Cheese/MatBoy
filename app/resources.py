@@ -187,7 +187,6 @@ class TournamentResource(Resource):
         return jsonify({'success': 'ok'})
         
 
-
 class TeamResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('name', type=str)

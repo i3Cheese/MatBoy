@@ -1,6 +1,7 @@
 from manager import Manager
-from data import global_init, create_session, User, Tournament
+from data import global_init, create_session, User
 import datetime as dt
+from app.resources import Tournament
 
 manager = Manager()
 global_init()
@@ -29,8 +30,16 @@ def give_creator(id=None, email=None):
 
 
 @manager.command
-def login(email, password):
-    pass
+def delete_tour(id):
+    """Use it if only if user haven't relations"""
+    session = create_session()
+    tour = session.query(Tournament).get(id)
+    if not tour:
+        print("Tour not found")
+        return
+    session.delete(tour)
+    session.commit()
+    print(repr(tour), "now deleted")
 
 
 @manager.command

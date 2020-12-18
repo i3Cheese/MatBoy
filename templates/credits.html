@@ -19,7 +19,7 @@
       },
       {
         "name": "Дарья Калашникова",
-        "desc": "Моральная подержка, менеджер, специалист по контакту.",
+        "desc": "Менеджер, специалист по интерграции, моральная поддержка.",
         "href": url_for('static', filename="img/credits/darya.jpg"),
         "tm": "ADari_Ka"
       },
@@ -39,7 +39,7 @@
         {{auth.desc | safe}}
       </div>
       <div>
-        <a href="t.me/{{ auth.tm }}">@{{ auth.tm }}</a>
+        <a href="https://t.me/{{ auth.tm }}" target="_blank">@{{ auth.tm }}</a>
       </div>
     </div>
     {% endfor %}
