@@ -524,14 +524,16 @@ button, input {
 .info_table{
     text-align: center;
     width: 98%;
+    border-collapse: collapse;
 }
+
 .protocol_in, .big_table_container{
     overflow: auto;
     align-content: center;
 }
 
 .info_table, .info_table td, .info_table th{
-    border: 1px solid rgba(0, 0, 0, 0.5);
+    border: 1px solid rgb(0, 0, 0);
 }
 
 .info_table td{

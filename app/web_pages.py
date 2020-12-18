@@ -551,5 +551,5 @@ def game_console(tour_id, league_id, game_id):
 
 
 @blueprint.route("/credits")
-def credits():
-    return render_template("credits.html")
+def credits_page():
+    return render_template("credits.html", menu=make_menu(now="Об авторах"))
