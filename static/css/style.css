@@ -439,9 +439,9 @@ button, input {
     height: 100%;
 }
 
-@media (max-width: 1000px){
+@media (max-width: 924px){
     .box{
-        max-width: none !important;
+        max-width: 100% !important;
     }
 }
 
