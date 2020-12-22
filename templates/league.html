@@ -95,9 +95,19 @@
            onclick="redirect(event)"
            href="{{game.link}}"
       >
-        <h2 class="item_title">{{game.title}}</h2>
-        <div class="description">
-          {{formated_datetime(game.start)}}
+        <div class="row centered_row">
+          <div class="col-md-4 d-flex align-items-center justify-content-center">
+            <h4 class="item_title">{{game.title}}</h4>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-center">
+            {{- formated_datetime(game.start) -}}
+          </div>
+          <div class="col-md-2 d-flex align-items-center justify-content-center">
+            {{- game.place -}}
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-center">
+            {{- game.judge.fullname -}}
+          </div>
         </div>
       </div>
     {% endfor %}

@@ -7,7 +7,7 @@
 {% block content %}
 <div class="hidden" id="game_id">{{game.id}}</div>
 
-<div class="box d-flex flex-wrap justify-content-between">
+<div class="box d-flex align-items-center flex-wrap justify-content-between">
   <div class="mdr-2">
     <a class="btn button_primary" href="{{game.league.link}}">
       <– Лига
@@ -24,11 +24,19 @@
       {% endif %}
     {% endif %}
   </div>
-  <div class="mdlr-2 h4">
-    {{game.title}}
-  </div>
-  <div class="mdl-2 h6">
-    {{formated_datetime(game.start)}}
+  <div class="row flex-fill mx-lg-3 centered_row">
+    <div class="col-lg-4">
+      <h4 class="item_title">{{game.title}}</h4>
+    </div>
+    <div class="col-lg-3 d-flex align-items-center justify-content-center">
+      {{- formated_datetime(game.start) -}}
+    </div>
+    <div class="col-lg-2 d-flex align-items-center justify-content-center">
+      {{- game.place -}}
+    </div>
+    <div class="col-lg-3 d-flex align-items-center justify-content-center">
+      {{- game.judge.fullname -}}
+    </div>
   </div>
 </div>
 
