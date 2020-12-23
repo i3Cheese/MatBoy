@@ -28,7 +28,7 @@
                   value="">
           </option>
         </template>
-        {% for team in tour.teams if team.status %}
+        {% for team in tour.teams | sort(attribute='status') if team.status %}
           {% if team.status == 2 %}
           <div class="box_item team border-success" id="team-{{team.id}}">
             <span class="status team-status">
