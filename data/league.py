@@ -62,6 +62,7 @@ class League(BaseModel):
         :return Tuple[List[Team], List[List[List[Tuple[int, Game]]]], List[int]]
         """
         teams = self.teams.copy()
+        teams.sort(key=lambda x: x.name)
         n = len(teams)
         indexes = {teams[i]: i for i in range(n)}
         table = [[[] for __ in range(n)] for _ in range(n)]
@@ -78,4 +79,4 @@ class League(BaseModel):
                     result[j] += r2
                 except KeyError:  # Команду могут удалить из лиги, но оставить игру
                     pass
-        return (teams, table, result)
+        return teams, table, result

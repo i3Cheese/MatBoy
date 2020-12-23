@@ -26,7 +26,7 @@
           <label class="box-label">
             Команды
           </label>
-          {% for team in league.teams if team.status == 2 %}
+          {% for team in league.teams | sort(attribute='name') if team.status == 2 %}
             <div class="box_item team" id="team-{{team.id}}">
               <label class="box_item-title team-title nested-toggler" for="team_info-{{team.id}}">
                 {{team.name}}
