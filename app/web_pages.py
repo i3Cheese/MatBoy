@@ -351,7 +351,7 @@ def team_request(tour_id: int):
             )
             emails = set()
             vk_uids = []
-            for field in form.players.entries:  # Check playes
+            for field in form.players.entries:  # Check players
                 email = field.data.lower()
                 if email in emails:
                     field.errors.append("Участник указан несколько раза")
@@ -385,10 +385,64 @@ def team_request(tour_id: int):
     except ValidationError:
         pass
 
-    return render_template("team_request.html",
+    return render_template("team_form.html",
+                           edit=False,
                            tour=tour,
                            form=form,
                            menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
+
+
+@blueprint.route('/tournament/<int:tour_id>/team/<int:team_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_team(tour_id: int, team_id: int):
+    form = TeamForm()
+    session = create_session()
+    team = session.query(Team).get(team_id)
+    if not team:
+        abort(404)
+    tour = team.tournament
+    if tour.id != tour_id:
+        abort(404)
+    if not tour.have_permission(current_user):
+        abort(403)
+
+    try:
+        if form.validate_on_submit():  # Validate posted data
+            team.fill(
+                name=form.name.data,
+                motto=form.motto.data,
+            )
+            emails = set()
+            team.players.clear()
+            for field in form.players.entries:  # Check players
+                email = field.data.lower()
+                if email in emails:
+                    field.errors.append("Участник указан несколько раза")
+                    raise ValidationError
+                emails.add(email)
+                user = session.query(User).filter(User.email == email).first()
+                if not user:
+                    field.errors.append("Пользователь не найден.")
+                    raise ValidationError
+                team.players.append(user)
+            session.commit()
+            return redirect(team.link)
+    except ValidationError:
+        pass
+
+    if request.method.upper() == 'GET':
+        form.name.data = team.name
+        form.motto.data = team.motto
+        form.players.entries.clear()
+        form.players.last_index = -1
+        for p in team.players:
+            form.players.append_entry(p.email)
+
+    return render_template("team_form.html",
+                           edit=True,
+                           tour=tour,
+                           form=form,
+                           menu=make_menu(session, team_id=team_id, now='Изменить данные команды'))
 
 
 @blueprint.route('/tournament/<int:tour_id>/create_post')

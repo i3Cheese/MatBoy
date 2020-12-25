@@ -6,14 +6,18 @@
 {% endblock head %}
 
 {% block title %}
-Заявка - {{tour.title}}
+  {% if edit %}
+    Изменение команды
+  {% else %}
+    Заявка - {{tour.title}}
+  {% endif %}
 {% endblock title %}
 
 {% block form %}
   <form
     class="form form_team"
     method="post"
-    autocomplete="offfff"
+    autocomplete="off"
   >
     {{form.hidden_tag()}}
     <fieldset class="form__fields">
@@ -22,7 +26,7 @@
         {{form.name(
           type="text",
           class="form__field-input",
-          autocomplete="offff"
+          autocomplete="off"
         )}}
         {{field_errors(form.name)}}
       </div>
@@ -30,35 +34,35 @@
         {{form.motto.label(class="form__field-label")}}
         {{form.motto(
           class="form__field-input",
-          autocomplete="offfff"
+          autocomplete="off"
         )}}
         {{field_errors(form.motto)}}
       </div>
       
       <template id="user_email_field">
         <li class="form__field">
-          <input autocomplete="offfff"
+          <input autocomplete="off"
                  class="form__field-input" 
                  id="players-1" 
                  name="players-1" 
-                 type="e-m-a-i-l" value="">
+                 type="email" value="">
         </li>
       </template>
       <div>
         {{form.players.label(class="form__field-label")}}
-        <ul class="form__field-list shadow_list"id={{form.players.id}}>
+        <ul class="form__field-list shadow_list" id={{form.players.id}}>
           {% for subfield in form.players %}
-              {% if subfield.errors %}
-                <li class="form__field s-with-error">
-              {% else %}
-                <li class="form__field">
-              {% endif %}
-              {{subfield(
-                class="form__field-input",
-                autocomplete="offfff",
-                type="email"
-              )}}
-              {{field_errors(subfield)}}
+            {% if subfield.errors %}
+              <li class="form__field s-with-error">
+            {% else %}
+              <li class="form__field">
+            {% endif %}
+            {{subfield(
+              class="form__field-input",
+              autocomplete="off",
+              type="email"
+            )}}
+            {{field_errors(subfield)}}
             </li>
           {% endfor %}
         </ul>
