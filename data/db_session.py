@@ -10,6 +10,7 @@ import logging
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
+__session = None
 
 
 class BaseModel(SqlAlchemyBase, ReprMixin, SerializerMixin, TimestampsMixin):
@@ -70,5 +71,7 @@ def global_init() -> None:
 
 def create_session() -> Session:
     """Create the data base session. Previosly global_init() should be call"""
-    global __factory
-    return __factory()
+    global __factory, __session
+    if not __session:
+        __session = __factory()
+    return __session
