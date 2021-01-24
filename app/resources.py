@@ -133,10 +133,11 @@ class UsersResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument(
         'vk_id', type=int, help="wrong type", location='args')
-    get_pars.add_argument('check', type=boolean,
-                          default=False, location='args')
+    get_pars.add_argument(
+        'email', location='args')
 
-    def post(self):
+    @classmethod
+    def post(cls):
         """Add new user to db"""
         args = UsersResource.reg_pars.parse_args()
         session = create_session()
@@ -153,19 +154,21 @@ class UsersResource(Resource):
         session.commit()
         return jsonify({"success": "ok"})
 
-    def get(self):
+    @classmethod
+    def get(cls):
         """Return the user you are looking for If unique args passed else all users"""
         session = create_session()
-        args = self.get_pars.parse_args()
-        if args['vk_id']:
-            user = session.query(User).filter(
-                User.vk_id == args['vk_id']).first()
-            if args['check']:
-                json_resp = {'exist': user is not None}
-            else:
-                if not user:
-                    abort(404)
-                json_resp = to_dict(user)
+        args = cls.get_pars.parse_args()
+        if args['vk_id'] or args['email']:
+            query = session.query(User)
+            if args['vk_id']:
+                query = query.filter_by(vk_id=args['vk_id'])
+            if args['email']:
+                query = query.filter_by(email=args['email'].lower())
+            user = query.first()
+            json_resp = {'exist': user is not None}
+            if user:
+                json_resp['user'] = to_dict(user)
         else:
             users = session.query(User).all()
             json_resp = {"users": [user.to_dict(only=("id",

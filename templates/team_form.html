@@ -2,6 +2,13 @@
 
 {% block head %}
   {{super()}}
+  <script>
+    const emails = [
+        {%- for email in emails -%}
+            "{{ email }}",
+        {%- endfor -%}
+    ]
+  </script>
   <script src="{{url_for('static', filename='js/team_request.js')}}"></script>
 {% endblock head %}
 
@@ -38,33 +45,50 @@
         )}}
         {{field_errors(form.motto)}}
       </div>
-      
-      <template id="user_email_field">
-        <li class="form__field">
-          <input autocomplete="off"
-                 class="form__field-input" 
-                 id="players-1" 
-                 name="players-1" 
-                 type="email" value="">
-        </li>
-      </template>
+
       <div>
+        {% set additional_info_fields = ['surname', 'name', 'patronymic', 'city', 'birthday'] %}
+
+        <template id="user_email_field">
+          <li class="form__field players-li">
+            <fieldset id="players-{}-fieldset container">
+              <div class="row">
+
+                <label class="col-sm" for="players-{}-email">
+                  Электронная почта
+                </label>
+                <input
+                    class=" players-email col-sm"
+                    id="players-{}-email"
+                    name="players-{}-email"
+                    onchange="onChangePlayerEmail(this)"
+                    oninput="onInputPlayerEmail(this)"
+                >
+              </div>
+              <fieldset class="players-additional_info" id="players-{}-additional_info" disabled>
+                {% for field_name in additional_info_fields %}
+                  <div class="row">
+                  <label class="col-sm" for="players-{}-{{ field_name }}">
+                    {{ field_name }}
+                  </label>
+                  <input class="players-{{ field_name }} col-sm {%- if field_name == "birthday" %} datepicker-here {%- endif -%}"
+                         id="players-{}-{{ field_name }}"
+                         name="players-{}-{{ field_name }}"
+                         {% if field_name == "birthday" -%}
+                           data-position="right top"
+                         {%- endif -%}
+                         {% if field_name in form.players.unbound_field.__required_if_new -%}
+                           required
+                         {%- endif -%}
+                  >
+                  </div>
+                {% endfor %}
+              </fieldset>
+            </fieldset>
+          </li>
+        </template>
         {{form.players.label(class="form__field-label")}}
-        <ul class="form__field-list shadow_list" id={{form.players.id}}>
-          {% for subfield in form.players %}
-            {% if subfield.errors %}
-              <li class="form__field s-with-error">
-            {% else %}
-              <li class="form__field">
-            {% endif %}
-            {{subfield(
-              class="form__field-input",
-              autocomplete="off",
-              type="email"
-            )}}
-            {{field_errors(subfield)}}
-            </li>
-          {% endfor %}
+        <ul class="form__field-list shadow_list" id="players">
         </ul>
       </div>
       <button onclick="addUserEmailField()" type="button">+</button>

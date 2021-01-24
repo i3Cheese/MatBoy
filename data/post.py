@@ -44,6 +44,9 @@ class Post(BaseModel):
     author = orm.relationship('User', backref="posts")
     tournament = orm.relationship('Tournament', backref="posts")
 
+    def check_relation(self, tour_id) -> bool:
+        return self.tournament_id == tour_id
+
     @property
     def created_info(self):
         created_date = datetime.datetime.fromisoformat(str(self.created_at))

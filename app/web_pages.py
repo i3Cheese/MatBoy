@@ -332,6 +332,26 @@ def tournament_console(tour_id: int):
                            tour=tour,
                            menu=make_menu(session, tour_id=tour_id, now='Консоль'))
 
+def get_emails(entries):
+    emails = []
+    for user_form in entries:
+        emails.append(user_form.email.data.lower())
+    return emails
+
+def process_team_players(session, entries, team):
+    emails = []
+    for user_form in entries:  # Check players
+        email = user_form.email.data.lower()
+        emails.append(email)
+        user = session.query(User).filter(User.email == email).first()
+        if not user:
+            user = User()
+            for field in user_form:
+                if field.data:
+                    setattr(user, field.short_name, field.data)
+        team.players.append(user)
+    return emails
+
 
 @blueprint.route("/tournament/<int:tour_id>/team_request", methods=["GET", "POST"])
 @login_required
@@ -341,6 +361,8 @@ def team_request(tour_id: int):
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
+
+    emails = []
     try:
         if form.validate_on_submit():  # Validate posted data
             team = Team().fill(
@@ -349,46 +371,36 @@ def team_request(tour_id: int):
                 trainer_id=current_user.id,
                 tournament_id=tour.id,
             )
-            emails = set()
-            vk_uids = []
-            for field in form.players.entries:  # Check players
-                email = field.data.lower()
-                if email in emails:
-                    field.errors.append("Участник указан несколько раза")
-                    raise ValidationError
-                emails.add(email)
-                user = session.query(User).filter(User.email == email).first()
-                if not user:
-                    field.errors.append("Пользователь не найден.")
-                    raise ValidationError
-                team.players.append(user)
-                if user.integration_with_VK:
-                    vk_uids.append(user.id)
+            emails = process_team_players(session, form.players.entries, team)
             session.add(team)
             session.commit()
 
             # Send notifications to players
-            msg = Message(
-                subject='Участие в турнире MatBoy',
-                recipients=list(emails),
-                sender=config.MAIL_DEFAULT_SENDER,
-                html=render_template('mails/email/invite_team.html',
-                                     team=team, tour=tour)
-            )
-            thr_email = Thread(target=send_message, args=[msg])
-            thr_vk = Thread(target=bot.notification_message,
-                            args=[render_template('mails/vk/invite_team.vkmsg',
-                                                  team=team, tour=tour), vk_uids])
-            thr_email.start()
-            thr_vk.start()
+            # msg = Message(
+            #     subject='Участие в турнире MatBoy',
+            #     recipients=emails,
+            #     sender=config.MAIL_DEFAULT_SENDER,
+            #     html=render_template('mails/email/invite_team.html',
+            #                          team=team, tour=tour)
+            # )
+            # thr_email = Thread(target=send_message, args=[msg])
+            # thr_email.start()
             return redirect(team.link)
     except ValidationError:
         pass
+
+    if form.is_submitted():
+        from pprint import pprint
+        pprint(request.form)
+        emails = get_emails(form.players.entries)
+        for error in form.players.errors:
+            flash(str(error), "error")
 
     return render_template("team_form.html",
                            edit=False,
                            tour=tour,
                            form=form,
+                           emails=emails,
                            menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
 
 
@@ -406,29 +418,24 @@ def edit_team(tour_id: int, team_id: int):
     if not tour.have_permission(current_user):
         abort(403)
 
+    emails = []
     try:
         if form.validate_on_submit():  # Validate posted data
             team.fill(
                 name=form.name.data,
                 motto=form.motto.data,
             )
-            emails = set()
             team.players.clear()
-            for field in form.players.entries:  # Check players
-                email = field.data.lower()
-                if email in emails:
-                    field.errors.append("Участник указан несколько раза")
-                    raise ValidationError
-                emails.add(email)
-                user = session.query(User).filter(User.email == email).first()
-                if not user:
-                    field.errors.append("Пользователь не найден.")
-                    raise ValidationError
-                team.players.append(user)
+            process_team_players(session, form.players.entries, team)
             session.commit()
             return redirect(team.link)
     except ValidationError:
         pass
+
+    if form.is_submitted():
+        emails = get_emails(form.players.entries)
+    else:
+        emails = [user.email for user in team.players]
 
     if request.method.upper() == 'GET':
         form.name.data = team.name
@@ -442,6 +449,7 @@ def edit_team(tour_id: int, team_id: int):
                            edit=True,
                            tour=tour,
                            form=form,
+                           emails=emails,
                            menu=make_menu(session, team_id=team_id, now='Изменить данные команды'))
 
 
@@ -452,11 +460,12 @@ def create_post(tour_id, post_id=None):
     """Create and edit post"""
     session = create_session()
     tour = session.query(Tournament).get(tour_id)
+    if not tour.have_permission(current_user):
+        abort(403)
     if post_id:
         post = session.query(Post).get(post_id)
-        if not post:
-            flash('Пост не найден', 'error')
-            return redirect(url_for('web_pages.tournament_page', tour_id=tour_id))
+        if not post or not post.check_relation(tour_id):
+            abort(404)
         return render_template('create_post.html', tour=tour, post=post,
                                menu=make_menu(tour_id=tour_id, now='Редактирование поста'))
     else:

@@ -1,6 +1,7 @@
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import TextAreaField, SubmitField, DateField, FieldList, SelectField
+from wtforms import FormField
 from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
@@ -182,19 +183,60 @@ class TournamentInfoForm(BaseForm):
     submit = SubmitField("Подтвердить")
 
 
+class BasicUserForm(BaseForm):
+    email = EmailField('E-mail *', validators=[field_data_lower,
+                                               Email(message="Неправильный формат"),
+                                               RuDataRequired()])
+
+    def required_if_new(form, field):
+        if form.__new_email:
+            RuDataRequired()(form, field)
+
+    surname = StringField('Фамилия *', validators=[field_data_capitalizer, required_if_new])
+    name = StringField('Имя *', validators=[field_data_capitalizer, required_if_new])
+    patronymic = StringField("Отчество (если есть)", validators=[field_data_capitalizer,])
+    city = StringField("Город *", validators=[field_data_capitalizer, required_if_new])
+    birthday = NullableDateField("Дата рождения *", format=DATE_FORMAT, validators=[required_if_new])
+
+    __new_email = False
+
+    __required_if_new = ['surname', 'name', 'city', 'birthday']
+
+    def __init__(self, *args, meta=None, **kwargs):
+        if meta is None:
+            meta = {'csrf': False}
+        else:
+            meta['csrf'] = False
+        super(BasicUserForm, self).__init__(*args, meta=meta, **kwargs)
+
+    def validate_email(form, field):
+        session = create_session()
+        user = session.query(User).filter_by(email=field.data.lower()).first()
+        form.__new_email = user is None
+
+
 class TeamForm(BaseForm):
     """Form for team request"""
     name = StringField("Название команды *", validators=[RuDataRequired()])
     motto = TextAreaField("Девиз команды")
-    players = FieldList(EmailField(label="E-mail участника *",
-                                   validators=[RuDataRequired(),
-                                               field_data_lower,
-                                               exist_email_validator]
-                                   ),
-                        "E-mail yчастников",
+    players = FieldList(FormField(BasicUserForm),
+                        "Данные участников",
                         min_entries=4,
                         max_entries=8, )
-    submit = SubmitField("Подтвердить")
+    submit = SubmitField("Отправить")
+
+    def validate_players(form, field):
+        emails = set()
+        success = True
+        for user_form in field.entries:
+            email = user_form.email.data.lower()
+            if email in emails:
+                user_form.email.errors.append("Участник указан несколько раз")
+                success = False
+            else:
+                emails.add(email)
+        if not success:
+            raise ValidationError("Один из участников указан несколько раз")
 
 
 class ResetPasswordStep1(BaseForm):
