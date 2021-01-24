@@ -74,7 +74,17 @@
           {% endfor %}
         </div>
       {% endmacro %}
-      {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆')] %}
+      {% set round_types = [(1, '→'), (2, '←'), (3, '⇄'), (4, '⇆'), (5, '⥇'), (6, '⬾')] %}
+      {% if game.protocol.get('captain_task') %}
+        <div class="m-2">
+          <label for="captain_task" class="m-0">
+            Текст задачи конкурса капитанов
+          </label>
+          <div class="w-100 captain_task border border-dark" id="captain_task">
+            {{- game.protocol['captain_task'] -}}
+          </div>
+        </div>
+      {% endif %}
       {% if game.captain_winner %}
         <div class="w-100 m-2 captain_winner">
           Победил капитан команды

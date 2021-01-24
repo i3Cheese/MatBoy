@@ -9,9 +9,7 @@ function gameStatus() {
 }
 
 function toggleProtocol(dis) {
-    $("#protocol").find("select, input").prop("disabled", dis);
-    $("select[name=captain_winner]").prop("disabled", dis);
-    $("#protocol_buttons button ").prop("disabled", dis);
+    $("#tournament_fieldset").prop("disabled", dis)
     disabled = dis;
 }
 
@@ -50,6 +48,7 @@ function saveGame(finish = false) {
     });
     let data = {rounds: rounds_json};
     data.captain_winner = $('[name="captain_winner"]').val();
+    data.captain_task = $('[name="captain_task"]').val();
 
     // sending the game protocol to the server
     $.ajax({
@@ -62,13 +61,13 @@ function saveGame(finish = false) {
         success: function () {
             makeSuccessToast("Протокол сохранён");
             if (finish) {
-                let red = function () {
+                let redirect = function () {
                     window.location.href = window.location.href.strip('/console');
                 };
                 if (stat === 2) {
-                    changeStatus(3, red);
+                    changeStatus(3, redirect);
                 } else {
-                    red();
+                    redirect();
                 }
             }
         },
@@ -98,7 +97,7 @@ function recountPoints(event) {
 
 function addStar(event) {
     if (disabled) return;
-    let stars = $(event.target).parents(".stars");
+    let stars = $(event.target).closest(".stars");
     stars.append($(document.querySelector("#star_template").content).clone().find('.star'));
 }
 
@@ -142,6 +141,6 @@ $(document).on('click', '.star.remove', removeStar);
 
 $(document).ready(function (jqs) {
     stat = gameStatus();
-    if (stat == 1 || stat == 3)
+    if (stat === 1 || stat === 3)
         toggleProtocol(1); // prohibiting editing
 });

@@ -651,8 +651,16 @@ textarea.input-wide{
     margin-bottom: 3px;
 }
 
-fieldset{
+fieldset {
     border-width: 0;
+}
+
+.filter_disabled:disabled {
+    filter: grayscale(100%);
+}
+
+.gray_disabled:disabled {
+    background: rgba(0,0,0,0.05);
 }
 
 input[type='checkbox']{

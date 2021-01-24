@@ -613,6 +613,19 @@ def game_console(tour_id, league_id, game_id):
                                           now='Консоль'))
 
 
+@blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>/swap")
+@login_required
+def game_swap(tour_id, league_id, game_id):
+    session = create_session()
+    game = session.query(Game).get(game_id)
+    if not (game and game.check_relation(tour_id, league_id)):
+        abort(404)
+    if not game.have_permission(current_user):
+        abort(403)
+    game.swap_teams()
+    return redirect(url_for('web_pages.prepare_to_game', tour_id=tour_id, league_id=league_id, game_id=game_id))
+
+
 @blueprint.route("/credits")
 def credits_page():
     return render_template("credits.html", menu=make_menu(now="Об авторах"))

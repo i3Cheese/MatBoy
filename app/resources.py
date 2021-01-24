@@ -466,7 +466,7 @@ class GamesResource(Resource):
                                required=True, help="Неправильно указана команда")
 
     def post(self):
-        """Handle request to change game."""
+        """Handle request to new game."""
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
 
@@ -513,12 +513,13 @@ class ProtocolResource(Resource):
 
         if 'teams' in request.json:
             game.protocol['teams'] = request.json['teams']
-
+        if 'captain_task' in request.json:
+            game.protocol['captain_task'] = request.json['captain_task']
         if 'captain_winner' in request.json:
             try:
                 game.captain_winner = int(request.json['captain_winner'])
             except ValueError as e:
-                abort(400, message=str(e))
+                abort(400, error={'captain_winner': str(e)})
 
         if 'rounds' in request.json:
             rounds = request.json['rounds']
@@ -544,7 +545,7 @@ class ProtocolResource(Resource):
                             del team['player']
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
-                [len(rounds) * 12 - sum(teams_points), ]  # Count judje points
+                [len(rounds) * 12 - sum(teams_points), ]  # Count judge points
             game.protocol['stars'] = teams_stars
 
         session.merge(game)

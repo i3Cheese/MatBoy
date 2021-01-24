@@ -118,7 +118,7 @@ class Game(BaseModel):
                     return
             raise ValueError("Team doesn't participate in this game")
         else:
-            if (team_data in self.teams):
+            if team_data in self.teams:
                 self.protocol['captain_winner'] = team_data.to_short_dict()
                 return
             else:
@@ -169,3 +169,19 @@ class Game(BaseModel):
 
     def deleted(self):
         return self.status <= 0
+
+    def swap_teams(self):
+        self.team1, self.team2 = self.team2, self.team1
+        if 'teams' in self.protocol:
+            self.protocol['teams'].reverse()
+
+        if 'rounds' in self.protocol:
+            for round in self.protocol['rounds']:
+                round['teams'].reverse()
+                round['type'] = ((round['type'] - 1) ^ 1) + 1
+        if 'points' in self.protocol:
+            points = self.protocol['points']
+            points[0], points[1] = points[1], points[0]
+        if 'stars' in self.protocol:
+            self.protocol['stars'].reverse()
+
