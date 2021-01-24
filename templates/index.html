@@ -16,6 +16,7 @@
         </div>
       {% endif %}
       {% from 'models_macroses.html' import tour_dates %}
+      <button onclick="c()">test of modals</button>
       {% for tour in tournaments | sort(reverse=True, attribute="created_at")%}
         <div class="centered_block block_link"
              onclick="redirect(event);"
