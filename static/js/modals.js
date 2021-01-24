@@ -1,7 +1,3 @@
-function c() {
-    window.alert();
-}
-
 window.confirm = (message) => {
     $('#PromiseConfirm .modal-body p').html(message);
     var PromiseConfirm = $('#PromiseConfirm').modal({
@@ -19,17 +15,6 @@ window.confirm = (message) => {
     });
 };
 
-$('p a[href="#"]').on('click', async (e) => {
-    e.preventDefault();
-    if (await confirm('Want to test the Prompt?')) {
-        let prmpt = await prompt('Entered value:');
-        if (prmpt) await alert(`entered: «${prmpt}»`);
-        else await alert('Do not enter a value');
-    }
-    else await alert('Promise based alert sample');
-});
-
-
 window.alert = (message) => {
     $('#PromiseAlert .modal-body p').html(message);
     var PromiseAlert = $('#PromiseAlert').modal({
@@ -40,12 +25,6 @@ window.alert = (message) => {
         PromiseAlert.on('hidden.bs.modal', resolve);
     });
 };
-
-$('p a[href="#"]').on('click', async (e) => {
-    e.preventDefault();
-    await alert('Promise based alert sample');
-});
-
 
 window.prompt = (message) => {
     $('#PromisePrompt .modal-body label').html(message);
@@ -64,3 +43,16 @@ window.prompt = (message) => {
         });
     });
 };
+
+
+// so, guys, this is an example for INTEGRATION (my fav word, u know) a modals into other functions
+
+// $('p a[href="#"]').on('click', async (e) => {
+    // e.preventDefault();
+    // if (await confirm('Want to test the Prompt?')) {
+        // let prmpt = await prompt('Entered value:');
+        // if (prmpt) await alert(`entered: «${prmpt}»`);
+        // else await alert('Do not enter a value');
+    // }
+    // else await alert('Promise based alert sample');
+// });
