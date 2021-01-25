@@ -47,7 +47,9 @@
       </div>
 
       <div>
-        {% set additional_info_fields = ['surname', 'name', 'patronymic', 'city', 'birthday'] %}
+        {% set additional_info_fields = {'surname': 'Фамилия', 'name': 'Имя', 
+                                         'patronymic': 'Отчество', 'city': 'Город', 
+                                         'birthday': 'Дата рождения'} %}
 
         <template id="user_email_field">
           <li class="form__field players-li">
@@ -58,7 +60,7 @@
                   Электронная почта
                 </label>
                 <input
-                    class=" players-email col-sm"
+                    class=" players-email col-sm form__field-input add"
                     id="players-{}-email"
                     name="players-{}-email"
                     onchange="onChangePlayerEmail(this)"
@@ -66,12 +68,12 @@
                 >
               </div>
               <fieldset class="players-additional_info gray_disabled" id="players-{}-additional_info" disabled>
-                {% for field_name in additional_info_fields %}
+                {% for field_name in additional_info_fields.keys() %}
                   <div class="row">
                   <label class="col-sm" for="players-{}-{{ field_name }}">
-                    {{ field_name }}
+                    {{ additional_info_fields[field_name] }}
                   </label>
-                  <input class="players-{{ field_name }} col-sm {%- if field_name == "birthday" %} datepicker-here {%- endif -%}"
+                  <input class="players-{{ field_name }} col-sm form__field-input add-field {%- if field_name == "birthday" %} datepicker-here {%- endif -%}"
                          id="players-{}-{{ field_name }}"
                          name="players-{}-{{ field_name }}"
                          {% if field_name == "birthday" -%}
