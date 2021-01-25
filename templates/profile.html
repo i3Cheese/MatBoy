@@ -89,7 +89,7 @@
   <div class="modal fade" id="edit-password-modal" tabindex="-1" role="dialog"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="box modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Смена пароля</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -115,7 +115,7 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal"
               id="close-password-modal">Закрыть
           </button>
-          <input type="submit" class="btn btn-primary" form="edit-password-form"
+          <input type="submit" class="btn button_primary" form="edit-password-form"
                            value="Изменить" id="edit-password-submit">
         </div>
       </div>
@@ -145,7 +145,7 @@
           <button type="button" class="btn btn-secondary" data-dismiss="modal"
                   id="close-email-modal">Закрыть
           </button>
-          <input type="submit" class="btn btn-primary" form="edit-email-form"
+          <input type="submit" class="btn button_primary" form="edit-email-form"
                  value="Изменить" id="edit-email-submit">
         </div>
       </div>
@@ -153,7 +153,6 @@
   </div>
   {% endif %}
   <template id="error-input-template">
-    <div class="s-error"></div>
   </template>
   <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
 {% endblock content %}

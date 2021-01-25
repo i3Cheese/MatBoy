@@ -20,7 +20,7 @@ def unauthorized(error):
 
 @app.errorhandler(403)
 def forbidden(error):
-    message = "Вам запрещено делать то, что вы пытаетесь. Ничего не поделаешь, такие правила."
+    message = "Вам запрещено здесь быть. Ничего не поделаешь, такие правила."
     return render_template("errors/error.html",
                            error=error,
                            message=message)
@@ -28,7 +28,7 @@ def forbidden(error):
 
 @app.errorhandler(404)
 def not_found(error):
-    message = "Мы не нашли то что вы искали. Или вы искали то чего у нас нет."
+    message = "Мы не нашли то, что Вы искали. Или Вы пытались найти то, чего у нас нет."
     return render_template("errors/error.html",
                            error=error,
                            message=message)

@@ -26,7 +26,7 @@ class NullableDateField(DateField):
                     date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Не правильный формат даты'))
+                raise ValueError(self.gettext('Неправильный формат даты'))
 
 
 class RuDataRequired(DataRequired):
@@ -47,7 +47,7 @@ class RuDateField(DateField):
                     date_str, self.format).date()
             except ValueError:
                 self.data = None
-                raise ValueError(self.gettext('Не правильный формат даты'))
+                raise ValueError(self.gettext('Неправильный формат даты'))
 
 
 class FillWith:
@@ -87,14 +87,14 @@ class FillWith:
             other_msg = self.other_msg
             if other_msg is None:
                 other_msg = field.gettext(
-                    'Поле "%(this_label)s" заполнено и это должно')
+                    'Поле "%(this_label)s" заполнено; так и должно быть')
             other.errors.append(other_msg)
 
             # Raise error
             this_msg = self.this_msg
             if this_msg is None:
                 this_msg = field.gettext(
-                    'Поле "%(other_label)s" должно быть тоже заполнено')
+                    'Поле "%(other_label)s" должно быть заполнено')
             raise ValidationError(this_msg % d)
 
 
@@ -114,7 +114,7 @@ def unique_email_validator(form, field):
     session = create_session()
     if session.query(User).filter(User.email == email).first():
         raise ValidationError(
-            "Пользователь с таким e-mail уже зарегестрирован")
+            "Пользователь с таким e-mail уже зарегистрирован")
 
 
 def exist_email_validator(form, field):
@@ -129,9 +129,9 @@ def exist_email_validator(form, field):
 def password_secure_validator(form, field):
     password = field.data
     if len(password) > 50:
-        raise ValidationError("Пароль должен быть меньше 50 символов")
+        raise ValidationError("Пароль должен быть менее 50 символов")
     elif len(password) < 8:
-        raise ValidationError("Пароль должен быть не меньше 8 символов")
+        raise ValidationError("Пароль должен быть не менее 8 символов")
 
 
 class BaseForm(FlaskForm):
@@ -176,10 +176,11 @@ class TournamentInfoForm(BaseForm):
     title = StringField("Название *", validators=[RuDataRequired()])
     description = TextAreaField("Дополнительная информация")
     place = StringField("Место проведения")
-    start = NullableDateField("Начало турнира", format=DATE_FORMAT)
+    start = NullableDateField("Начало турнира", format=DATE_FORMAT, 
+                              validators=[FillWith('end', other_msg='Без начала нет конца')])
     end = NullableDateField("Конец турнира",
                             format=DATE_FORMAT,
-                            validators=[FillWith('start', other_msg='Без начала нет конца')])
+                            validators=[FillWith('start', other_msg='Бесконечный турнир?')])
     submit = SubmitField("Подтвердить")
 
 

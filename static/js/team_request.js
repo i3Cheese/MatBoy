@@ -31,6 +31,7 @@ function checkPlayerForm(liFieldset) {
                 fillPlayerForm(additionalInfo, data.user);
             } else {
                 additionalInfo.prop("disabled", false);
+                additionalInfo.find('.players-birthday').prop("placeholder", '01.01.1970')
             }
         }
     });
