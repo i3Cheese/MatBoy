@@ -43,7 +43,7 @@ button.hidden{
 }
 
 .link{
-    color: blue !important;
+    color: cornflowerblue !important;
 }
 
 .link:hover{
@@ -353,7 +353,7 @@ button, input {
 }
 
 .block_link:hover{
-    background: rgba(0, 255, 255, 0.1)
+    background: #f8f9fa
 }
 
 .centered_block {

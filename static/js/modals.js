@@ -1,4 +1,11 @@
-window.confirm = (message) => {
+window.confirm = (message, swap) => {
+    if (swap === true) {
+        $('#PromiseConfirm .modal-footer .ok').removeClass('button_primary');
+        $('#PromiseConfirm .modal-footer .cancel').removeClass('btn-danger');
+
+        $('#PromiseConfirm .modal-footer .ok').addClass('btn-danger');
+        $('#PromiseConfirm .modal-footer .cancel').addClass('button_primary');
+    }
     $('#PromiseConfirm .modal-body p').html(message);
     var PromiseConfirm = $('#PromiseConfirm').modal({
         keyboard: false,
@@ -49,10 +56,11 @@ window.prompt = (message) => {
 
 // $('p a[href="#"]').on('click', async (e) => {
     // e.preventDefault();
-    // if (await confirm('Want to test the Prompt?')) {
+    // if (await confirm('Want to test the Prompt?', true)) {
         // let prmpt = await prompt('Entered value:');
         // if (prmpt) await alert(`entered: «${prmpt}»`);
         // else await alert('Do not enter a value');
     // }
     // else await alert('Promise based alert sample');
 // });
+// true if confirm is the flag of swiping buttons' colour
