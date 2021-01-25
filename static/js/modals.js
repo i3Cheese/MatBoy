@@ -12,7 +12,7 @@ window.confirm = (message, swap) => {
         backdrop: 'static'
     }).modal('show');
     let confirm = false;
-    $('#PromiseConfirm .btn-success').on('click', e => {
+    $('#PromiseConfirm .ok').on('click', e => {
         confirm = true;
     });
     return new Promise(function (resolve, reject) {
@@ -41,7 +41,7 @@ window.prompt = (message) => {
     }).modal('show');
     $('#PromisePromptInput').focus();
     let prmpt = null;
-    $('#PromisePrompt .btn-success').on('click', e => {
+    $('#PromisePrompt .button_primary').on('click', e => {
         prmpt = $('#PromisePrompt .modal-body input').val();
     });
     return new Promise(function (resolve, reject) {
