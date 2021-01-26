@@ -128,15 +128,17 @@ function removeGameForm(event) {
     form.remove();
 }
 
-function deleteGame(game_id) {
-    $.ajax({
-        type: "DELETE",
-        url: API_URL + "game/" + game_id,
-        success: function () {
-            location.reload();
-        },
-        error: holdErrorResponse,
-    });
+async function deleteGame(game_id) {
+    if (await confirm("Вы уверены, что хотите удалить эту игру? Это действие невозможно отменить.")) {
+        $.ajax({
+            type: "DELETE",
+            url: API_URL + "game/" + game_id,
+            success: function () {
+                location.reload();
+            },
+            error: holdErrorResponse,
+        });
+    }
 }
 
 function getGameId(target) {

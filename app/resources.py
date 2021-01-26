@@ -3,6 +3,7 @@ from flask_restful.inputs import boolean
 from flask import jsonify
 from flask_login import current_user, login_required
 from data import User, Team, Tournament, League, Game, Post, create_session
+from data.user import AnonymousUser
 from datetime import date, datetime
 import logging
 
@@ -542,7 +543,7 @@ class ProtocolResource(Resource):
                         if player:
                             team['player'] = player.to_short_dict()
                         else:
-                            del team['player']
+                            team['player'] = AnonymousUser().to_short_dict()
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
                 [len(rounds) * 12 - sum(teams_points), ]  # Count judge points

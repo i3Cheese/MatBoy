@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
-from data.db_session import BaseModel
+from data.base_model import BaseModel
 
 subscribe_user_to_tournament_email = sa.Table('subscribe_user_to_tournament_email',
                                               BaseModel.metadata,

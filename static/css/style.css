@@ -671,6 +671,9 @@ input[type='checkbox']{
     margin: 0 auto;
 }
 
+.border_red {
+    border: 2px solid #e91313 !important;
+}
 
 .centered_row > div{
     display: flex;

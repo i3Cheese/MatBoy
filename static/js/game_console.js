@@ -28,9 +28,10 @@ function changeStatus(st, func) {
     });
 }
 
-function saveGame(finish = false) {
+async function saveGame(finish = false) {
     // collecting game info
     let rounds_json = [];
+    let make_red = [];
     $("#protocol").find(".round_form").each(function (index) {
         let form = $(this);
         let round = {'teams': [{}, {},],};
@@ -38,14 +39,35 @@ function saveGame(finish = false) {
         round.type = Number(form.find('[name="type"]').val());
         round.teams[0].points = Number(form.find('[name="team1_points"]').val());
         round.teams[1].points = Number(form.find('[name="team2_points"]').val());
-        round.teams[0].player = Number(form.find('[name="team1_players"]').val());
-        round.teams[1].player = Number(form.find('[name="team2_players"]').val());
+        let team1_player = form.find('[name="team1_players"]');
+        let team2_player = form.find('[name="team2_players"]');
+        let t1pVal = Number(team1_player.val());
+        let t2pVal = Number(team2_player.val());
+        if (t1pVal === 0) {
+            make_red.push(team1_player);
+        }
+        if (t2pVal === 0) {
+            make_red.push(team2_player);
+        }
+        round.teams[0].player = t1pVal;
+        round.teams[1].player = t2pVal;
 
         round.teams[0].stars = form.find("[name='team1_stars']").find(".remove").length;
         round.teams[1].stars = form.find("[name='team2_stars']").find(".remove").length;
         round.additional = form.find('[name="additional"]').val();
         rounds_json.push(round);
     });
+    if (make_red.length) {
+        make_red.forEach(function (v) {
+            v.closest('td').addClass('border_red');
+        });
+        let ans = await confirm("В некотрых раундах не указаны игроки выходившие к доске. Вы уверены, что хотите сохранить?");
+        console.log(ans);
+        if (!ans) {
+            console.log("HERE");
+            return false;
+        }
+    }
     let data = {rounds: rounds_json};
     data.captain_winner = $('[name="captain_winner"]').val();
     data.captain_task = $('[name="captain_task"]').val();
@@ -72,6 +94,7 @@ function saveGame(finish = false) {
             }
         },
     });
+    return true;
 }
 
 function rowCount() {
@@ -106,23 +129,23 @@ function removeStar(event) {
     $(event.target).remove();
 }
 
-$(document).on('click', '.add_round', function () {
+$(document).on('click', '.add_round', async function () {
     // adding round
-    saveGame();
+    await saveGame();
     addRow();
 });
 
-$(document).on('click', '.save', function () {
+$(document).on('click', '.save', async function () {
     // saving game
-    saveGame();
+    await saveGame();
 });
 
-$(document).on('click', '.end_editing', function () {
+$(document).on('click', '.end_editing', async function () {
     // function to end editing
-    saveGame(finish = true);
+    await saveGame(finish = true);
 });
 
-$(document).on('click', '.start_editing', function (e) {
+$(document).on('click', '.start_editing', async function (event) {
     // function to start editing
     if (stat === 1) {
         changeStatus(2, function () {
@@ -139,7 +162,7 @@ $(document).on('input keyup', '.points_input', recountPoints);
 $(document).on('click', '.star.add', addStar);
 $(document).on('click', '.star.remove', removeStar);
 
-$(document).ready(function (jqs) {
+$(document).ready( async function (jqs) {
     stat = gameStatus();
     if (stat === 1 || stat === 3)
         toggleProtocol(1); // prohibiting editing

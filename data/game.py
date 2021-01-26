@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
-from data.db_session import BaseModel
+from data.base_model import BaseModel
 from sqlalchemy_json import MutableJson
 from data.exceptions import StatusError
 

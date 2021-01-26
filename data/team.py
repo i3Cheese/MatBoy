@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
-from data.db_session import BaseModel
+from data.base_model import BaseModel
 
 users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
                           sa.Column('user', sa.Integer,

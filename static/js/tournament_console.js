@@ -86,16 +86,18 @@ function acceptTeam(team_id) {
     });
 }
 
-function deleteTeam(team_id) {
-    $.ajax({
-        type: "DELETE",
-        url: API_URL + "team/" + team_id,
-        success: function () {
-            deleteTeamFromLeagues(team_id);
-            $("#team-" + team_id).remove();
-        },
-        error: holdErrorResponse,
-    });
+async function deleteTeam(team_id) {
+    if (await confirm("Вы уверены, что хотите удалить эту команду? Это действие невозможно отменить.")) {
+        $.ajax({
+            type: "DELETE",
+            url: API_URL + "team/" + team_id,
+            success: function () {
+                deleteTeamFromLeagues(team_id);
+                $("#team-" + team_id).remove();
+            },
+            error: holdErrorResponse,
+        });
+    }
 }
 
 // bind commands to the buttons, controls teams
@@ -266,15 +268,17 @@ function removeLeagueForm(event) {
     form.remove();
 }
 
-function deleteLeague(league_id) {
-    $.ajax({
-        type: "DELETE",
-        url: API_URL + "league/" + league_id,
-        success: function () {
-            location.reload();
-        },
-        error: holdErrorResponse,
-    });
+async function deleteLeague(league_id) {
+    if (await confirm("Вы уверены, что хотите удалить эту лигу? Это действие невозможно отменить.")) {
+        $.ajax({
+            type: "DELETE",
+            url: API_URL + "league/" + league_id,
+            success: function () {
+                location.reload();
+            },
+            error: holdErrorResponse,
+        });
+    }
 }
 
 $(document).on('click', '.league-edit', function (event) {

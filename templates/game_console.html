@@ -83,9 +83,11 @@
 
         {% macro select_players(players, i, player_id=0) %}
           <select name="team{{i}}_players">
+            <option value="0" {{ 'selected' if 0 == player_id else '' }} style="border: 5px #e91313;">
+            </option>
             {% for player in players %}
-                <option value="{{player['id']}}" {{'selected' if player['id'] == player_id else ''}}>
-                  {{player['fullname']}}
+                <option value="{{ player['id'] }}" {{ 'selected' if player['id'] == player_id else '' }}>
+                  {{ player['fullname'] }}
                 </option>
             {% endfor %}
           </select>

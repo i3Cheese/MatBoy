@@ -1,14 +1,15 @@
 import datetime
 import sqlalchemy as sa
-from data.db_session import BaseModel
+from data.base_model import BaseModel, FormatSerializerMixin, ReprMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 import werkzeug
 
 
-class User(BaseModel, UserMixin):
-    __tablename__ = "users"
+class UserInterface:
+    """User interface for both User and AnonymousUser classes"""
     __repr_attrs__ = ["surname", "name"]
+
     serialize_only = ("id",
                       "name",
                       "surname",
@@ -36,18 +37,32 @@ class User(BaseModel, UserMixin):
                             "email"
                             )
 
-    surname = sa.Column(sa.String, nullable=False)
-    name = sa.Column(sa.String, nullable=False)
-    patronymic = sa.Column(sa.String, nullable=True)
-    city = sa.Column(sa.String, nullable=True)
-    birthday = sa.Column(sa.Date)
-    email = sa.Column(sa.String, index=True, unique=True)
-    hashed_password = sa.Column(sa.String, nullable=True)
-    is_creator = sa.Column(sa.Boolean, default=False)
-    vk_id = sa.Column(sa.Integer, default=0)
-    integration_with_VK = sa.Column(sa.Boolean, default=False)
-    email_notifications = sa.Column(sa.Boolean, default=False)
-    vk_notifications = sa.Column(sa.Boolean, default=False)
+    def to_dict(self, only=None):
+        res = {}
+        only = only or self.serialize_only
+        for field_name in only:
+            res[field_name] = getattr(self, field_name)
+        return res
+
+    def to_short_dict(self):
+        return self.to_dict(only=self.short_serialize_only)
+
+    def to_secure_dict(self):
+        return self.to_dict(only=self.secure_serialize_only)
+
+    id = 0
+    surname = ''
+    name = ''
+    patronymic = None
+    city = None
+    birthday = datetime.date(1970, 1, 1)
+    email = "mail@example.com"
+    hashed_password = None
+    is_creator = False
+    vk_id = 0
+    integration_with_VK = False
+    email_notifications = False
+    vk_notifications = False
 
     @property
     def fullname(self):
@@ -62,12 +77,6 @@ class User(BaseModel, UserMixin):
 
     def __str__(self):
         return self.fullname
-
-    def set_password(self, password):
-        self.hashed_password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.hashed_password, password)
 
     @property
     def years_old(self):
@@ -91,8 +100,29 @@ class User(BaseModel, UserMixin):
             raise TypeError
 
 
-class AnonymousUser(AnonymousUserMixin):
-    id = 0
-    is_admin = False
+class User(UserInterface, BaseModel, UserMixin,):
+    __tablename__ = "users"
 
-    __eq__ = User.__eq__
+    id = BaseModel.id
+    surname = sa.Column(sa.String, nullable=False)
+    name = sa.Column(sa.String, nullable=False)
+    patronymic = sa.Column(sa.String, nullable=True)
+    city = sa.Column(sa.String, nullable=True)
+    birthday = sa.Column(sa.Date)
+    email = sa.Column(sa.String, index=True, unique=True)
+    hashed_password = sa.Column(sa.String, nullable=True)
+    is_creator = sa.Column(sa.Boolean, default=False)
+    vk_id = sa.Column(sa.Integer, default=0)
+    integration_with_VK = sa.Column(sa.Boolean, default=False)
+    email_notifications = sa.Column(sa.Boolean, default=False)
+    vk_notifications = sa.Column(sa.Boolean, default=False)
+
+    def set_password(self, password):
+        self.hashed_password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.hashed_password, password)
+
+
+class AnonymousUser(AnonymousUserMixin, UserInterface):
+    pass
