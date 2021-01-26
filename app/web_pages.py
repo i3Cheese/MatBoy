@@ -332,11 +332,13 @@ def tournament_console(tour_id: int):
                            tour=tour,
                            menu=make_menu(session, tour_id=tour_id, now='Консоль'))
 
+
 def get_emails(entries):
     emails = []
     for user_form in entries:
         emails.append(user_form.email.data.lower())
     return emails
+
 
 def process_team_players(session, entries, team):
     emails = []

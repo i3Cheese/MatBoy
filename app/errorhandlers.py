@@ -28,7 +28,15 @@ def forbidden(error):
 
 @app.errorhandler(404)
 def not_found(error):
-    message = "Мы не нашли то, что Вы искали. Или Вы пытались найти то, чего у нас нет."
+    message = "Мы не нашли то, что Вы искали. Или Вы искали то, чего у нас нет."
     return render_template("errors/error.html",
+                           error=error,
+                           message=message)
+
+
+@app.errorhandler(500)
+def server_error(error):
+    message = "У нас что-то сломалось. Сообщите нам об этом."
+    return render_template('errors/error.html',
                            error=error,
                            message=message)
