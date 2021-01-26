@@ -43,7 +43,7 @@ button.hidden{
 }
 
 .link{
-    color: blue !important;
+    color: cornflowerblue !important;
 }
 
 .link:hover{
@@ -172,6 +172,16 @@ fieldset {
 }
 textarea.form__field-input {
     height: 160px;
+}
+
+.add-field {
+    height: 30px;
+    min-width: 100px;
+    width: 10%;
+
+    margin-bottom: 5px;
+
+    background: rgba(0, 0, 0, 0);
 }
 
 .s-with-error .form__field-input {
@@ -343,7 +353,7 @@ button, input {
 }
 
 .block_link:hover{
-    background: rgba(0, 255, 255, 0.1)
+    background: #f8f9fa
 }
 
 .centered_block {
@@ -661,6 +671,8 @@ fieldset {
 
 .gray_disabled:disabled {
     background: rgba(0,0,0,0.05);
+    padding: 5px 20px 5px 20px;
+    justify-content: right;
 }
 
 input[type='checkbox']{
