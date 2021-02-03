@@ -10,7 +10,6 @@ from app.token import generate_confirmation_token_reset_email, confirm_token_edi
 from string import ascii_letters, digits
 from random import choice
 from threading import Thread
-import bot
 
 blueprint = Blueprint('web_utils',
                       __name__,
@@ -129,47 +128,6 @@ def subscribe_email():
         return jsonify({'error': 'Invalid response'})
 
 
-@blueprint.route('/subscribe-vk-tour', methods=['POST'])
-@blueprint.route('/subscribe-vk-profile', methods=['POST'])
-@login_required
-def subscribe_vk():
-    """Function for enable subscribe news by vk"""
-    try:
-        if 'status' in request.form:
-            session = create_session()
-            status = request.form.get('status')
-            status = bool(int(status))
-            user = session.query(User).get(current_user.id)
-            if not user.integration_with_VK:
-                return jsonify({'error': 'User not integration vk'})
-            if request.path == '/subscribe-vk-tour' and 'tour_id' in request.form:
-                tour_id = request.form.get('tour_id')
-                tour = session.query(Tournament).get(tour_id)
-                if not tour:
-                    raise AttributeError
-                if status:
-                    if user not in tour.users_subscribe_vk:
-                        tour.users_subscribe_vk.append(user)
-                else:
-                    if user in tour.users_subscribe_vk:
-                        tour.users_subscribe_vk.remove(user)
-                session.merge(tour)
-                session.merge(user)
-            elif request.path == '/subscribe-vk-profile':
-                if status:
-                    user.vk_notifications = True
-                else:
-                    user.vk_notifications = False
-            else:
-                raise AttributeError
-            session.commit()
-            return jsonify({'success': 'ok'})
-        else:
-            raise AttributeError
-    except AttributeError:
-        return jsonify({'error': 'Invalid response'})
-
-
 @blueprint.route('/notifications_sending', methods=['POST'])
 def notifications_sending():
     """Function for notifications subscribed users"""
@@ -183,10 +141,6 @@ def notifications_sending():
                                   tour.users_subscribe_email))
     emails = list(map(lambda user: user.email, subscribe_email))
 
-    subscribe_vk = list(filter(lambda user: user.vk_notifications,
-                               tour.users_subscribe_vk))
-    vk_uids = list(map(lambda user: user.vk_id, subscribe_vk))
-
     if emails:
         kwargs = {
             'subject': 'Обновление в новостях турнира MatBoy',
@@ -197,50 +151,4 @@ def notifications_sending():
         thr_email = Thread(target=send_messages, kwargs=kwargs)
         thr_email.start()
 
-    if vk_uids:
-        thr_vk = Thread(target=bot.notification_message,
-                        args=[render_template('mails/vk/new_post.vkmsg',
-                                              tour=tour), vk_uids])
-
-        thr_vk.start()
-    return jsonify({'success': 'ok'})
-
-
-@blueprint.route('/vk_disintegration', methods=['GET', 'DELETE'])
-@login_required
-def disintegration():
-    if request.method == 'GET':
-        return render_template('vk/vk_disintegration.html')
-    session = create_session()
-    user = session.query(User).get(current_user.id)
-    user.vk_id = 0
-    user.integration_with_VK = False
-    user.vk_notifications = False
-    session.commit()
-    return jsonify({"success": "ok"})
-
-
-@blueprint.route('/vk_integration', methods=['GET'])
-@login_required
-def integration():
-    return render_template('vk/vk_integration.html')
-
-
-@blueprint.route('/vk_integration_notification')
-@login_required
-def vk_integration_notification():
-    """Function for notify user about VK integration"""
-    user_id = request.args.get('user_id')
-    link = 'https://vk.com/' + request.args.get('screen_name')
-    session = create_session()
-    user = session.query(User).get(user_id)
-
-    msg = Message(
-        subject='Привязка ВКонтакте - MatBoy',
-        recipients=[user.email],
-        sender=config.MAIL_DEFAULT_SENDER,
-        html=render_template('mails/email/vk_notifications.html', link=link, user_id=user_id)
-    )
-    thr_email = Thread(target=send_message, args=[msg])
-    thr_email.start()
     return jsonify({'success': 'ok'})
