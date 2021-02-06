@@ -44,30 +44,17 @@
             <input type="checkbox" id="subscribe-email-input">
           {% endif %}
         </div>
-        {% if current_user.integration_with_VK %}
-          <div class="subscribe__item" id="vk_notifications">
-            <label for="subscribe-vk-input">Уведомления ВК:</label>
-            {% if current_user.vk_notifications %}
-              <input type="checkbox" id="subscribe-vk-input" checked>
-            {% else %}
-              <input type="checkbox" id="subscribe-vk-input">
-            {% endif %}
-          </div>
-        {% endif %}
+        
       </div>
       <div class="vk_menu w-100">
-        {% if  current_user.integration_with_VK %}
-          {% include "vk/vk_disintegration.html" %}
-        {% else %}
-          {% include "vk/vk_integration.html" %}
-        {% endif %}
+
       </div>
       <div id="vk_notification" class="hidden form__field-label"></div>
 
       <div class="buttons-menu edit-user justify-content-between">
         <button
           type="button"
-          class="btn btn-secondary btn-sm flex-grow-1"
+          class="btn button_primary btn-sm flex-grow-1"
           id="edit-password"
           data-toggle="modal"
           data-target="#edit-password-modal"
@@ -76,7 +63,7 @@
         </button>
         <button
           type="button"
-          class="btn btn-secondary btn-sm flex-grow-1"
+          class="btn button_primary btn-sm flex-grow-1"
           id="edit-email"
           data-toggle="modal"
           data-target="#edit-email-modal"

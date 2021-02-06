@@ -12,7 +12,6 @@ from wtforms import ValidationError
 from typing import List, Tuple
 from threading import Thread
 from hashlib import md5
-import bot
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -123,18 +122,6 @@ def register_page():
             user.integration_with_VK = True
         session.add(user)
         session.commit()
-        if user.integration_with_VK:
-            link = 'https://vk.com/' + request.args.get('screen_name')
-            msg = Message(
-                subject='Привязка ВКонтакте - MatBoy',
-                recipients=[user.email],
-                sender=config.MAIL_DEFAULT_SENDER,
-                html=render_template('mails/email/vk_notifications.html',
-                                     link=link, user_id=user.id)
-            )
-            thr_email = Thread(target=send_message, args=[msg])
-            thr_email.start()
-            flash('Для активации бота следуйте интрукциям на почте', 'success')
         return redirect("/login")
     return render_template("register.html", form=form)
 
