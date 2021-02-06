@@ -6,9 +6,6 @@ from data import global_init, create_session, User
 from data.user import AnonymousUser
 from config import config
 # from bot import bot_launch
-from threading import Thread
-import logging
-import os
 
 config.setup()
 global_init()
@@ -42,23 +39,25 @@ app.register_blueprint(web_pages.blueprint)
 app.register_blueprint(single_pages.blueprint)
 app.register_blueprint(web_utils.blueprint)
 
-api = Api(app)
-from .resources import TournamentResource
-from .resources import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource
-from .resources import GameResource, GamesResource, ProtocolResource
-from .resources import PostResource, TournamentPostsResource
+restful = Api(app)
+from app.api import TournamentResource, TournamentsResource
+from app.api import UserResource, UsersResource, TeamResource, LeagueResource, LeaguesResource, TeamsResource
+from app.api import GameResource, GamesResource, ProtocolResource
+from app.api import PostResource, TournamentPostsResource
 
-api.add_resource(UserResource, '/api/user/<int:user_id>')
-api.add_resource(UsersResource, '/api/user')
-api.add_resource(TournamentResource, '/api/tournament/<int:tour_id>')
-api.add_resource(TeamResource, '/api/team/<int:team_id>')
-api.add_resource(LeagueResource, '/api/league/<int:league_id>')
-api.add_resource(LeaguesResource, '/api/league')
-api.add_resource(GameResource, '/api/game/<int:game_id>')
-api.add_resource(GamesResource, '/api/game')
-api.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
-api.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')
-api.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts')
+restful.add_resource(UserResource, '/api/user/<int:user_id>')
+restful.add_resource(UsersResource, '/api/user')
+restful.add_resource(TournamentResource, '/api/tournament/<int:tour_id>')
+restful.add_resource(TournamentsResource, '/api/tournament')
+restful.add_resource(TeamResource, '/api/team/<int:team_id>')
+restful.add_resource(TeamsResource, '/api/team')
+restful.add_resource(LeagueResource, '/api/league/<int:league_id>')
+restful.add_resource(LeaguesResource, '/api/league')
+restful.add_resource(GameResource, '/api/game/<int:game_id>')
+restful.add_resource(GamesResource, '/api/game')
+restful.add_resource(ProtocolResource, '/api/game/<int:game_id>/protocol')
+restful.add_resource(PostResource, '/api/post', '/api/post/<int:post_id>')
+restful.add_resource(TournamentPostsResource, '/api/tournament/<int:tour_id>/posts')
 
 # bot_working = os.environ.get('BOT_WORKING', None)  # Current status working vk bot
 # if not bot_working:

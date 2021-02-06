@@ -23,7 +23,11 @@ function checkPlayerForm(liFieldset) {
     fillPlayerForm(additionalInfo);
     if (email === "") return;
     $.ajax({
-        url: `/api/user?email=${email}`,
+        url: `/api/user`,
+        data: {
+            email: email,
+            check: true,
+        },
         type: 'get',
         error: holdErrorResponse,
         success: function (data) {

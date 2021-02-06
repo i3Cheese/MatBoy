@@ -14,7 +14,7 @@ function registration() {
             url: API_URL + `user`,
             data: {
                 vk_id: info.user_id,
-                check: true
+                check: true // Should be here
             },
             type: 'GET',
             async: false,

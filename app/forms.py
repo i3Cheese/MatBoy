@@ -5,8 +5,12 @@ from wtforms import FormField
 from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
-from data import User, Game, create_session
 from config import config
+
+from flask import url_for
+import requests
+
+from typing import Dict, Optional, List
 
 DATE_FORMAT = config.DATE_FORMAT
 
@@ -108,20 +112,27 @@ def field_data_capitalizer(form, field):
     field.data = field.data.capitalize()
 
 
+def email_exist(email: str) -> bool:
+    email = email.lower()
+    res = requests.get(url_for('UsersResource'.lower(), _external=True), params={'email': email, 'check': True})
+    if res.ok:
+        return res.json()['exist']
+    else:
+        res.raise_for_status()
+
+
 def unique_email_validator(form, field):
     """Check if user with same e-mail exist"""
-    email = field.data.lower()
-    session = create_session()
-    if session.query(User).filter(User.email == email).first():
+    email = field.data
+    if email_exist(email):
         raise ValidationError(
             "Пользователь с таким e-mail уже зарегистрирован")
 
 
 def exist_email_validator(form, field):
     """Check if user with the e-mail exist"""
-    email = field.data.lower()
-    session = create_session()
-    if not session.query(User).filter(User.email == email).first():
+    email = field.data
+    if not email_exist(email):
         raise ValidationError(
             "Пользователь не найден")
 
@@ -190,7 +201,7 @@ class BasicUserForm(BaseForm):
                                                RuDataRequired()])
 
     def required_if_new(form, field):
-        if form.__new_email:
+        if form.new_email:
             RuDataRequired()(form, field)
 
     surname = StringField('Фамилия *', validators=[field_data_capitalizer, required_if_new])
@@ -199,7 +210,7 @@ class BasicUserForm(BaseForm):
     city = StringField("Город *", validators=[field_data_capitalizer, required_if_new])
     birthday = NullableDateField("Дата рождения *", format=DATE_FORMAT, validators=[required_if_new])
 
-    __new_email = False
+    new_email: bool = False
 
     __required_if_new = ['surname', 'name', 'city', 'birthday']
 
@@ -211,9 +222,18 @@ class BasicUserForm(BaseForm):
         super(BasicUserForm, self).__init__(*args, meta=meta, **kwargs)
 
     def validate_email(form, field):
-        session = create_session()
-        user = session.query(User).filter_by(email=field.data.lower()).first()
-        form.__new_email = user is None
+        email = field.data
+        form.new_email = not email_exist(email)
+
+    def serialize(self):
+        user = {}
+        for field_name in ['email', 'surname', 'name', 'patronymic', 'city', 'birthday']:
+            field = getattr(self, field_name)
+            data = field.data
+            if data:
+                user[field] = data
+        user['is_new'] = self.new_email
+        return user
 
 
 class TeamForm(BaseForm):
@@ -269,7 +289,7 @@ class PlayerBooleanField(BooleanField):
         self.player_id = player_id
 
 
-def PrepareToGameForm(game: Game):
+def PrepareToGameForm(game):
     """Generate FlaskForm for game"""
 
     class PrepareToGameForm(BaseForm):

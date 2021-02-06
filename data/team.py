@@ -13,7 +13,12 @@ users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
 class Team(BaseModel):
     """
     Represent Team module from db.
-    :status: 0-deleted 1-waiting 2-accepted
+    :status:
+        rejected - Rejected by management
+        frozen - Can be edit by sender. Waiting for submit. #TODO: do it in v0.3
+        submitted - Sent to tour management
+        accepted - Accept for tournament. Waiting for league.
+        ready - Ready for battle. League should be set
     """
     __tablename__ = "teams"
     __repr_attrs__ = ["name", "tournament"]
@@ -24,6 +29,9 @@ class Team(BaseModel):
                       "trainer.id",
                       "trainer.email",
                       "trainer.fullname",
+                      "players.id",
+                      "players.email",
+                      "players.fullname",
                       "tournament.id",
                       "tournament.title",
                       "league.id",
@@ -52,7 +60,7 @@ class Team(BaseModel):
 
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
-    status = sa.Column(sa.Integer, default=1)
+    status = sa.Column(sa.String, default='submitted')
     trainer_id = sa.Column(
         sa.Integer, sa.ForeignKey("users.id"), nullable=True)
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey(

@@ -8,9 +8,6 @@ SqlAlchemyBase = dec.declarative_base()
 
 
 class FormatSerializerMixin(SerializerMixin):
-    date_format = '%d.%m.%Y'
-    datetime_format = '%d.%m.%Y %H:%M:%S.%f'
-    time_format = '%H:%M.%f'
     short_serialize_only = ()
     secure_serialize_only = ()
 

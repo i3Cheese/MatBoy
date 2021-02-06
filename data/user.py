@@ -100,10 +100,13 @@ class UserInterface:
             raise TypeError
 
 
-class User(UserInterface, BaseModel, UserMixin,):
+class User(BaseModel, UserMixin, UserInterface):
     __tablename__ = "users"
+    serialize_only = UserInterface.serialize_only
+    short_serialize_only = UserInterface.short_serialize_only
+    secure_serialize_only = UserInterface.secure_serialize_only
+    __eq__ = UserInterface.__eq__
 
-    id = BaseModel.id
     surname = sa.Column(sa.String, nullable=False)
     name = sa.Column(sa.String, nullable=False)
     patronymic = sa.Column(sa.String, nullable=True)
