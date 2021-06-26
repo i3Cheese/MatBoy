@@ -28,6 +28,7 @@ def forbidden(error):
 
 @app.errorhandler(404)
 def not_found(error):
+    return render_template('react_index.html')
     message = "Мы не нашли то, что Вы искали. Или Вы искали то, чего у нас нет."
     return render_template("errors/error.html",
                            error=error,

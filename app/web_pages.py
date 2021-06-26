@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, redirect, abort, request, url_for,
 from flask import make_response, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
-from data import User, Tournament, League, Team, Game, Post, create_session
+from data import User, Tournament, League, Team, Game, Post, get_session
 from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
 from app.forms import ResetPasswordStep1, EditPassword, EditEmail
 from app.token import generate_confirmation_token_reset_password, confirm_token_reset_password
@@ -42,7 +42,7 @@ def make_menu(session=None, *,
             if id is None:
                 continue
             if session is None:
-                session = create_session()
+                session = get_session()
             item = session.query(cls).get(id)
             menu.append((str(item), item.link))
     except AttributeError:
@@ -55,7 +55,7 @@ def make_menu(session=None, *,
 @blueprint.route("/")
 @blueprint.route("/index")
 def index_page():
-    session = create_session()
+    session = get_session()
     tournaments = session.query(Tournament).all()
     return render_template("index.html", tournaments=tournaments)
 
@@ -73,7 +73,7 @@ def login_page():
                     config.VK_SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
                 raise ValidationError("Not valide vk hash")
 
-            session = create_session()
+            session = get_session()
             try:
                 user = session.query(User).filter(
                     User.vk_id == int(args.get('uid'))).first()
@@ -88,7 +88,7 @@ def login_page():
         return redirect("/login?comefrom={}".format(request.args.get("comefrom", "/")))
 
     if form.validate_on_submit():
-        session = create_session()
+        session = get_session()
         user = session.query(User).filter(
             User.email == form.email.data).first()
         if not user:
@@ -107,7 +107,7 @@ def login_page():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        session = create_session()
+        session = get_session()
         user = User().fill(email=form.email.data,
                            name=form.name.data,
                            surname=form.surname.data,
@@ -164,7 +164,7 @@ def reset_password_step_2(token):
     form = EditPassword()
     if form.validate_on_submit():
         password = form.password.data
-        session = create_session()
+        session = get_session()
         user = session.query(User).filter(User.email == email).first()
         if not user:
             abort(404)
@@ -198,7 +198,7 @@ def feedback():
 
 @blueprint.route("/profile/<int:user_id>")
 def user_page(user_id):
-    session = create_session()
+    session = get_session()
     user = session.query(User).get(user_id)
     edit_password_form = EditPassword()
     edit_email_form = EditEmail()
@@ -213,7 +213,7 @@ def user_page(user_id):
 
 @blueprint.route("/tournament/<int:tour_id>")
 def tournament_page(tour_id):
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
@@ -229,7 +229,7 @@ def tournament_creator_page():
     form = TournamentInfoForm()
     try:
         if form.validate_on_submit():  # Validate posted data. Create tour
-            session = create_session()
+            session = get_session()
             if session.query(Tournament).filter(Tournament.title == form.title.data).first():
                 form.title.errors.append(
                     "Турнир с таким названием уже существует")
@@ -259,7 +259,7 @@ def tournament_creator_page():
 @blueprint.route("/tournament/<int:tour_id>/edit", methods=["POST", "GET"])
 @login_required
 def tournament_edit_page(tour_id: int):
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
@@ -307,7 +307,7 @@ def tournament_edit_page(tour_id: int):
 @login_required
 def tournament_console(tour_id: int):
     """Web page for manage tournament"""
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
@@ -346,7 +346,7 @@ def process_team_players(session, entries, team):
 @login_required
 def team_request(tour_id: int):
     form = TeamForm()
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
@@ -397,7 +397,7 @@ def team_request(tour_id: int):
 @login_required
 def edit_team(tour_id: int, team_id: int):
     form = TeamForm()
-    session = create_session()
+    session = get_session()
     team = session.query(Team).get(team_id)
     if not team:
         abort(404)
@@ -447,7 +447,7 @@ def edit_team(tour_id: int, team_id: int):
 @login_required
 def create_post(tour_id, post_id=None):
     """Create and edit post"""
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour.have_permission(current_user):
         abort(403)
@@ -464,7 +464,7 @@ def create_post(tour_id, post_id=None):
 
 @blueprint.route("/tournament/<int:tour_id>/team/<int:team_id>")
 def team_page(team_id, tour_id):
-    session = create_session()
+    session = get_session()
     team = session.query(Team).get(team_id)
     if not (team and team.check_relation(tour_id)):
         abort(404)
@@ -477,7 +477,7 @@ def team_page(team_id, tour_id):
 
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>")
 def league_page(tour_id, league_id):
-    session = create_session()
+    session = get_session()
     league = session.query(League).get(league_id)
     if not (league and league.check_relation(tour_id)):
         abort(404)
@@ -492,7 +492,7 @@ def league_page(tour_id, league_id):
 @login_required
 def league_console(tour_id: int, league_id: int):
     """Web page for manage league"""
-    session = create_session()
+    session = get_session()
     league = session.query(League).get(league_id)
     if not (league and league.check_relation(tour_id)):
         abort(404)
@@ -510,7 +510,7 @@ def league_console(tour_id: int, league_id: int):
 
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>")
 def game_page(tour_id, league_id, game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not (game and game.check_relation(tour_id, league_id)):
         abort(404)
@@ -526,7 +526,7 @@ def game_page(tour_id, league_id, game_id):
                  methods=["GET", "POST"])
 @login_required
 def prepare_to_game(tour_id, league_id, game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not (game and game.check_relation(tour_id, league_id)):
         abort(404)
@@ -587,7 +587,7 @@ def prepare_to_game(tour_id, league_id, game_id):
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>/console")
 @login_required
 def game_console(tour_id, league_id, game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not (game and game.check_relation(tour_id, league_id)):
         abort(404)
@@ -605,7 +605,7 @@ def game_console(tour_id, league_id, game_id):
 @blueprint.route("/tournament/<int:tour_id>/league/<int:league_id>/game/<int:game_id>/swap")
 @login_required
 def game_swap(tour_id, league_id, game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not (game and game.check_relation(tour_id, league_id)):
         abort(404)

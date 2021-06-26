@@ -2,7 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_restful import Api
 from flask_mail import Mail
-from data import global_init, create_session, User
+from data import global_init, get_session, User
 from data.user import AnonymousUser
 from config import config
 from threading import Thread
@@ -13,7 +13,8 @@ config.setup()
 global_init()
 
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
-app.jinja_options['extensions'].extend(config.JINJA_EXTENSIONS)
+for ex in config.JINJA_EXTENSIONS:
+    app.jinja_env.add_extension(ex)
 app.config.from_object(config)
 
 mail = Mail(app)
@@ -26,7 +27,7 @@ login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id) -> User:
-    session = create_session()
+    session = get_session()
     return session.query(User).get(user_id)
 
 

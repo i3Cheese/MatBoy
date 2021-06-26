@@ -1,5 +1,5 @@
 from manager import Manager
-from data import global_init, create_session, User
+from data import global_init, get_session, User
 import datetime as dt
 from app.resources import Tournament
 
@@ -9,7 +9,7 @@ global_init()
 
 @manager.command
 def give_creator(id=None, email=None):
-    session = create_session()
+    session = get_session()
     if id:
         user = session.query(User).get(id)
     elif email:
@@ -32,7 +32,7 @@ def give_creator(id=None, email=None):
 @manager.command
 def delete_tour(id):
     """Use it if only if user haven't relations"""
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(id)
     if not tour:
         print("Tour not found")
@@ -45,7 +45,7 @@ def delete_tour(id):
 @manager.command
 def delete_user(id=None, email=None):
     """Use it if only if user haven't relations"""
-    session = create_session()
+    session = get_session()
     if id:
         user = session.query(User).get(id)
     elif email:
@@ -63,7 +63,7 @@ def delete_user(id=None, email=None):
 
 @manager.command
 def make_robots():
-    session = create_session()
+    session = get_session()
     names = ['Валентин',
              'Александр',
              "Слава",

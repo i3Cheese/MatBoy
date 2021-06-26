@@ -1,4 +1,4 @@
-from data import User, Tournament, create_session
+from data import User, Tournament, get_session
 import bot.messages as msg
 from bot import keyboards as kb
 import re
@@ -78,7 +78,7 @@ def handler(vk_id, text):
             json.dump(users_info, f, ensure_ascii=False, indent=4)
         msg.welcome_message(uid)
     else:
-        session = create_session()
+        session = get_session()
         user = session.query(User).filter(User.vk_id == vk_id).first()
         if not user:  # auto answer for a user without VK integration
             msg.without_integration(uid)

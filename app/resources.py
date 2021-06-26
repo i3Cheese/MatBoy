@@ -2,7 +2,7 @@ from flask_restful import reqparse, abort, Resource, request
 from flask_restful.inputs import boolean
 from flask import jsonify
 from flask_login import current_user, login_required
-from data import User, Team, Tournament, League, Game, Post, create_session
+from data import User, Team, Tournament, League, Game, Post, get_session
 from data.user import AnonymousUser
 from datetime import date, datetime
 import logging
@@ -103,14 +103,14 @@ class UserResource(Resource):
     put_pars.add_argument('vk_id', type=int, help="wrong type")
 
     def get(self, user_id: int):
-        session = create_session()
+        session = get_session()
         user = get_user(session, user_id)
         d = to_dict(user)
         return jsonify({"user": d})
 
     def put(self, user_id: int):
         args = self.put_pars.parse_args()
-        session = create_session()
+        session = get_session()
         user = get_user(session, user_id)
         if current_user != user and not current_user.is_admin:
             abort(403)
@@ -141,7 +141,7 @@ class UsersResource(Resource):
     def post(cls):
         """Add new user to db"""
         args = UsersResource.reg_pars.parse_args()
-        session = create_session()
+        session = get_session()
         abort_if_email_exist(session, args['email'])
         user = User().fill(email=args['email'],
                            name=args['name'],
@@ -158,7 +158,7 @@ class UsersResource(Resource):
     @classmethod
     def get(cls):
         """Return the user you are looking for If unique args passed else all users"""
-        session = create_session()
+        session = get_session()
         args = cls.get_pars.parse_args()
         if args['vk_id'] or args['email']:
             query = session.query(User)
@@ -182,7 +182,7 @@ class UsersResource(Resource):
 class TournamentResource(Resource):
     @login_required
     def delete(self, tour_id):
-        session = create_session()
+        session = get_session()
         tour = get_tour(session, tour_id)
         if not tour.have_permission(current_user):
             abort(403, message="Permission denied")
@@ -200,7 +200,7 @@ class TeamResource(Resource):
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, team_id: int):
-        session = create_session()
+        session = get_session()
         team = get_team(session, team_id)
         return jsonify(to_dict(team))
 
@@ -213,7 +213,7 @@ class TeamResource(Resource):
         args = self.put_pars.parse_args()
         logging.info(f"Team put request with args {args}")
 
-        session = create_session()
+        session = get_session()
         team = get_team(session, team_id)
 
         if not (args['league.id'] is None and args['status'] is None):
@@ -250,7 +250,7 @@ class TeamResource(Resource):
     @login_required
     def delete(self, team_id):
         """Sets the status of team to zero. Thats mean that the team request was refused"""
-        session = create_session()
+        session = get_session()
         team = get_team(session, team_id)
         if not team.have_permission(current_user):
             abort(403, message="Permission denied")
@@ -270,7 +270,7 @@ class LeagueResource(Resource):
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, league_id: int):
-        session = create_session()
+        session = get_session()
         league = get_league(session, league_id)
         if league.have_permission(current_user):
             d = league.to_dict()
@@ -284,7 +284,7 @@ class LeagueResource(Resource):
         args = self.put_pars.parse_args()
         logging.info(f"League put request with args {args}")
 
-        session = create_session()
+        session = get_session()
         league = get_league(session, league_id)
         if not league.have_permission(current_user):
             abort(403, message="Permission denied")
@@ -313,7 +313,7 @@ class LeagueResource(Resource):
     @login_required
     def delete(self, league_id):
         """Delete this league and set league.teams.status to <=1"""
-        session = create_session()
+        session = get_session()
         league = get_league(session, league_id, do_abort=False)
         if not league.have_permission(current_user):
             abort(403, message="Permission denied")
@@ -342,7 +342,7 @@ class LeaguesResource(Resource):
         args = self.post_pars.parse_args()
         logging.info(f"League post request with args {args}")
 
-        session = create_session()
+        session = get_session()
         tour = get_tour(session, args['tournament.id'])
         if not tour.have_permission(current_user):
             abort('403', message="Permission denied")
@@ -387,7 +387,7 @@ class GameResource(Resource):
     put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, game_id):
-        session = create_session()
+        session = get_session()
         game = get_game(session, game_id)
         if game.have_permission(current_user):
             d = game.to_dict()
@@ -400,7 +400,7 @@ class GameResource(Resource):
         args = self.put_pars.parse_args()
         logging.info(f"Game put request: {args}")
 
-        session = create_session()
+        session = get_session()
         game = get_game(session, game_id)
         if not game.have_permission(current_user):
             abort(403)
@@ -448,7 +448,7 @@ class GameResource(Resource):
 
     def delete(self, game_id):
         """Sets the status of game to zero. Thats mean that the game is canceled"""
-        session = create_session()
+        session = get_session()
         game = get_game(session, game_id)
         if not game.have_permission(current_user):
             abort(403)
@@ -471,7 +471,7 @@ class GamesResource(Resource):
         args = self.post_pars.parse_args()
         logging.info(f"Game post request: {args}")
 
-        session = create_session()
+        session = get_session()
         league = get_league(session, args['league.id'])
         if not league.have_permission(current_user):
             abort(403)
@@ -506,7 +506,7 @@ class GamesResource(Resource):
 class ProtocolResource(Resource):
     def put(self, game_id):
         """Gets parts of protocol and complements it"""
-        session = create_session()
+        session = get_session()
         game = get_game(session, game_id)
         logging.info("Protocol put with json " + str(request.json))
         if not game.have_permission(current_user):
@@ -554,7 +554,7 @@ class ProtocolResource(Resource):
         return jsonify({"success": "ok"})
 
     def get(self, game_id):
-        session = create_session()
+        session = get_session()
         game = get_game(session, game_id)
         return jsonify(game.protocol)
 
@@ -572,12 +572,12 @@ class PostResource(Resource):
     post_parse.add_argument('status')
 
     def get(self, post_id):
-        session = create_session()
+        session = get_session()
         post = get_post(session, post_id)
         return jsonify({'post': to_dict(post)})
 
     def put(self, post_id):
-        session = create_session()
+        session = get_session()
         post = get_post(session, post_id)
         if not post.have_permission(current_user):
             abort(403, message="Permission denied")
@@ -602,7 +602,7 @@ class PostResource(Resource):
 
     def delete(self, post_id):
         """Deleting a post by id"""
-        session = create_session()
+        session = get_session()
         post = session.query(Post).filter(Post.id == post_id).first()
         if not post.have_permission(current_user):
             abort(403)
@@ -614,7 +614,7 @@ class PostResource(Resource):
             abort(404, message="Post not found")
 
     def post(self):
-        session = create_session()
+        session = get_session()
         args = self.post_parse.parse_args()
         post = Post()
         tour = get_tour(session, args['tournament_id'])
@@ -658,7 +658,7 @@ class TournamentPostsResource(Resource):
         """
         args = self.get_pars.parse_args()
         logging.info(f"Posts get request: {args}")
-        session = create_session()
+        session = get_session()
         tour = get_tour(session, tour_id)
         t = args['type']
         if t in ('hidden', 'all') and not tour.have_permission(current_user):
