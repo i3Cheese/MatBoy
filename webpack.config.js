@@ -9,6 +9,14 @@ module.exports = {
   },
   module: { rules: [
     {
+      test: /\.s[ac]ss$/i,
+      use: [
+        "style-loader",
+        "css-loader",
+        "sass-loader",
+      ],
+    },
+    {
       test   : /\.js|.jsx|.tsx|.ts$/,
       include: [
         path.resolve(__dirname, 'src')
