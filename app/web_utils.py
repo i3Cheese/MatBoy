@@ -2,7 +2,7 @@ from flask import Blueprint, request, url_for, make_response, jsonify, render_te
 from flask import abort, flash
 from flask_login import login_required, current_user
 from flask_mail import Message
-from data import User, Tournament, Post, create_session
+from data import User, Tournament, Post, get_session
 from config import config
 from app import send_message, send_messages
 from app.forms import EditPassword, EditEmail
@@ -24,7 +24,7 @@ def edit_password():
     """Function for changing password from personal account"""
     edit_password_form = EditPassword()
     if edit_password_form.validate_on_submit():
-        session = create_session()
+        session = get_session()
         password = edit_password_form.password.data
         user = session.query(User).get(current_user.id)
         user.set_password(password)
@@ -62,7 +62,7 @@ def edit_email(token=None):
             return redirect(url_for('web_pages.index_page'))
         old_email = data['old_email']
         new_email = data['new_email']
-        session = create_session()
+        session = get_session()
         user = session.query(User).get(current_user.id)
         if user.email != old_email:
             abort(403)
@@ -96,7 +96,7 @@ def subscribe_email():
     """Function for enable subscribe news by email"""
     try:
         if 'status' in request.form:
-            session = create_session()
+            session = get_session()
             status = request.form.get('status')
             status = bool(int(status))
             user = session.query(User).get(current_user.id)
@@ -133,7 +133,7 @@ def notifications_sending():
     """Function for notifications subscribed users"""
     data = request.form
 
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).filter(Tournament.id == data.get('tour_id')).first()
     post = session.query(Post).filter(Post.id == data.get('post_id')).first()
 

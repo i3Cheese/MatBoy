@@ -1,7 +1,7 @@
 # Pages with short links
 
 from flask import Blueprint, redirect, abort
-from data import Tournament, League, Team, Game, create_session
+from data import Tournament, League, Team, Game, get_session
 from config import config
 
 blueprint = Blueprint('single_pages',
@@ -13,7 +13,7 @@ blueprint = Blueprint('single_pages',
 
 @blueprint.route("/league/<int:league_id>")
 def league_page(league_id, tour_id=None):
-    session = create_session()
+    session = get_session()
     league = session.query(League).get(league_id)
     if not league:
         abort(404)
@@ -22,7 +22,7 @@ def league_page(league_id, tour_id=None):
 
 @blueprint.route("/team/<int:team_id>")
 def team_page(team_id, tour_id=None):
-    session = create_session()
+    session = get_session()
     team = session.query(Team).get(team_id)
     if not team:
         abort(404)
@@ -31,7 +31,7 @@ def team_page(team_id, tour_id=None):
 
 @blueprint.route("/game/<int:game_id>")
 def game_page(game_id, tour_id=None, league_id=None):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not game:
         abort(404)
@@ -40,7 +40,7 @@ def game_page(game_id, tour_id=None, league_id=None):
 
 @blueprint.route("/team_request/<int:tour_id>", methods=["GET", "POST"])
 def team_request(tour_id: int):
-    session = create_session()
+    session = get_session()
     tour = session.query(Tournament).get(tour_id)
     if not tour:
         abort(404)
@@ -60,7 +60,7 @@ def tournament_console(tour_id: int):
 @blueprint.route("/league_console/<int:league_id>")
 def league_console(league_id: int):
     """Web page for manage league"""
-    session = create_session()
+    session = get_session()
     league = session.query(League).get(league_id)
     if not league:
         abort(404)
@@ -70,7 +70,7 @@ def league_console(league_id: int):
 
 @blueprint.route("/prepare_to_game/<int:game_id>", methods=["GET", "POST"])
 def prepare_to_game(game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not game:
         abort(404)
@@ -80,7 +80,7 @@ def prepare_to_game(game_id):
 
 @blueprint.route("/game_console/<int:game_id>")
 def game_console(game_id):
-    session = create_session()
+    session = get_session()
     game = session.query(Game).get(game_id)
     if not game:
         abort(404)

@@ -49,7 +49,7 @@ class BaseConfig:
     LOGGING_FILE = "matboy.log"
     LOGGING_LEVEL = logging.WARNING
 
-    LOCALE = 'ru_RU'
+    LOCALE = 'ru_RU.utf8'
 
     @classmethod
     def setup(cls):

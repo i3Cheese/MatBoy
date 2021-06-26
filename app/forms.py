@@ -5,7 +5,7 @@ from wtforms import FormField
 from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
 import datetime
-from data import User, Game, create_session
+from data import User, Game, get_session
 from config import config
 
 DATE_FORMAT = config.DATE_FORMAT
@@ -111,7 +111,7 @@ def field_data_capitalizer(form, field):
 def unique_email_validator(form, field):
     """Check if user with same e-mail exist"""
     email = field.data.lower()
-    session = create_session()
+    session = get_session()
     if session.query(User).filter(User.email == email).first():
         raise ValidationError(
             "Пользователь с таким e-mail уже зарегистрирован")
@@ -120,7 +120,7 @@ def unique_email_validator(form, field):
 def exist_email_validator(form, field):
     """Check if user with the e-mail exist"""
     email = field.data.lower()
-    session = create_session()
+    session = get_session()
     if not session.query(User).filter(User.email == email).first():
         raise ValidationError(
             "Пользователь не найден")
@@ -211,7 +211,7 @@ class BasicUserForm(BaseForm):
         super(BasicUserForm, self).__init__(*args, meta=meta, **kwargs)
 
     def validate_email(form, field):
-        session = create_session()
+        session = get_session()
         user = session.query(User).filter_by(email=field.data.lower()).first()
         form.__new_email = user is None
 

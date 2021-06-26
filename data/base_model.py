@@ -2,9 +2,7 @@ import sqlalchemy as sa
 import sqlalchemy.ext.declarative as dec
 from sqlalchemy_mixins import ReprMixin, TimestampsMixin
 from sqlalchemy_serializer import SerializerMixin
-
-
-SqlAlchemyBase = dec.declarative_base()
+from data.db_session import SqlAlchemyBase
 
 
 class FormatSerializerMixin(SerializerMixin):
