@@ -1,12 +1,13 @@
 **/__pycache__
 *.pyc
 *.log
-tasks.md
 venv/
-.vscode/
+node_modules/
 alembic/versions/
 ngrok.exe
 *.idea
 static/img/*.*
 vk_info.json
 db/matboy.db
+tasks.md
+.vscode/

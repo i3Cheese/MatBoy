@@ -4,7 +4,7 @@ import './index.scss'
 
 ReactDOM.render(
     <div>
-        Hello
+        Use react in MatBoy
     </div>,
     document.getElementById("root")
 );

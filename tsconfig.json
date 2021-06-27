@@ -6,6 +6,9 @@
     "target": "es5",
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    "allowJs": true,
+    "moduleResolution": "node",
+    "outDir": "./dist/"
   }
 }
