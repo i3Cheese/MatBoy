@@ -2,7 +2,7 @@ import sqlalchemy as sa
 import sqlalchemy.ext.declarative as dec
 from sqlalchemy_mixins import ReprMixin, TimestampsMixin
 from sqlalchemy_serializer import SerializerMixin
-from data.db_session import SqlAlchemyBase
+from data.db_tools import SqlAlchemyBase, db_session
 
 
 class FormatSerializerMixin(SerializerMixin):
@@ -24,6 +24,7 @@ class BaseModel(SqlAlchemyBase, FormatSerializerMixin, ReprMixin, TimestampsMixi
     short_serialize_only = ('id',)
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    query = db_session.query_property()
 
     def fill(self, **kwargs):
         """Set the attibutes. Equal to self.key = value.

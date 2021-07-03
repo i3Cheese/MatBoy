@@ -1,11 +1,13 @@
 const path = require('path');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 
 
 module.exports = {
     mode: 'development',
-    entry: './src/index.tsx',
+    entry: {
+        app: path.join(__dirname, 'src', 'index.tsx')
+    },
+    target: 'web',
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'static'),
@@ -24,11 +26,10 @@ module.exports = {
                 ],
             },
             {
-                test: /\.js|.jsx|.tsx|.ts$/,
-                include: [
-                    path.resolve(__dirname, 'src')
-                ],
-                use: ['babel-loader'],
+                test: /\.(ts|tsx)$/,
+                loader: 'ts-loader',
+                // include: [path.resolve(__dirname, 'yourAppPath')],
+                exclude: '/node_modules',
             },
         ]
     },

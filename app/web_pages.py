@@ -62,6 +62,7 @@ def index_page():
 
 @blueprint.route("/login", methods=["POST", "GET"])
 def login_page():
+    print(request.form)
     form = LoginForm()
     try:
         # Try login user using vk

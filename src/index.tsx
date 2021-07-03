@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import App from "./App";
 import './index.scss'
+import 'bootstrap/scss/bootstrap.scss';
 
 ReactDOM.render(
-    <div>
-        Use react in MatBoy
-    </div>,
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
     document.getElementById("root")
 );

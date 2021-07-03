@@ -4,11 +4,14 @@
   ],
   "compilerOptions": {
     "target": "es5",
+    "module": "es6",
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "strictNullChecks": true,
     "allowJs": true,
     "moduleResolution": "node",
-    "outDir": "./dist/"
+    "outDir": "./static/",
+    "noImplicitAny": true
   }
 }

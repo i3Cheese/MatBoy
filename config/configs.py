@@ -65,6 +65,7 @@ class BaseConfig:
 class DebugConfig(BaseConfig):
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
+    SECRET_KEY = '11'
 
 
 class ProductionConfig(BaseConfig):

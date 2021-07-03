@@ -9,11 +9,12 @@ SqlAlchemyBase = dec.declarative_base()
 
 __factory: orm.sessionmaker = None
 db_session: scoped_session = None
+session: Session = None
 
 
 def global_init() -> None:
     """Connect to the database. If it already done - do nothing"""
-    global __factory, db_session
+    global __factory, db_session, session
     if __factory:
         return
 
@@ -25,12 +26,13 @@ def global_init() -> None:
                                  autoflush=False,
                                  bind=engine)
     db_session = scoped_session(__factory)
+    session = Session(__factory)
 
     from . import __all_models
 
     SqlAlchemyBase.metadata.create_all(engine)
 
 
-def get_session() -> scoped_session:
-    """Create the data base session. Previosly global_init() should be call"""
-    return db_session
+def get_session() -> Session:
+    """Create the data base session. Previosly global_init() should be call. Deprecated."""
+    return session
