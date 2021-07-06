@@ -1,7 +1,7 @@
 from flask import flash
 from itsdangerous import SignatureExpired, BadSignature, URLSafeTimedSerializer
 
-from app import app
+from server import app
 
 
 def generate_confirmation_token_reset_password(email):

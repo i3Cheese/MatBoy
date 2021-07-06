@@ -1,7 +1,7 @@
 from manager import Manager
 from data import global_init, get_session, User
 import datetime as dt
-from app.api.resources import Tournament
+from server.api.resources import Tournament
 
 manager = Manager()
 global_init()

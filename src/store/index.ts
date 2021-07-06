@@ -8,4 +8,7 @@ const store = configureStore({
 });
 
 import AppAction from './actionTypes';
+export default store;
 export { AppAction };
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

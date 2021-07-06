@@ -1,28 +1,28 @@
 import {authService} from '../services';
-// import { alertActions } from './';
-import {history} from '../helpers';
 import {Dispatch} from "redux";
-import {AppAction} from '../store'
+import {AppAction, AppDispatch} from '../store'
 import {User} from "../types/models";
 
 export const authActions = {
     login,
     logout,
     // register,
+    getCurrentUser,
 };
 
 
-function login(form: { email: string, password: string, csrf_token: string }) {
-    return (dispatch: Dispatch) => {
+function login(form: { email: string, password: string, }) {
+    return (dispatch: AppDispatch) => {
         dispatch(request());
 
         authService.login(form)
             .then(
                 (user: User) => {
+                    console.log(user);
                     dispatch(success(user));
-                    history.push('/');
                 },
                 (error: string) => {
+                    console.log(error);
                     dispatch(failure(error));
                     // dispatch(alertActions.error(error));
                 }
@@ -44,14 +44,38 @@ function login(form: { email: string, password: string, csrf_token: string }) {
 
 function logout() {
     return (dispatch: Dispatch) => {
-        authService.logout().then((data) => {
+        authService.logout().then(() => {
             dispatch(success());
         });
     }
+
     function success(): AppAction {
         return {type: "LOGOUT"}
     }
 }
+
+function getCurrentUser() {
+    return (dispatch: AppDispatch) => {
+        dispatch(request());
+        authService.getCurrentUser().then((data) => {
+           if (data.loggedIn) dispatch(setLogged(data.user));
+           else dispatch(setLogout());
+        });
+    }
+
+    function request(): AppAction {
+        return {type: "LOGIN_REQUEST"}
+    }
+    function setLogged(user: User): AppAction {
+        return {type: "LOGIN_SUCCESS", user};
+    }
+
+    function setLogout(): AppAction {
+        return {type: "LOGOUT"};
+    }
+
+}
+
 
 //
 // function register(user) {

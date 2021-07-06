@@ -1,5 +1,6 @@
 import sqlalchemy as sa
 import sqlalchemy.ext.declarative as dec
+from sqlalchemy.orm import Query
 from sqlalchemy_mixins import ReprMixin, TimestampsMixin
 from sqlalchemy_serializer import SerializerMixin
 from data.db_tools import SqlAlchemyBase, db_session
@@ -9,14 +10,19 @@ class FormatSerializerMixin(SerializerMixin):
     date_format = '%d.%m.%Y'
     datetime_format = '%d.%m.%Y %H:%M:%S.%f'
     time_format = '%H:%M.%f'
-    short_serialize_only = ()
     secure_serialize_only = ()
 
     def to_short_dict(self):
-        return self.to_dict(only=self.short_serialize_only)
+        # deprecated
+        return self.to_secure_dict()
 
     def to_secure_dict(self):
-        return self.to_dict(only=self.secure_serialize_only)
+        if hasattr(self, 'sensitive_fields'):
+            return self.to_dict(tuple(filter(lambda s: s in self.sensitive_fields, self.serialize_only)))
+        elif hasattr(self, 'secure_serialize_only'):
+            return self.to_dict(only=self.secure_serialize_only)
+        else:
+            return self.to_dict()
 
 
 class BaseModel(SqlAlchemyBase, FormatSerializerMixin, ReprMixin, TimestampsMixin):
@@ -24,7 +30,7 @@ class BaseModel(SqlAlchemyBase, FormatSerializerMixin, ReprMixin, TimestampsMixi
     short_serialize_only = ('id',)
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
-    query = db_session.query_property()
+    query: Query = db_session.query_property()
 
     def fill(self, **kwargs):
         """Set the attibutes. Equal to self.key = value.

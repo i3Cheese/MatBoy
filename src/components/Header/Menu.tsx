@@ -1,11 +1,14 @@
 import React from "react";
 import {FC} from "react";
-import {Nav} from "react-bootstrap";
+import {Nav, NavProps} from "react-bootstrap";
 
-const Menu: FC<{}> = props => {
+interface MenuProps extends NavProps {
+}
+
+const Menu: FC<MenuProps> = props => {
     return (
         //TODO: DO MENU
-        <Nav>
+        <Nav {...props}>
         </Nav>
     );
 }

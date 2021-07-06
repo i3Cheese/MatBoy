@@ -137,6 +137,7 @@ def password_secure_validator(form, field):
 class BaseForm(FlaskForm):
     class Meta:
         locales = ['ru_RU', 'ru']
+        csrf = False
 
 
 class RegisterForm(BaseForm):
@@ -159,8 +160,8 @@ class RegisterForm(BaseForm):
     city = StringField(
         "Город *", validators=[field_data_capitalizer, RuDataRequired()])
     birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
-    recaptcha = RecaptchaField(
-        validators=[Recaptcha(message='Это поле обязательно')])
+#     recaptcha = RecaptchaField(
+#         validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
 
 

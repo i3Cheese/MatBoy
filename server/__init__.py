@@ -1,11 +1,13 @@
 from flask import Flask
 from flask_login import LoginManager
-from flask_restful import Api
 from flask_mail import Mail
+import wtforms_json
+
 from data import global_init, get_session, User
 from data.user import AnonymousUser
 from config import config
 
+wtforms_json.init()
 config.setup()
 global_init()
 
@@ -28,11 +30,11 @@ def load_user(user_id) -> User:
     return session.query(User).get(user_id)
 
 
-from . import errorhandlers
-from . import web_pages
+# from . import errorhandlers
+# from . import web_pages
 from . import web_utils
 
-app.register_blueprint(web_pages.blueprint)
-app.register_blueprint(web_utils.blueprint)
+# app.register_blueprint(web_pages.blueprint)
+# app.register_blueprint(web_utils.blueprint)
 
-import app.api
+import server.api

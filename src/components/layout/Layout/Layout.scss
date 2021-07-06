@@ -1,0 +1,33 @@
+.layout {
+  height: 100%;
+  width: 100%;
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.layout__page {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.layout__page-middle {
+  max-width: 700px;
+  margin-top: 50px;
+}
+
+.layout__page-thin {
+  margin-top: 60px;
+  max-width: 460px;
+}
+
+@media only screen and (max-width: 480px) {
+  .layout__page-thin {
+    margin-top: 0;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .layout__page-middle {
+    margin-top: 0;
+  }
+}

@@ -21,21 +21,7 @@ class UserInterface:
                       "is_creator",
                       "link",
                       )
-    secure_serialize_only = ("id",
-                             "name",
-                             "surname",
-                             "patronymic",
-                             "fullname",
-                             "city",
-                             "birthday",
-                             "link",
-                             )
-    short_serialize_only = ("id",
-                            "name",
-                            "surname",
-                            "fullname",
-                            "email"
-                            )
+    sensitive_fields = ('email', )
 
     def to_dict(self, only=None):
         res = {}
@@ -45,10 +31,16 @@ class UserInterface:
         return res
 
     def to_short_dict(self):
-        return self.to_dict(only=self.short_serialize_only)
+        # deprecated
+        return self.to_secure_dict()
 
     def to_secure_dict(self):
-        return self.to_dict(only=self.secure_serialize_only)
+        if hasattr(self, 'sensitive_fields'):
+            return self.to_dict(tuple(filter(lambda s: s in self.sensitive_fields, self.serialize_only)))
+        elif hasattr(self, 'secure_serialize_only'):
+            return self.to_dict(only=self.secure_serialize_only)
+        else:
+            return self.to_dict()
 
     id = 0
     surname = ''

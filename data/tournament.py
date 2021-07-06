@@ -22,18 +22,12 @@ class Tournament(BaseModel):
     __repr_attrs__ = ["title", "id"]
     serialize_only = ("id",
                       "title",
-                      "chief.id",
-                      "chief.email",
-                      "chief.fullname",
+                      "chief",
                       "place",
                       "start",
                       "end",
                       "link",
                       )
-
-    short_serialize_only = ("id",
-                            "title",
-                            )
 
     title = sa.Column(sa.String, unique=True)
     description = sa.Column(sa.Text, nullable=True)

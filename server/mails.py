@@ -1,5 +1,5 @@
 from flask_mail import Message
-from app import app, mail
+from server import app, mail
 from config import config
 
 

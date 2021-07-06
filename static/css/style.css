@@ -6,21 +6,21 @@ body {
     background: #f4f4f4;
     font-size: 14px;
     font-weight: normal;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
 }
 
-.hidden{
+.hidden {
     display: none !important;
 }
 
-button.hidden{
+button.hidden {
     height: 0;
     width: 0;
     position: absolute;
     bottom: 0;
 }
 
-.toast_holder{
+.toast_holder {
     position: fixed;
     z-index: 1060;
     right: 50px;
@@ -29,24 +29,25 @@ button.hidden{
     width: 350px;
 }
 
-@media only screen and (max-width:500px){
-    .toast_holder{
+@media only screen and (max-width: 500px) {
+    .toast_holder {
         right: 0;
         bottom: 0;
         width: 100%;
         padding: 0;
     }
-    .toast{
+
+    .toast {
         width: 100%;
         max-width: none;
     }
 }
 
-.link{
+.link {
     color: cornflowerblue !important;
 }
 
-.link:hover{
+.link:hover {
     cursor: pointer;
 }
 
@@ -72,13 +73,14 @@ button.hidden{
     max-width: 460px;
 }
 
-@media only screen and (max-width: 480px){
+@media only screen and (max-width: 480px) {
     .layout__page_thin {
         margin-top: 0;
     }
 }
-@media only screen and (max-width: 750px){
-    .layout__page_middle{
+
+@media only screen and (max-width: 750px) {
+    .layout__page_middle {
         margin-top: 0;
     }
 }
@@ -86,13 +88,14 @@ button.hidden{
 .shadow-box {
     width: 100%;
     background: #fff;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     margin: 0 auto;
     padding: 40px;
     box-sizing: border-box;
 }
-@media only screen and (max-width: 1024px){
+
+@media only screen and (max-width: 1024px) {
     .shadow-box {
         padding: 20px;
         box-sizing: border-box;
@@ -107,7 +110,7 @@ button.hidden{
     color: #333;
     font-size: 22px;
     line-height: 26px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 700;
 }
 
@@ -116,8 +119,8 @@ button.hidden{
     box-sizing: border-box;
 }
 
-form{
-    margin-top: 0em;
+form {
+    margin-top: 0;
     display: block;
 }
 
@@ -141,7 +144,7 @@ fieldset {
     padding: 0;
 }
 
-.form__field+.form__field {
+.form__field + .form__field {
     margin-top: 31px;
 }
 
@@ -151,7 +154,7 @@ fieldset {
     line-height: 16px;
     color: #333;
     font-size: 14px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 700;
     margin-bottom: 12px;
     display: inline-block;
@@ -167,9 +170,10 @@ fieldset {
     padding: 0 14px;
     box-sizing: border-box;
     font-size: 14px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     color: #333;
 }
+
 textarea.form__field-input {
     height: 160px;
 }
@@ -195,7 +199,7 @@ textarea.form__field-input {
     line-height: 18px;
     color: #333;
     font-size: 14px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 500;
 }
 
@@ -209,7 +213,7 @@ textarea.form__field-input {
     -moz-osx-font-smoothing: grayscale;
     color: #DE5959;
     font-size: 12px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 500;
     line-height: 18px;
     margin-top: 7px;
@@ -219,21 +223,21 @@ textarea.form__field-input {
     margin-top: 28px;
 }
 
-.vk_menu > button{
+.vk_menu > button {
     width: 100%;
 }
 
-.buttons-menu{
+.buttons-menu {
     display: flex;
     justify-content: left;
     padding-top: 10px;
 }
 
-.buttons-menu > button{
+.buttons-menu > button {
     margin-left: 5px;
 }
 
-.buttons-menu > button:first-of-type{
+.buttons-menu > button:first-of-type {
     margin-left: 0;
 }
 
@@ -251,7 +255,7 @@ textarea.form__field-input {
     line-height: 15px;
     color: #333;
     font-size: 15px;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 500;
     justify-content: center;
     text-align: center;
@@ -264,22 +268,22 @@ textarea.form__field-input {
     height: 48px;
 }
 
-.button_primary{
+.button_primary {
     color: #eee;
     background-color: cornflowerblue;
 }
 
-.button_success{
+.button_success {
     color: #eee;
     background-color: #00a550;
 }
 
-.button_warning{
+.button_warning {
     background-color: orange;
     color: white;
 }
 
-.button_danger{
+.button_danger {
     background-color: red;
     color: white;
 }
@@ -298,7 +302,7 @@ textarea.form__field-input {
     vertical-align: baseline;
 }
 
-.login_manager>.btn{
+.login_manager > .btn {
     color: inherit;
     margin: 0 3px;
 }
@@ -309,12 +313,12 @@ textarea.form__field-input {
     text-align: center;
 }
 
-.horizontal-spacer{
+.horizontal-spacer {
     height: 10px;
     width: 100%;
 }
 
-.item_title{
+.item_title {
     margin-top: 10px;
 }
 
@@ -342,17 +346,18 @@ input {
     border-color: initial;
     border-image: initial;
 }
+
 button, input {
     overflow: visible;
 }
 
-.block_link{
+.block_link {
     cursor: pointer;
     transition: 0.2s ease-in;
     border-radius: 20px;
 }
 
-.block_link:hover{
+.block_link:hover {
     background: #f8f9fa
 }
 
@@ -364,10 +369,10 @@ button, input {
     align-items: center;
 }
 
-.box-large{
+.box-large {
     max-width: 700px;
     background: #fff;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     flex-grow: 1;
 
@@ -377,7 +382,7 @@ button, input {
 }
 
 
-.box_container{
+.box_container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap-reverse;
@@ -387,21 +392,21 @@ button, input {
 }
 
 /* Сохраняет расстояние между элементами */
-.box_container-covid{
+.box_container-covid {
     justify-content: space-between;
 }
 
 
-.box-label{
+.box-label {
     font-size: 3em;
     width: 100%;
 }
 
-.box{
+.box {
     flex-shrink: 0;
     flex-grow: 1;
     background: #fff;
-    box-shadow: 0 4px 8px 2px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px 2px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     padding: 20px;
     margin: 5px;
@@ -409,7 +414,7 @@ button, input {
     align-self: flex-end;
 }
 
-.box-non_flex{
+.box-non_flex {
     width: 100%;
     flex-shrink: unset;
     flex-grow: unset;
@@ -417,76 +422,80 @@ button, input {
     margin: 60px 10px 10px 10px;
 }
 
-.box-tiny{
+.box-tiny {
     max-width: 380px;
 }
 
-.box-middle{
+.box-middle {
     max-width: 530px;
 }
 
-.box-large{
+.box-large {
     max-width: 700px;
 }
 
-.box_item-title{
+.box_item-title {
     color: #333;
     font-size: 1.6em;
-    font-family: "-apple-system",BlinkMacSystemFont,Arial,sans-serif;
+    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 700;
     width: 100%;
     margin-bottom: 0;
 }
 
-.square-tiny{
+.square-tiny {
     max-width: 300px;
     min-height: 300px;
 }
 
-.info_in_box{
+.info_in_box {
     width: 100%;
     padding: 20px 0;
     height: 100%;
 }
 
-@media (max-width: 924px){
-    .box{
+@media (max-width: 924px) {
+    .box {
         max-width: 100% !important;
     }
 }
 
-@media only screen and (max-width: 700px){
-    .box_container{
+@media only screen and (max-width: 700px) {
+    .box_container {
         justify-content: center;
         margin-top: 0px;
     }
-    .box_container > div{
+
+    .box_container > div {
         width: 100%;
     }
-    .non_space_box{
+
+    .non_space_box {
         padding: 2px;
     }
 }
 
-@media (min-width: 300px){
-    .col-sm-3{
+@media (min-width: 300px) {
+    .col-sm-3 {
         flex: 0 0 25%;
         max-width: 25%;
     }
-    .col-sm-9{
+
+    .col-sm-9 {
         flex: 0 0 75%;
         max-width: 75%;
     }
-    .info_in_box{
+
+    .info_in_box {
         height: 50%;
     }
 }
 
-.info_bar{
+.info_bar {
     margin-top: 5px;
 }
 
-.title_container{
+.title_container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -495,22 +504,22 @@ button, input {
     margin-top: 20px;
 }
 
-.page_title{
+.page_title {
     margin: 0 6px 0 6px;
 }
 
-.page_description{
+.page_description {
     text-align: center;
     font-size: 16px;
     font-style: italic;
 }
 
 
-.nested-toggler:hover{
+.nested-toggler:hover {
     cursor: pointer;
 }
 
-.box_item{
+.box_item {
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 3px;
@@ -521,39 +530,40 @@ button, input {
     border: 3px solid;
 }
 
-.team-motto{
+.team-motto {
     margin-left: 10px;
     margin-bottom: 13px;
     color: gray;
 }
 
-.team_league_title{
+.team_league_title {
     display: inline;
 }
 
-.info_table{
+.info_table {
     text-align: center;
     width: 98%;
     border-collapse: collapse;
 }
 
-.protocol_in, .big_table_container{
+.protocol_in, .big_table_container {
     overflow: auto;
     align-content: center;
 }
 
-.info_table, .info_table td, .info_table th{
+.info_table, .info_table td, .info_table th {
     border: 1px solid rgb(0, 0, 0);
 }
 
-.info_table td{
+.info_table td {
     height: 30px;
 }
-.info_table th{
+
+.info_table th {
     padding: 0 5px;
 }
 
-.protocol-table input, .protocol-table select, .protocol-table textarea{
+.protocol-table input, .protocol-table select, .protocol-table textarea {
     height: 100%;
     border: none;
     width: 100%;
@@ -562,56 +572,56 @@ button, input {
     text-align: inherit;
 }
 
-.protocol-table textarea{
+.protocol-table textarea {
     text-align: left;
 }
 
-textarea:disabled, .protocol-table select:not(.custom-select){
+textarea:disabled, .protocol-table select:not(.custom-select) {
     background: #fff;
 }
 
-.protocol-table textarea{
+.protocol-table textarea {
     margin-top: 3px;
 }
 
-.protocol-table .symbols{
+.protocol-table .symbols {
     width: 50px;
     font-size: 25px;
     text-align: center;
 }
 
-.protocol-table .player select{
+.protocol-table .player select {
     width: 200px;
 }
 
-.protocol-table .player{
+.protocol-table .player {
     white-space: nowrap;
     position: relative;
     padding: 5px;
 }
 
-.shadow_link{
+.shadow_link {
     color: inherit;
 }
 
-.captain_winner_name{
+.captain_winner_name {
     font-size: 1.2em;
     text-decoration: underline;
     padding: 0 5px;
 }
 
-.captain_winner span{
+.captain_winner span {
     vertical-align: middle;
     line-height: 100%;
 }
 
-.corner-lt{
+.corner-lt {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.stars{
+.stars {
     -ms-user-select: none;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -621,7 +631,7 @@ textarea:disabled, .protocol-table select:not(.custom-select){
     margin-top: -5px
 }
 
-.star{
+.star {
     font-size: 27px;
     -ms-user-select: none;
     -moz-user-select: none;
@@ -630,33 +640,34 @@ textarea:disabled, .protocol-table select:not(.custom-select){
     user-select: none;
 }
 
-.star.enabled:hover{
+.star.enabled:hover {
     cursor: pointer;
 }
 
-.star.add{
+.star.add {
     color: rgba(0, 0, 0, 0.5);
 }
 
-.shadow_list{
+.shadow_list {
     list-style-type: none;
     padding: 0 20px;
 }
 
-.like_list{
+.like_list {
     padding: 0 20px;
     width: 100%;
     box-sizing: border-box;
     display: block;
 }
 
-.input-wide{
+.input-wide {
     width: 100%;
 }
 
-textarea.input-wide{
+textarea.input-wide {
     height: 150px;
 }
+
 .info_bar p {
     margin-bottom: 3px;
 }
@@ -670,12 +681,12 @@ fieldset {
 }
 
 .gray_disabled:disabled {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.05);
     padding: 5px 20px 5px 20px;
     justify-content: right;
 }
 
-input[type='checkbox']{
+input[type='checkbox'] {
     cursor: pointer;
 }
 
@@ -687,7 +698,7 @@ input[type='checkbox']{
     border: 2px solid #e91313 !important;
 }
 
-.centered_row > div{
+.centered_row > div {
     display: flex;
     align-items: center;
     justify-content: center;

@@ -1,23 +1,38 @@
-import {jsonToFormData} from "../helpers";
 import {User} from "../types/models";
+import revive from "../helpers/json/revive";
 
 export const authService = {
     login: function login(form: object) {
-        const requestOptions = {
+        const requestOptions: RequestInit = {
             method: 'POST',
-            data: jsonToFormData(form),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({form}),
         };
         return fetch(`/api/login`, requestOptions)
-            .then(r => r.json().then(
-                ({success, user, message}: { success: boolean, user?: User, message?: string }) => {
-                    if (success) {
-                        return user as User;
-                    } else {
-                        const er = message || r.statusText;
-                        return Promise.reject(er);
-                    }
-                }
-            ));
+            .then(
+                r => {
+                    return r.text().then(t => {
+                        return JSON.parse(t, revive)
+                    }).then(
+                        ({success, user, message}: { success: boolean, user?: User, message?: string }) => {
+                            if (success) {
+                                console.log(user)
+                                return user as User;
+                            } else {
+                                const er = message || r.statusText;
+                                return Promise.reject(er);
+                            }
+                        }
+                    )
+                },
+                r => r.json().then(({message}: { message?: string }) => {
+                    const er = message || r.statusText;
+                    return Promise.reject(er);
+                })
+            )
     },
 
     logout: function () {
@@ -28,23 +43,15 @@ export const authService = {
                 }
             ));
     },
-}
 
-
-function handleResponse(response: Response) {
-    return response.text().then(text => {
-        const data = text && JSON.parse(text);
-        if (!response.ok) {
-            if (response.status === 401) {
-                location.reload();
-            }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
-    });
+    getCurrentUser: function () {
+        return fetch('/api/current_user', {method: 'GET'})
+            .then(r => r.json().then(
+                (data) => {
+                    return data;
+                }
+            ));
+    }
 }
 
 export default authService;

@@ -1,5 +1,5 @@
 const path = require('path');
-const TerserWebpackPlugin = require("terser-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 
 module.exports = {
@@ -10,7 +10,7 @@ module.exports = {
     target: 'web',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname, 'static'),
+        path: path.resolve(__dirname, 'dist'),
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -31,6 +31,28 @@ module.exports = {
                 // include: [path.resolve(__dirname, 'yourAppPath')],
                 exclude: '/node_modules',
             },
+            {
+                test: /\.html$/,
+                loader: "html-loader"
+            }
         ]
     },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template:  path.join(__dirname, 'public', 'index.html'),
+            filename: "./index.html"
+        })
+    ],
+    devServer: {
+        historyApiFallback: true,
+        contentBase: path.join(__dirname, '/dist'),
+        port: 8000,
+        proxy: {
+            "/api": {
+                target: "http://localhost:5000",
+                pathRewrite: {"^/api" : ""}
+            }
+        },
+        hot: true
+    }
 };

@@ -1,10 +1,11 @@
 import React from "react";
 import {FC} from "react";
-import {Nav, Navbar, NavItem, NavLink} from "react-bootstrap";
+import {Nav, Navbar, NavItem} from "react-bootstrap";
 import Menu from "./Menu";
 import LoginManager from "./LoginManager";
+import { Link } from "react-router-dom";
 
-const Header: FC<{}> = props => {
+const Header: FC = () => {
     return (
         <header className="">
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -13,15 +14,15 @@ const Header: FC<{}> = props => {
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse>
-                    <Menu />
+                    <Menu className="mr-auto" />
                     <Nav className="mr-3">
                         <NavItem>
-                            <NavLink href="{{ url_for('web_pages.feedback') }}">
+                            <Link to="/feedback" className="nav-link">
                                 Обратная связь
-                            </NavLink>
+                            </Link>
                         </NavItem>
                     </Nav>
-                    <LoginManager />
+                    <LoginManager >ddd</LoginManager>
                 </Navbar.Collapse>
             </Navbar>
         </header>

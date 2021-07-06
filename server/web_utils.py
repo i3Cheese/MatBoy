@@ -4,9 +4,9 @@ from flask_login import login_required, current_user
 from flask_mail import Message
 from data import User, Tournament, Post, get_session
 from config import config
-from app import send_message, send_messages
-from app.forms import EditPassword, EditEmail
-from app.token import generate_confirmation_token_reset_email, confirm_token_edit_email
+from server import send_message, send_messages
+from server.forms import EditPassword, EditEmail
+from server.token import generate_confirmation_token_reset_email, confirm_token_edit_email
 from string import ascii_letters, digits
 from random import choice
 from threading import Thread

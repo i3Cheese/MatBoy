@@ -1,17 +1,17 @@
-from app import send_message
 from flask import Blueprint, render_template, redirect, abort, request, url_for, flash
 from flask import make_response, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
-from data import User, Tournament, League, Team, Game, Post, get_session
-from app.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
-from app.forms import ResetPasswordStep1, EditPassword, EditEmail
-from app.token import generate_confirmation_token_reset_password, confirm_token_reset_password
-from config import config
 from wtforms import ValidationError
 from typing import List, Tuple
-from threading import Thread
 from hashlib import md5
+
+from data import User, Tournament, League, Team, Game, Post, get_session
+from server import send_message
+from server.forms import LoginForm, RegisterForm, TeamForm, TournamentInfoForm, PrepareToGameForm
+from server.forms import ResetPasswordStep1, EditPassword, EditEmail
+from server.token import generate_confirmation_token_reset_password, confirm_token_reset_password
+from config import config
 
 blueprint = Blueprint('web_pages',
                       __name__,
@@ -60,50 +60,6 @@ def index_page():
     return render_template("index.html", tournaments=tournaments)
 
 
-@blueprint.route("/login", methods=["POST", "GET"])
-def login_page():
-    print(request.form)
-    form = LoginForm()
-    try:
-        # Try login user using vk
-        args = request.args
-        uid, hash_st = args.get('uid'), args.get('hash')
-        if uid and hash_st:
-            # Check security
-            if md5((config.CLIENT_ID + uid +
-                    config.VK_SECRET_KEY).encode('utf-8')).hexdigest() != hash_st:
-                raise ValidationError("Not valide vk hash")
-
-            session = get_session()
-            try:
-                user = session.query(User).filter(
-                    User.vk_id == int(args.get('uid'))).first()
-            except ValueError:
-                raise ValidationError("Not valid uid")
-            if not user:
-                flash('Пользователь не найден', "error")
-                raise ValidationError("User not found")
-            login_user(user, remember=True)
-            return back_redirect()
-    except ValidationError:
-        return redirect("/login?comefrom={}".format(request.args.get("comefrom", "/")))
-
-    if form.validate_on_submit():
-        session = get_session()
-        user = session.query(User).filter(
-            User.email == form.email.data).first()
-        if not user:
-            form.email.errors.append(
-                "Пользователь с таким e-mail не зарегестрирован")
-        elif not user.check_password(form.password.data):
-            form.password.errors.append("Неправильный пароль")
-        else:
-            login_user(user, remember=True)
-            return back_redirect()
-
-    return render_template("login.html", form=form)
-
-
 @blueprint.route("/register", methods=["POST", "GET"])
 def register_page():
     form = RegisterForm()
@@ -125,13 +81,6 @@ def register_page():
         session.commit()
         return redirect("/login")
     return render_template("register.html", form=form)
-
-
-@blueprint.route("/logout")
-@login_required
-def logout_page():
-    logout_user()
-    return back_redirect("/login")
 
 
 @blueprint.route('/reset_password_step_1', methods=["POST", "GET"])

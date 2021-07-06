@@ -66,6 +66,7 @@ class DebugConfig(BaseConfig):
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
     SECRET_KEY = '11'
+    LOCALE = 'ru_RU'
 
 
 class ProductionConfig(BaseConfig):

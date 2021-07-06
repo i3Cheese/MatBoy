@@ -4,37 +4,52 @@ import {Navbar, Button} from "react-bootstrap";
 import {User} from "../../types/models";
 import {Link} from "react-router-dom"
 
+import './LoginManager.scss'
+import {connect, useSelector} from "react-redux";
+import {RootState} from "../../store";
+import {authActions} from "../../actions";
+import ArgsType = jest.ArgsType;
 
-const Logged: FC<{user: User}> = ({user}) => {
+
+const Logged = connect(null, (dispatch => {
+    return {
+        logout: (...args: ArgsType<typeof authActions.logout>) => authActions.logout(...args)(dispatch),
+    }
+}))(({user, logout}: { user: User, logout: () => void }) => {
     return (
         <div className="login_manager">
             <Navbar.Brand
-               href={`/profile/${user.id}`}>
+                href={`/profile/${user.id}`}>
                 {user.name}
             </Navbar.Brand>
-            <Button variant="primary" href="/logout">
+            <Button variant="primary" onClick={logout}>
                 Выйти
             </Button>
         </div>
     );
-}
+});
+
 
 const Logout: FC<{}> = ({}) => {
     return (
         <div className="login_manager">
-            <Button variant="success" href="/register">
+            <Link className="btn btn-success" to="/register">
                 Зарегистрироваться
-            </Button>
-            <Button variant="primary" href="/logout">
+            </Link>
+            <Link className="btn btn-primary" to="/login" role="button">
                 Войти
-            </Button>
+            </Link>
         </div>
     );
 }
 
-const LoginManager: FC<{}> = props => {
-    //TODO: DO LOGIN
-    return <Logout />;
+const LoginManager: FC = () => {
+    const auth = useSelector<RootState, RootState["auth"]>((state) => state.auth);
+
+    if (auth.loggedIn && auth.user !== null)
+        return <Logged user={auth.user}/>;
+    else
+        return <Logout/>;
 }
 
 export default LoginManager;

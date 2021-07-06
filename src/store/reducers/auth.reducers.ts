@@ -4,8 +4,8 @@ import AppAction from "../actionTypes";
 export type AuthState = { loggedIn: boolean, user: User | null, isWaiting: boolean }
 
 
-let user: User | null = JSON.parse(localStorage.getItem('user')!);
-const initialState = {user, loggedIn: user === null, isWaiting: false};
+let user: User | null = null;
+const initialState: AuthState = {user, loggedIn: user !== null, isWaiting: false};
 
 export function authReducer(state: AuthState = initialState, action: AppAction): AuthState {
     switch (action.type) {
@@ -13,7 +13,7 @@ export function authReducer(state: AuthState = initialState, action: AppAction):
             return {
                 loggedIn: false,
                 user: null,
-                isWaiting: false,
+                isWaiting: true,
             };
         case "LOGIN_SUCCESS":
             return {
