@@ -102,12 +102,12 @@
         autocomplete="off"
       )}}
       {{field_errors(form.password_again)}}
-    </div>
+    {# </div>
       {{form_field(form.recaptcha)}}
       {{form.recaptcha.label(for="password_repeat", class="form__field-label")}}
       {{form.recaptcha(id="recaptcha")}}
       {{field_errors(form.recaptcha)}}
-      </div>
+      </div> #}
     <div class="form__buttons s-buttons">
       {{form.submit(
         type="submit",

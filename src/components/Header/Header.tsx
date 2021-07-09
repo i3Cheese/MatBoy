@@ -9,9 +9,9 @@ const Header: FC = () => {
     return (
         <header className="">
             <Navbar bg="dark" variant="dark" expand="lg">
-                <Navbar.Brand className="logo" href="/">
+                <Link to="/" className="navbar-brand logo" >
                     MatBoy
-                </Navbar.Brand>
+                </Link>
                 <Navbar.Toggle />
                 <Navbar.Collapse>
                     <Menu className="mr-auto" />

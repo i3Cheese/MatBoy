@@ -1,3 +1,5 @@
+@import "styles/block";
+
 $font-stack: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
 $primary-color: #333;
 $background-color: #f4f4f4;
@@ -5,42 +7,15 @@ $background-color: #f4f4f4;
 body {
   font: 100% $font-stack;
   color: $primary-color;
-  background-color: $background-color;
-  height: 100%;
+  background: url("./img/popcat.gif") repeat;
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+  padding: 0;
 }
 
-
-.shadow_box {
-  width: 100%;
-  background: #fff;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  margin: 0 auto 16px;
-  padding: 40px;
-  box-sizing: border-box;
-}
-
-@media only screen and (max-width: 1024px) {
-  .shadow_box {
-    padding: 20px;
-    box-sizing: border-box;
-  }
-}
-
-.shadow_box-additions {
-  margin-top: 16px;
-  padding: 15px 0;
-  text-align: center;
-}
-
-.box_title {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  display: flex;
-  align-items: center;
-  color: #333;
-  font-size: 22px;
-  line-height: 26px;
-  font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
-  font-weight: 700;
+#root {
+  background-color: $background_color;
+  min-height: 100vh;
+  min-width: 100vw;
 }

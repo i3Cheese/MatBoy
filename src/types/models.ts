@@ -15,9 +15,10 @@ export interface User {
 export interface Tournament {
     id: number,
     title: string,
+    description: string,
     chief: User,
     place: string,
-    start?: Date,
-    end?: Date,
-    link?: string,
+    start: Date | null,
+    end: Date | null,
+    link: string,
 }

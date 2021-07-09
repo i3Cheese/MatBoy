@@ -22,6 +22,7 @@ class Tournament(BaseModel):
     __repr_attrs__ = ["title", "id"]
     serialize_only = ("id",
                       "title",
+                      "description"
                       "chief",
                       "place",
                       "start",

@@ -10,11 +10,10 @@ from server.api import api
 class TournamentsResource(Resource):
     def get(self):
         tours = Tournament.query.all()
-        return jsonify({'tours': [t.to_dict() for t in tours], 'success': True})
+        return jsonify({'tournaments': [t.to_dict() for t in tours], 'success': True})
 
 
-api.add_resource('/tournament')
-
+api.add_resource(TournamentsResource, '/tournament')
 
 class TournamentResource(Resource):
     @login_required
@@ -29,4 +28,5 @@ class TournamentResource(Resource):
         return jsonify({'success': True})
 
 
-api.add_resource('/tournament/<int:tour_id>')
+api.add_resource(TournamentResource, '/tournament/<int:tour_id>')
+
