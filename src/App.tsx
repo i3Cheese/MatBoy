@@ -7,6 +7,8 @@ import {authActions} from "./actions";
 import {Dispatch} from "redux";
 import {Route, Switch} from "react-router";
 import AuthScenes from "./Scenes/AuthScenes";
+import TournamentsScene from "./Scenes/TournamentsScene";
+import TournamentScenes from "./Scenes/TournamentScenes";
 
 const App: FC = () => {
     const dispatch = useDispatch<Dispatch<AppAction>>();
@@ -17,6 +19,8 @@ const App: FC = () => {
              <Route path='*'>
                  <Header />
                  <Switch>
+                     <Route path="/" exact component={TournamentsScene} />
+                     <Route path="/tournament" component={TournamentScenes} />
                  </Switch>
              </Route>
         </Switch>

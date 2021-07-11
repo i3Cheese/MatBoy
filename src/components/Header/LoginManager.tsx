@@ -6,7 +6,7 @@ import {Link} from "react-router-dom"
 
 import './LoginManager.scss'
 import {connect, useSelector} from "react-redux";
-import {RootState} from "../../store";
+import {AppState} from "../../store";
 import {authActions} from "../../actions";
 import ArgsType = jest.ArgsType;
 
@@ -44,7 +44,7 @@ const Logout: FC<{}> = ({}) => {
 }
 
 const LoginManager: FC = () => {
-    const auth = useSelector<RootState, RootState["auth"]>((state) => state.auth);
+    const auth = useSelector<AppState, AppState["auth"]>((state) => state.auth);
 
     if (auth.loggedIn && auth.user !== null)
         return <Logged user={auth.user}/>;

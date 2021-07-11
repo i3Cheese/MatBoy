@@ -1,2 +1,3 @@
 import authService from "./auth.services";
-export { authService };
+import tournamentService from "./tournament.services";
+export { authService, tournamentService };

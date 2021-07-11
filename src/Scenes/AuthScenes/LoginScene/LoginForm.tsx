@@ -5,7 +5,7 @@ import produce from "immer";
 import ArgsType = jest.ArgsType;
 import {history} from "../../../helpers";
 import {authActions} from "../../../actions";
-import {AppDispatch, RootState} from "../../../store";
+import {AppDispatch, AppState} from "../../../store";
 
 
 interface LoginState {
@@ -70,7 +70,7 @@ class LoginForm extends Component<LoginProps, LoginState> {
     }
 }
 
-function mapStateToProps(state: RootState) {
+function mapStateToProps(state: AppState) {
     return {
         loggedIn: state.auth.loggedIn,
         user: state.auth.user,
@@ -83,7 +83,7 @@ function mapDispatchToProps(dispatch: AppDispatch) {
     }
 }
 const connector = connect(mapStateToProps, mapDispatchToProps);
-type LoginProps = ConnectedProps<typeof connector> & FormProps
+type LoginProps = ConnectedProps<typeof connector> & FormProps;
 
 
 export default connector(LoginForm);
