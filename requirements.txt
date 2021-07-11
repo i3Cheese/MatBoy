@@ -10,6 +10,7 @@ Flask-Mail==0.9.1
 Flask-RESTful==0.3.8
 Flask-WTF==0.14.3
 WTForms==2.2.1
+wtforms_json==0.3.3
 email_validator==1.1.3
 idna==2.8
 itsdangerous==1.1.0

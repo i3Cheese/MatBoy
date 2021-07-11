@@ -31,10 +31,10 @@ def load_user(user_id) -> User:
 
 
 # from . import errorhandlers
-# from . import web_pages
+from . import web_pages
 from . import web_utils
 
-# app.register_blueprint(web_pages.blueprint)
+app.register_blueprint(web_pages.blueprint)
 # app.register_blueprint(web_utils.blueprint)
 
 import server.api

@@ -49,7 +49,8 @@ class BaseConfig:
     LOGGING_FILE = "matboy.log"
     LOGGING_LEVEL = logging.WARNING
 
-    LOCALE = 'ru_RU.utf8'
+    LOCALE_LIST = ['ru_RU.utf8', 'ru_RU', 'ru']
+    LOCALE = None
 
     @classmethod
     def setup(cls):
@@ -59,14 +60,23 @@ class BaseConfig:
                             level=cls.LOGGING_LEVEL)
         logging.getLogger('serializer').setLevel(
             logging.WARNING)  # Disable spam log
-        locale.setlocale(locale.LC_ALL, cls.LOCALE)
+        for locale_name in cls.LOCALE_LIST:
+            try:
+                locale.setlocale(locale.LC_ALL, locale_name)
+            except locale.Error:
+                pass
+            else:
+                cls.LOCALE = locale
+                break
+        if cls.LOCALE is None:
+            raise locale.Error("OS does not support any of locales")
+
 
 
 class DebugConfig(BaseConfig):
     DEBUG = True
     LOGGING_LEVEL = logging.DEBUG
     SECRET_KEY = '11'
-    LOCALE = 'ru_RU'
 
 
 class ProductionConfig(BaseConfig):
