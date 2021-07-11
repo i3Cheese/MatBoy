@@ -11,12 +11,9 @@ from server.forms import LoginForm
 
 class LoginResource(Resource):
     def post(self):
-        print(request)
         data = request.get_json()
-        print(data)
         form = LoginForm.from_json(data['form'])
         res = {"success": False}
-        print(form.email.data)
         if form.validate():
             user = User.query.filter(User.email == form.email.data).first()
             if not user:

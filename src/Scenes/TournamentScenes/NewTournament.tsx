@@ -1,21 +1,22 @@
-import React, {Component, FC} from 'react';
+import React, {FC} from 'react';
 import {Layout} from "../../components";
 import {ShadowBox} from "../../components";
-import TournamentForm, {
-    TournamentFormReturn
-} from "../../components/models/Tournament/TournamentForm";
+import TournamentForm from "../../components/models/Tournament/TournamentForm";
+import tournamentService, {ITournamentFormRequest} from "../../services/tournament.services";
+import {Tournament} from "../../types/models";
+import {history} from "../../helpers";
 
 const NewTournament: FC = () => {
-    const handleSubmit = (data: TournamentFormReturn) => {
-        fetch(
-            '/api/new_tournament',
-
-        )
-    };
+    const handleSubmit = (data: ITournamentFormRequest) =>
+        tournamentService.postNew(data).then(
+            (tour: Tournament) => {
+                console.log(tour);
+                history.push(tour.link);
+            });
     return (
         <Layout size="middle">
             <ShadowBox>
-                <TournamentForm onSubmit={(data) => fetch('/api/new_tournament')} />
+                <TournamentForm onSubmit={handleSubmit}/>
             </ShadowBox>
         </Layout>
     );

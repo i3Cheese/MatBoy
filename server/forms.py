@@ -159,7 +159,7 @@ class RegisterForm(BaseForm):
         field_data_capitalizer])
     city = StringField(
         "Город *", validators=[field_data_capitalizer, RuDataRequired()])
-    birthday = RuDateField("Дата рождения *", format=DATE_FORMAT, )
+    birthday = RuDateField("Дата рождения *")
 #     recaptcha = RecaptchaField(
 #         validators=[Recaptcha(message='Это поле обязательно')])
     submit = SubmitField('Зарегистрироваться')
@@ -174,14 +174,11 @@ class LoginForm(BaseForm):
 
 
 class TournamentInfoForm(BaseForm):
-    title = StringField("Название *", validators=[RuDataRequired()])
-    description = TextAreaField("Дополнительная информация")
-    place = StringField("Место проведения")
-    start = NullableDateField("Начало турнира", format=DATE_FORMAT, 
-                              validators=[FillWith('end', other_msg='Без начала нет конца')])
-    end = NullableDateField("Конец турнира",
-                            format=DATE_FORMAT,
-                            validators=[FillWith('start', other_msg='Бесконечный турнир?')])
+    title = StringField("Название", validators=[RuDataRequired()])
+    description = TextAreaField("Дополнительная информация", )
+    place = StringField("Место проведения", validators=[RuDataRequired()])
+    start = RuDateField("Начало турнира", validators=[RuDataRequired()])
+    end = RuDateField("Конец турнира", validators=[RuDataRequired()])
     submit = SubmitField("Подтвердить")
 
 

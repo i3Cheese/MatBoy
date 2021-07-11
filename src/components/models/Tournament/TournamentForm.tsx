@@ -1,9 +1,10 @@
-import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandler} from 'react';
+import React, {ChangeEventHandler, Component, FormEventHandler} from 'react';
 import {Tournament} from "../../../types/models";
 import moment from 'moment';
 import {Button, Form} from "react-bootstrap";
 import {Fieldset} from "../../form/form";
 import produce from "immer";
+import {ITournamentFormRequest} from "../../../services";
 
 
 export interface TournamentFormFields {
@@ -14,38 +15,24 @@ export interface TournamentFormFields {
     end: string,
 }
 
-export interface TournamentFormReturn {
-    title: string,
-    description: string,
-    place: string,
-    start: Date,
-    end: Date,
-}
+export type TournamentFormReturn = ITournamentFormRequest;
 
 interface TournamentFormState {
     form: TournamentFormFields,
     isWaiting: boolean,
+    accepted: boolean,
 }
-
-// title = StringField("Название *", validators=[RuDataRequired()])
-// description = TextAreaField("Дополнительная информация")
-// place = StringField("Место проведения")
-// start = NullableDateField("Начало турнира", format=DATE_FORMAT,
-//     validators=[FillWith('end', other_msg='Без начала нет конца')])
-// end = NullableDateField("Конец турнира",
-//     format=DATE_FORMAT,
-//     validators=[FillWith('start', other_msg='Бесконечный турнир?')])
 
 export interface TournamentFormProps {
     tour?: Tournament,
-    onSubmit: (data: TournamentFormFields) => Promise<any>
+    onSubmit: (data: TournamentFormReturn) => Promise<any>
 }
 
 class TournamentForm extends Component<TournamentFormProps, TournamentFormState> {
     constructor(props: TournamentFormProps) {
         super(props);
         const tour = props.tour;
-        const form: TournamentFormFields = tour === undefined?
+        const form: TournamentFormFields = tour === undefined ?
             {
                 title: "",
                 description: "",
@@ -62,21 +49,28 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
         this.state = {
             form,
             isWaiting: false,
+            accepted: false,
         }
     }
 
-    handleSubmit: FormEventHandler = (event) => {
+    parse = ({start, end, ...fields}: TournamentFormFields): TournamentFormReturn => ({
+        start,
+        end,
+        ...fields,
+    });
+
+    handleSubmit: FormEventHandler = async (event) => {
         this.setState({isWaiting: true});
-        this.props.onSubmit(this.state.form).then(
+        this.props.onSubmit(this.parse(this.state.form)).then(
             () => {
-                this.setState({isWaiting: false});
+                this.setState({isWaiting: false, accepted: true});
             },
             () => {
-                this.setState({isWaiting: false});
+                this.setState({isWaiting: false, accepted: false})
             }
         )
         event.preventDefault();
-    }
+    };
     handleChange: ChangeEventHandler<HTMLInputElement> = (event => {
         const name = event.target.name;
         const value = event.target.value;
@@ -84,7 +78,7 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
             // @ts-ignore
             draft.form[name] = value;
         }));
-    })
+    });
 
     render() {
         const form = this.state.form;
@@ -117,7 +111,7 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
                         <Form.Control name="end" type="date" value={form.end}
                                       onChange={this.handleChange}/>
                     </Form.Group>
-                    <Button variant="primary" type="submit">Войти</Button>
+                    <Button variant="primary" type="submit">Создать</Button>
                 </Fieldset>
             </Form>
         );
