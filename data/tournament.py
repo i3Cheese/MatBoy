@@ -22,7 +22,7 @@ class Tournament(BaseModel):
     __repr_attrs__ = ["title", "id"]
     serialize_only = ("id",
                       "title",
-                      "description"
+                      "description",
                       "chief",
                       "place",
                       "start",
@@ -30,11 +30,11 @@ class Tournament(BaseModel):
                       "link",
                       )
 
-    title = sa.Column(sa.String, unique=True)
-    description = sa.Column(sa.Text, nullable=True)
-    place = sa.Column(sa.String, nullable=True)
-    start = sa.Column(sa.Date, nullable=True)
-    end = sa.Column(sa.Date, nullable=True)
+    title = sa.Column(sa.String, nullable=False)
+    description = sa.Column(sa.Text)
+    place = sa.Column(sa.String, nullable=False)
+    start = sa.Column(sa.Date, nullable=False)
+    end = sa.Column(sa.Date, nullable=False)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
 
     chief = orm.relationship("User", backref="tournaments")

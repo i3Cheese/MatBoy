@@ -13,21 +13,17 @@ export const authService = {
         };
         return fetch(`/api/login`, requestOptions)
             .then(
-                r => {
-                    return r.text().then(t => {
-                        return JSON.parse(t, revive)
-                    }).then(
-                        ({success, user, message}: { success: boolean, user?: User, message?: string }) => {
-                            if (success) {
-                                console.log(user)
-                                return user as User;
-                            } else {
-                                const er = message || r.statusText;
-                                return Promise.reject(er);
-                            }
+                r => r.text().then(t => JSON.parse(t, revive)).then(
+                    ({success, user, message}: { success: boolean, user?: User, message?: string }) => {
+                        if (success) {
+                            return user as User;
+                        } else {
+                            const er = message || r.statusText;
+                            return Promise.reject(er);
                         }
-                    )
-                },
+                    }
+                )
+                ,
                 r => r.json().then(({message}: { message?: string }) => {
                     const er = message || r.statusText;
                     return Promise.reject(er);

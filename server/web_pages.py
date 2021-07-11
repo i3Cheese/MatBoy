@@ -52,14 +52,6 @@ def make_menu(session=None, *,
     return menu
 
 
-@blueprint.route("/")
-@blueprint.route("/index")
-def index_page():
-    session = get_session()
-    tournaments = session.query(Tournament).all()
-    return render_template("index.html", tournaments=tournaments)
-
-
 @blueprint.route("/register", methods=["POST", "GET"])
 def register_page():
     form = RegisterForm()
@@ -169,41 +161,6 @@ def tournament_page(tour_id):
         abort(404)
     return render_template("tournament.html",
                            tour=tour, menu=make_menu(session, tour_id=tour_id))
-
-
-@blueprint.route("/new_tournament", methods=["POST", "GET"])
-@login_required
-def tournament_creator_page():
-    if not current_user.is_creator:
-        abort(403)
-    form = TournamentInfoForm()
-    try:
-        if form.validate_on_submit():  # Validate posted data. Create tour
-            session = get_session()
-            if session.query(Tournament).filter(Tournament.title == form.title.data).first():
-                form.title.errors.append(
-                    "Турнир с таким названием уже существует")
-                raise ValidationError
-
-            if form.end.data and form.start.data > form.end.data:
-                form.end.errors.append("Турнир заканчивается слишком рано.")
-                raise ValidationError
-
-            tournament = Tournament().fill(title=form.title.data,
-                                           description=form.description.data,
-                                           place=form.place.data,
-                                           start=form.start.data,
-                                           end=form.end.data,
-                                           chief_id=current_user.id, )
-            session.add(tournament)
-            session.commit()
-
-            return redirect("/")
-    except ValidationError:
-        pass
-    return render_template("tournament_editor.html",
-                           form=form,
-                           menu=make_menu(now="Новый турнир"))
 
 
 @blueprint.route("/tournament/<int:tour_id>/edit", methods=["POST", "GET"])
