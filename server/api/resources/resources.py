@@ -231,43 +231,6 @@ class LeagueResource(Resource):
         return jsonify({'success': 'ok'})
 
 
-class LeaguesResource(Resource):
-    post_pars = LeagueResource.put_pars.copy()
-    post_pars.replace_argument(
-        'title', type=str, required=True, help="Необходимо указать название")
-    post_pars.replace_argument('tournament.id', type=int, required=True)
-
-    def post(self):
-        args = self.post_pars.parse_args()
-        logging.info(f"League post request with args {args}")
-
-        session = get_session()
-        tour = get_tour(session, args['tournament.id'])
-        if not tour.have_permission(current_user):
-            abort('403', message="Permission denied")
-
-        league = League()
-        league.tournament = tour
-        if args['chief.id'] is None and args['chief.email'] is None:
-            abort(400, message={
-                "chief": "Не указана информация о главном по лиге"})
-        else:
-            league.chief = get_user(session,
-                                    user_id=args['chief.id'],
-                                    email=args['chief.email'], )
-        league.title = args['title']
-        if args['description'] is not None:
-            league.description = args['description']
-
-        session.add(league)
-        session.commit()
-
-        response = {"success": "ok"}
-        if args['send_info']:
-            response["league"] = league.to_dict()
-        return jsonify(response)
-
-
 class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)

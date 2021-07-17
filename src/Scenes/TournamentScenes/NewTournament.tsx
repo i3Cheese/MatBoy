@@ -11,7 +11,7 @@ const NewTournament: FC = () => {
         tournamentService.postNew(data).then(
             (tour: Tournament) => {
                 console.log(tour);
-                history.push(tour.link);
+                history.push(`/tournament/${tour.id}`);
             });
     return (
         <Layout size="middle">

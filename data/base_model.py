@@ -3,13 +3,12 @@ import sqlalchemy.ext.declarative as dec
 from sqlalchemy.orm import Query
 from sqlalchemy_mixins import ReprMixin, TimestampsMixin
 from sqlalchemy_serializer import SerializerMixin
+from flask_login import current_user
+
 from data.db_tools import SqlAlchemyBase, db_session
 
 
 class FormatSerializerMixin(SerializerMixin):
-    date_format = '%d.%m.%Y'
-    datetime_format = '%d.%m.%Y %H:%M:%S.%f'
-    time_format = '%H:%M.%f'
     secure_serialize_only = ()
 
     def to_short_dict(self):
@@ -53,3 +52,10 @@ class BaseModel(SqlAlchemyBase, FormatSerializerMixin, ReprMixin, TimestampsMixi
     def have_permission(self, user):
         """Check if user can edit self"""
         return user.is_admin
+
+    def edit_access(self):
+        """
+        have_permission for current_user
+        only with request context
+        """
+        return self.have_permission(current_user)

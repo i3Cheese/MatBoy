@@ -7,6 +7,8 @@ import {tournamentService} from "../../../services";
 import {Box, BoxTitle} from "../../layout";
 import {DateSpan} from "../../layout/";
 import Loader from 'react-loader-spinner';
+import DivLink from "../../layout/DivLink";
+import SimpleMenu from "../../SimpleMenu";
 
 export const TourDate: FC<ComponentProps<'div'> & { tour: Tournament }> = ({tour, className, children, ...props}) => {
     const content: ReactElement = (<>
@@ -28,12 +30,10 @@ export const TourDate: FC<ComponentProps<'div'> & { tour: Tournament }> = ({tour
 
 export const TournamentItem: FC<{ tour: Tournament }> = ({tour}) => {
     return (
-        <div className="centered_block block_link">
-            <Link to={tour.link}>
-                <h2 className="item_title">{tour.title}</h2>
-                <TourDate tour={tour}/>
-            </Link>
-        </div>
+        <DivLink to={`/tournament/${tour.id}`}>
+            <h2 className="item_title">{tour.title}</h2>
+            <TourDate tour={tour}/>
+        </DivLink>
     )
 };
 
@@ -62,11 +62,11 @@ class TournamentBox extends Component<TournamentBoxProps, { tours: Tournament[] 
                     Турниры
                 </BoxTitle>
                 {this.props.user?.is_creator &&
-                <div className="link_menu">
+                <SimpleMenu>
                     <Link className="link link-small" to="/tournament/new">
                         Создать турнир
                     </Link>
-                </div>
+                </SimpleMenu>
                 }
                 {this.state.tours?.map((tour) =>
                     <TournamentItem tour={tour} key={tour.id}/>

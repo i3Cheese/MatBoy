@@ -9,6 +9,7 @@ import {Route, Switch} from "react-router";
 import AuthScenes from "./Scenes/AuthScenes";
 import TournamentsScene from "./Scenes/TournamentsScene";
 import TournamentScenes from "./Scenes/TournamentScenes";
+import {Main} from "./components";
 
 const App: FC = () => {
     const dispatch = useDispatch<Dispatch<AppAction>>();
@@ -18,10 +19,12 @@ const App: FC = () => {
             <Route path={['/login', '/logout', '/registration']} component={AuthScenes}/>
              <Route path='*'>
                  <Header />
-                 <Switch>
-                     <Route path="/" exact component={TournamentsScene} />
-                     <Route path="/tournament" component={TournamentScenes} />
-                 </Switch>
+                 <Main>
+                     <Switch>
+                         <Route path="/" exact component={TournamentsScene} />
+                         <Route path="/tournament" component={TournamentScenes} />
+                     </Switch>
+                 </Main>
              </Route>
         </Switch>
     )

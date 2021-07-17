@@ -153,62 +153,6 @@ def user_page(user_id):
                            menu=make_menu(session, user_id=user_id))
 
 
-@blueprint.route("/tournament/<int:tour_id>")
-def tournament_page(tour_id):
-    session = get_session()
-    tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
-    return render_template("tournament.html",
-                           tour=tour, menu=make_menu(session, tour_id=tour_id))
-
-
-@blueprint.route("/tournament/<int:tour_id>/edit", methods=["POST", "GET"])
-@login_required
-def tournament_edit_page(tour_id: int):
-    session = get_session()
-    tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
-    if not tour.have_permission(current_user):
-        abort(403)
-    form = TournamentInfoForm()
-    if form.validate_on_submit():
-        try:
-            new_title = form.title.data
-            # if title changed and new_title exist
-            if (new_title != tour.title) and (
-                    session.query(Tournament).filter(Tournament.title == new_title).first()):
-                form.title.errors.append("Турнир с таким названием уже существует")
-                return render_template("tournament_editor.html", form=form)
-
-            if form.end.data and form.start.data > form.end.data:
-                form.end.errors.append("Турнир заканчивается слишком рано.")
-                raise ValidationError
-
-            # Change tour values
-            tour.title = new_title
-            tour.description = form.description.data
-            tour.place = form.place.data
-            tour.start = form.start.data
-            tour.end = form.end.data
-            session.merge(tour)
-            session.commit()
-
-            return back_redirect("{0}/console".format(tour.link))
-        except ValidationError:
-            pass
-    elif not form.is_submitted():
-        form.title.data = tour.title
-        form.description.data = tour.description
-        form.place.data = tour.place
-        form.start.data = tour.start
-        form.end.data = tour.end
-
-    return render_template("tournament_editor.html",
-                           form=form,
-                           menu=make_menu(session, tour_id=tour_id, now='Редактирование'))
-
 
 @blueprint.route("/tournament/<int:tour_id>/console")
 @login_required
@@ -247,57 +191,6 @@ def process_team_players(session, entries, team):
                     setattr(user, field.short_name, field.data)
         team.players.append(user)
     return emails
-
-
-@blueprint.route("/tournament/<int:tour_id>/team_request", methods=["GET", "POST"])
-@login_required
-def team_request(tour_id: int):
-    form = TeamForm()
-    session = get_session()
-    tour = session.query(Tournament).get(tour_id)
-    if not tour:
-        abort(404)
-
-    emails = []
-    try:
-        if form.validate_on_submit():  # Validate posted data
-            team = Team().fill(
-                name=form.name.data,
-                motto=form.motto.data,
-                trainer_id=current_user.id,
-                tournament_id=tour.id,
-            )
-            emails = process_team_players(session, form.players.entries, team)
-            session.add(team)
-            session.commit()
-
-            # Send notifications to players
-            # msg = Message(
-            #     subject='Участие в турнире MatBoy',
-            #     recipients=emails,
-            #     sender=config.MAIL_DEFAULT_SENDER,
-            #     html=render_template('mails/email/invite_team.html',
-            #                          team=team, tour=tour)
-            # )
-            # thr_email = Thread(target=send_message, args=[msg])
-            # thr_email.start()
-            return redirect(team.link)
-    except ValidationError:
-        pass
-
-    if form.is_submitted():
-        from pprint import pprint
-        pprint(request.form)
-        emails = get_emails(form.players.entries)
-        for error in form.players.errors:
-            flash(str(error), "error")
-
-    return render_template("team_form.html",
-                           edit=False,
-                           tour=tour,
-                           form=form,
-                           emails=emails,
-                           menu=make_menu(session, tour_id=tour_id, now='Командная заявка'))
 
 
 @blueprint.route('/tournament/<int:tour_id>/team/<int:team_id>/edit', methods=['GET', 'POST'])

@@ -111,7 +111,7 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
                         <Form.Control name="end" type="date" value={form.end}
                                       onChange={this.handleChange}/>
                     </Form.Group>
-                    <Button variant="primary" type="submit">Создать</Button>
+                    <Button variant="primary" type="submit">{this.props.tour?"Изменить":"Создать"}</Button>
                 </Fieldset>
             </Form>
         );
