@@ -1,0 +1,28 @@
+@import "~bootstrap/scss/bootstrap";
+
+$font-stack: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
+$background-color: $gray-200;
+
+body {
+  font: 100% $font-stack;
+  //color: ;
+  background: url("./img/popcat.gif") repeat;
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  background-color: $background_color;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+.centered_block {
+  text-align: center;
+  padding: 10px 10px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+}

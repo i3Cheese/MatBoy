@@ -1,10 +1,13 @@
-import React, {ChangeEventHandler, Component, FormEventHandler} from 'react';
+import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandler, useState} from 'react';
 import {Tournament} from "../../../types/models";
 import moment from 'moment';
 import {Button, Form} from "react-bootstrap";
 import {Fieldset} from "../../form/form";
 import produce from "immer";
-import {ITournamentFormRequest} from "../../../services";
+import {tournamentService, ITournamentFormRequest} from "../../../services";
+import {AppLoader} from "../../Loader";
+import {Redirect} from "react-router";
+import {FormBox} from "../../layout";
 
 
 export interface TournamentFormFields {
@@ -25,10 +28,11 @@ interface TournamentFormState {
 
 export interface TournamentFormProps {
     tour?: Tournament,
-    onSubmit: (data: TournamentFormReturn) => Promise<any>
+    onSubmit: (data: TournamentFormReturn) => Promise<any>,
+    isLoading: boolean,
 }
 
-class TournamentForm extends Component<TournamentFormProps, TournamentFormState> {
+export class TournamentForm extends Component<TournamentFormProps, TournamentFormState> {
     constructor(props: TournamentFormProps) {
         super(props);
         const tour = props.tour;
@@ -82,6 +86,7 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
 
     render() {
         const form = this.state.form;
+        if (this.props.isLoading) return <AppLoader/>
         return (
             <Form onSubmit={this.handleSubmit}>
                 <Fieldset>
@@ -111,11 +116,74 @@ class TournamentForm extends Component<TournamentFormProps, TournamentFormState>
                         <Form.Control name="end" type="date" value={form.end}
                                       onChange={this.handleChange}/>
                     </Form.Group>
-                    <Button variant="primary" type="submit">Создать</Button>
+                    <Button variant="primary" type="submit">{this.props.tour ? "Изменить" : "Создать"}</Button>
                 </Fieldset>
             </Form>
         );
     }
 }
 
-export default TournamentForm;
+export const NewTournamentForm: FC = () => {
+    const [isLoading, setLoading] = useState(false);
+    const [success, setSuccess] = useState<{ success: false } | { success: true, tourId: number }>({success: false})
+    const handleSubmit = (data: ITournamentFormRequest) => {
+        setLoading(true);
+        return tournamentService.postNew(data).then(
+            (tour: Tournament) => {
+                setLoading(false);
+                setSuccess({success: true, tourId: tour.id});
+            },
+            () => {
+                setLoading(false);
+            });
+    }
+    if (success.success) return <Redirect to={`/tournament/${success.tourId}`}/>;
+    return (
+        <TournamentForm onSubmit={handleSubmit} isLoading={isLoading}/>
+    );
+}
+
+
+interface EditTournamentFormProps {
+    tour: Tournament,
+    setTour: (tour: Tournament) => void
+}
+
+export const EditTournamentForm: FC<EditTournamentFormProps> = ({tour, setTour}) => {
+    const [{isLoading, isSuccess}, setState] = useState({isLoading: false, isSuccess: false});
+    const handleSubmit = (data: ITournamentFormRequest) => {
+        setState({isLoading: true, isSuccess: false});
+        return tournamentService.edit(tour.id, data).then(
+            (tour: Tournament) => {
+                setState({isLoading: false, isSuccess: true});
+                setTour(tour);
+            },
+            () => {
+                setState({isLoading: false, isSuccess: false});
+            });
+    }
+    if (isSuccess) return <Redirect to={`/tournament/${tour.id}`}/>;
+    return (
+        <TournamentForm onSubmit={handleSubmit} tour={tour} isLoading={isLoading}/>
+    );
+}
+
+
+export const EditTournamentFormBox: FC<EditTournamentFormProps & ComponentProps<typeof FormBox>> = ({tour, setTour, ...props}) => (
+    <FormBox size="middle" {...props}>
+        <FormBox.Title>
+            Редактирование турнира
+        </FormBox.Title>
+        <EditTournamentForm tour={tour} setTour={setTour}/>
+    </FormBox>
+)
+
+export const NewTournamentFormBox: FC<ComponentProps<typeof FormBox>> = (props) => (
+    <FormBox size="middle" {...props}>
+        <FormBox.Title>
+            Создание нового турнира
+        </FormBox.Title>
+        <NewTournamentForm />
+    </FormBox>
+)
+

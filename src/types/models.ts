@@ -11,14 +11,45 @@ export interface User {
     link: string,
 }
 
-
-export interface Tournament {
+export interface TournamentBasics {
     id: number,
     title: string,
+}
+
+export interface Tournament extends TournamentBasics{
     description: string,
     chief: User,
     place: string,
     start: Date | null,
     end: Date | null,
-    link: string,
+    edit_access: boolean,
+    link?: string,
+}
+
+export interface LeagueBasics {
+    id: string,
+    title: string,
+}
+
+export interface League extends LeagueBasics {
+    description: string,
+    chief: User,
+    tournament: TournamentBasics,
+    edit_access: boolean,
+    link?: string,
+}
+
+export interface TeamBasics {
+    name: string,
+    id: number,
+}
+
+export interface Team extends TeamBasics {
+    motto: string | null,
+    tournament: TournamentBasics,
+    league: LeagueBasics | null,
+    status_string: "deleted" | "waiting" | "accepted",
+    trainer: User,
+    edit_access: boolean,
+
 }

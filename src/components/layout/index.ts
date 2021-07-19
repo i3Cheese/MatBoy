@@ -1,6 +1,7 @@
 import Layout from "./Layout";
 import Main from "./Main";
-export {Layout, Main}
+import FormBox from "./FormBox";
+export {Layout, Main, FormBox};
+export * from "../Loader";
 export * from "./datetime";
 export * from './Box';
-export * from './ShadowBox'

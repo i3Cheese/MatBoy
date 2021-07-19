@@ -1,5 +1,6 @@
 import {Tournament} from "../types/models";
 import revive from "../helpers/json/revive";
+import {ErrorResponse} from "./types";
 
 
 export const tournamentService = {
@@ -32,27 +33,18 @@ export const tournamentService = {
                 })
             )
     },
-    get: function get(tourId: number) {
+    get: async function (tourId: number) {
         const requestOptions: RequestInit = {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
             }
         }
-        return fetch(`/api/tournament/${tourId}`, requestOptions)
-            .then(
-                r => {
-                    return r.text().then(t => {
-                        return JSON.parse(t, revive);
-                    }).then(
-                        ({tournament: tour} : {tournament: Tournament}) => {
-                            return tour;
-                        }
-                    )
-                }
-            );
+        const response = await fetch(`/api/tournament/${tourId}`, requestOptions);
+        const {tournament: tour} = await response.text().then(t => JSON.parse(t, revive));
+        return tour as Tournament;
     },
-    postNew: function postNew(form : ITournamentFormRequest) {
+    postNew: async function (form : ITournamentFormRequest) {
         console.log(form);
         const requestOptions: RequestInit = {
             method: 'POST',
@@ -62,28 +54,42 @@ export const tournamentService = {
             },
             body: JSON.stringify({form}),
         }
-        return fetch(`/api/tournament`, requestOptions)
-            .then(
-                r => {
-                    return r.text().then(t => {
-                        const obg = JSON.parse(t, revive);
-                        console.log(obg);
-                        return obg;
-                    }).then(
-                        ({tournament: tour, success, message} : {tournament?: Tournament, success: boolean, message?: string}) => {
-                            if (success) {
-                                console.log('success')
-                                return tour as Tournament;
-                            } else {
-                                const er = message || r.statusText;
-                                return Promise.reject(er);
-                            }
-                        }
-                    )
-                }
-            );
+        const response = await fetch(`/api/tournament`, requestOptions);
+        const data: FullTournamentResponse = await response.text().then(t => JSON.parse(t, revive));
+
+        if (data.success) {
+            return data.tournament;
+        } else {
+            const er = data.message || response.statusText;
+            return Promise.reject(er);
+        }
+    },
+    edit: async function (tourId: number, form : ITournamentFormRequest) {
+        const requestOptions: RequestInit = {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({form}),
+        }
+        const response = await fetch(`/api/tournament/${tourId}`, requestOptions);
+        const data: FullTournamentResponse = await response.text().then(t => JSON.parse(t, revive));
+        if (data.success) {
+            return data.tournament;
+        } else {
+            const er = data.message || response.statusText;
+            return Promise.reject(er);
+        }
     }
 }
+
+interface TournamentResponse {
+    success: true,
+    tournament: Tournament,
+}
+
+type FullTournamentResponse = TournamentResponse | ErrorResponse;
 
 export interface ITournamentFormRequest {
     title: string,

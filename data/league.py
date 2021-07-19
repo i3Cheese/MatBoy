@@ -9,26 +9,12 @@ class League(BaseModel):
     serialize_only = ("id",
                       "title",
                       "description",
-                      "chief.id",
-                      "chief.email",
-                      "chief.fullname",
+                      "chief",
                       "tournament.id",
                       "tournament.title",
-                      "teams.id",
-                      "teams.name",
+                      "edit_access",
                       "link",
                       )
-    secure_serialize_only = ("id",
-                             "title",
-                             "description",
-                             "chief.id",
-                             "chief.fullname",
-                             "tournament.id",
-                             "tournament.title",
-                             "teams.id",
-                             "teams.name",
-                             "link",
-                             )
 
     title = sa.Column(sa.String, unique=False)
     description = sa.Column(sa.Text, nullable=True)

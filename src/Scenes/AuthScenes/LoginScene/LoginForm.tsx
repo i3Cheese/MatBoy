@@ -3,9 +3,9 @@ import {connect, ConnectedProps} from "react-redux";
 import {Button, Form, FormProps} from "react-bootstrap";
 import produce from "immer";
 import ArgsType = jest.ArgsType;
-import {history} from "../../../helpers";
 import {authActions} from "../../../actions";
 import {AppDispatch, AppState} from "../../../store";
+import {Redirect} from "react-router";
 
 
 interface LoginState {
@@ -37,11 +37,8 @@ class LoginForm extends Component<LoginProps, LoginState> {
         }));
     }
 
-    componentDidUpdate(prevProps: Readonly<LoginProps>, prevState: Readonly<LoginState>, snapshot?: any) {
-        if (this.props.loggedIn) history.push('/');
-    }
-
     render() {
+        if (this.props.loggedIn) return <Redirect to={'/'}/>;
         return (
             <Form onSubmit={this.handleSubmit} className={this.props.className}>
                 <fieldset disabled={this.props.isWaiting}>

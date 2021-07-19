@@ -28,6 +28,7 @@ class Tournament(BaseModel):
                       "start",
                       "end",
                       "link",
+                      "edit_access",
                       )
 
     title = sa.Column(sa.String, nullable=False)
@@ -47,7 +48,7 @@ class Tournament(BaseModel):
     )
 
     def have_permission(self, user):
-        return user.is_admin or self.chief == user
+        return self.chief == user or super(Tournament, self).have_permission(user)
 
     def __str__(self):
         return self.title

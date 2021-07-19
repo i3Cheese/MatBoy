@@ -9,86 +9,6 @@ from data import User, Team, Tournament, League, Game, Post, get_session
 from server.api.resources.utils import *
 
 
-class UserResource(Resource):
-    put_pars = reqparse.RequestParser()
-    put_pars.add_argument('vk_id', type=int, help="wrong type")
-
-    def get(self, user_id: int):
-        session = get_session()
-        user = get_user(session, user_id)
-        d = to_dict(user)
-        return jsonify({"user": d})
-
-    def put(self, user_id: int):
-        args = self.put_pars.parse_args()
-        session = get_session()
-        user = get_user(session, user_id)
-        if current_user != user and not current_user.is_admin:
-            abort(403)
-        if args['vk_id'] is not None:  # integrate user with vk
-            user.vk_id = args['vk_id']
-            user.integration_with_VK = True
-        session.commit()
-        return jsonify({"success": "ok"})
-
-
-class UsersResource(Resource):
-    reg_pars = reqparse.RequestParser()
-    reg_pars.add_argument('surname', required=True, type=str)
-    reg_pars.add_argument('name', required=True, type=str)
-    reg_pars.add_argument('patronymic', required=False, type=str)
-    reg_pars.add_argument('city', required=False, type=str)
-    reg_pars.add_argument('birthday', required=True, type=get_date_from_string)
-    reg_pars.add_argument('email', required=True, type=str)
-    reg_pars.add_argument('password', required=True, type=str)
-
-    get_pars = reqparse.RequestParser()
-    get_pars.add_argument(
-        'vk_id', type=int, help="wrong type", location='args')
-    get_pars.add_argument(
-        'email', location='args')
-
-    @classmethod
-    def post(cls):
-        """Add new user to db"""
-        args = UsersResource.reg_pars.parse_args()
-        session = get_session()
-        abort_if_email_exist(session, args['email'])
-        user = User().fill(email=args['email'],
-                           name=args['name'],
-                           surname=args['surname'],
-                           patronymic=args['patronymic'],
-                           city=args['city'],
-                           birthday=args['birthday'],
-                           )
-        user.set_password(args['password'])
-        session.add(user)
-        session.commit()
-        return jsonify({"success": "ok"})
-
-    @classmethod
-    def get(cls):
-        """Return the user you are looking for If unique args passed else all users"""
-        session = get_session()
-        args = cls.get_pars.parse_args()
-        if args['vk_id'] or args['email']:
-            query = session.query(User)
-            if args['vk_id']:
-                query = query.filter_by(vk_id=args['vk_id'])
-            if args['email']:
-                query = query.filter_by(email=args['email'].lower())
-            user = query.first()
-            json_resp = {'exist': user is not None}
-            if user:
-                json_resp['user'] = to_dict(user)
-        else:
-            users = session.query(User).all()
-            json_resp = {"users": [user.to_dict(only=("id",
-                                                      "name",
-                                                      "surname",
-                                                      "fullname",)) for user in users]}
-        return jsonify(json_resp)
-
 
 class TeamResource(Resource):
     put_pars = reqparse.RequestParser()
@@ -231,49 +151,12 @@ class LeagueResource(Resource):
         return jsonify({'success': 'ok'})
 
 
-class LeaguesResource(Resource):
-    post_pars = LeagueResource.put_pars.copy()
-    post_pars.replace_argument(
-        'title', type=str, required=True, help="Необходимо указать название")
-    post_pars.replace_argument('tournament.id', type=int, required=True)
-
-    def post(self):
-        args = self.post_pars.parse_args()
-        logging.info(f"League post request with args {args}")
-
-        session = get_session()
-        tour = get_tour(session, args['tournament.id'])
-        if not tour.have_permission(current_user):
-            abort('403', message="Permission denied")
-
-        league = League()
-        league.tournament = tour
-        if args['chief.id'] is None and args['chief.email'] is None:
-            abort(400, message={
-                "chief": "Не указана информация о главном по лиге"})
-        else:
-            league.chief = get_user(session,
-                                    user_id=args['chief.id'],
-                                    email=args['chief.email'], )
-        league.title = args['title']
-        if args['description'] is not None:
-            league.description = args['description']
-
-        session.add(league)
-        session.commit()
-
-        response = {"success": "ok"}
-        if args['send_info']:
-            response["league"] = league.to_dict()
-        return jsonify(response)
-
-
 class GameResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('place', type=str)
     # Empty string == None
     put_pars.add_argument(
-        'start', type=get_datetime_from_string, help="Неверный формат даты")
+        'start', type=datetime_type, help="Неверный формат даты")
     put_pars.add_argument('status', type=int)
     put_pars.add_argument('judge.id', type=int)
     put_pars.add_argument('judge.email', type=str)

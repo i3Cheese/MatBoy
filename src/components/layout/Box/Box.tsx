@@ -1,19 +1,25 @@
 import React, {ComponentProps, FC} from 'react';
 import './Box.scss';
 
-interface BoxProps extends ComponentProps<'div'> {
+export interface BoxProps extends ComponentProps<'div'> {
     size?: "tiny" | "middle" | "large",
+    type?: "square",
 }
 
-export const Box: FC<BoxProps> = (
+const RawBox: FC<BoxProps> = (
     {
         size,
+        type,
         children,
         className,
         ...props
     }) => {
+    let classes = ["box",];
+    if (size) classes.push("box-"+size);
+    if (type) classes.push("box-"+type);
+    if (className) classes.push(className);
     return (
-        <div className={"box" + (size && ` box-${size} `) + (className || "")} {...props}>
+        <div className={classes.join(' ')} {...props}>
             {children}
         </div>
     );
@@ -27,11 +33,8 @@ export const BoxTitle: FC<ComponentProps<'div'>> = ({children, className,...prop
     );
 }
 
+export const Box = Object.assign(RawBox, {
+    Title: BoxTitle,
+});
 
-export const BoxContainer: FC<ComponentProps<'div'>> = ({children, className,...props}) => {
-    return (
-        <div className={"box_container"+ (className || "")} {...props}>
-            {children}
-        </div>
-    );
-}
+export default Box;

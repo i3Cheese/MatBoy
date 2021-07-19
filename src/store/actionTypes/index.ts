@@ -1,7 +1,9 @@
-import AuthAction from "./user.types.actions";
+import AuthAction from "./auth.types.actions";
+import MenuAction from "./menu.types.actions";
 
-type AppAction = AuthAction;
+type AppAction = AuthAction | MenuAction;
 
 export default AppAction;
 
-export * from './user.types.actions'
+export * from './auth.types.actions';
+export * from './menu.types.actions';

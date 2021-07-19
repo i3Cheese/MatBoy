@@ -5,29 +5,29 @@
   overflow-x: hidden;
 }
 
-.layout__page {
+.layout {
   max-width: 780px;
   margin: 0 auto;
 }
 
-.layout__page-middle {
+.layout-middle {
   max-width: 700px;
   margin-top: 50px;
 }
 
-.layout__page-thin {
+.layout-thin {
   margin-top: 60px;
   max-width: 460px;
 }
 
 @media only screen and (max-width: 480px) {
-  .layout__page-thin {
+  .layout-thin {
     margin-top: 0;
   }
 }
 
 @media only screen and (max-width: 750px) {
-  .layout__page-middle {
+  .layout-middle {
     margin-top: 0;
   }
 }

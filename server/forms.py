@@ -173,15 +173,6 @@ class LoginForm(BaseForm):
     submit = SubmitField("Войти")
 
 
-class TournamentInfoForm(BaseForm):
-    title = StringField("Название", validators=[RuDataRequired()])
-    description = TextAreaField("Дополнительная информация", )
-    place = StringField("Место проведения", validators=[RuDataRequired()])
-    start = RuDateField("Начало турнира", validators=[RuDataRequired()])
-    end = RuDateField("Конец турнира", validators=[RuDataRequired()])
-    submit = SubmitField("Подтвердить")
-
-
 class BasicUserForm(BaseForm):
     email = EmailField('E-mail *', validators=[field_data_lower,
                                                Email(message="Неправильный формат"),
@@ -214,28 +205,6 @@ class BasicUserForm(BaseForm):
         form.__new_email = user is None
 
 
-class TeamForm(BaseForm):
-    """Form for team request"""
-    name = StringField("Название команды *", validators=[RuDataRequired()])
-    motto = TextAreaField("Девиз команды")
-    players = FieldList(FormField(BasicUserForm),
-                        "Данные участников",
-                        min_entries=4,
-                        max_entries=8, )
-    submit = SubmitField("Отправить")
-
-    def validate_players(form, field):
-        emails = set()
-        success = True
-        for user_form in field.entries:
-            email = user_form.email.data.lower()
-            if email in emails:
-                user_form.email.errors.append("Участник указан несколько раз")
-                success = False
-            else:
-                emails.add(email)
-        if not success:
-            raise ValidationError("Один из участников указан несколько раз")
 
 
 class ResetPasswordStep1(BaseForm):

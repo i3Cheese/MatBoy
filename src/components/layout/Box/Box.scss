@@ -33,13 +33,21 @@
   max-width: 700px;
 }
 
+.box-square {
+  $size: 300px;
+  max-width: $size;
+  min-width: $size;
+  min-height: $size;
+  max-height: $size;
+}
+
 
 .box_container {
   display: flex;
   justify-content: center;
   flex-wrap: wrap-reverse;
   flex-direction: row;
-  margin: 60px 0px 10px 0px;
+  margin: 60px 0 10px 0;
   padding: 0 5px;
 }
 
@@ -48,3 +56,8 @@
   justify-content: space-between;
 }
 
+.info_in_box {
+  width: 100%;
+  padding: 20px 0;
+  height: 100%;
+}
