@@ -21,34 +21,15 @@ class Team(BaseModel):
                       "name",
                       "motto",
                       "status",
-                      "trainer.id",
-                      "trainer.email",
-                      "trainer.fullname",
+                      "status_string",
+                      "trainer",
                       "tournament.id",
                       "tournament.title",
                       "league.id",
                       "league.title",
                       "link",
+                      "edit_access",
                       )
-
-    secure_serialize_only = ("id",
-                             "name",
-                             "motto",
-                             "status",
-                             "trainer.id",
-                             "trainer.fullname",
-                             "tournament.id",
-                             "tournament.title",
-                             "league.id",
-                             "league.title",
-                             "link",
-                             )
-
-    short_serialize_only = ("id",
-                            'name',
-                            'motto',
-                            "status"
-                            )
 
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
@@ -89,4 +70,16 @@ class Team(BaseModel):
 
     @property
     def games(self):
-        return sorted(set(self.games_1 + self.games_2), key=lambda game: game.created_at)
+        return list(set(self.games_1 + self.games_2))
+
+    @property
+    def status_string(self):
+        s = self.status
+        if s == 0:
+            return "deleted"
+        elif s == 1:
+            return "waiting"
+        elif s == 2:
+            return "accepted"
+        else:
+            return "deleted"

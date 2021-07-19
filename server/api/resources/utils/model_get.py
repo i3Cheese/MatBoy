@@ -2,6 +2,13 @@ from flask_restful import abort
 from data import User, Team, Tournament, League, Game, Post
 
 
+def get_model(cls, _id, do_abort=True):
+    res = cls.query.get(_id)
+    if do_abort and not res:
+        abort(404, message=f"{cls.__name__} #{_id} not found")
+    return res
+
+
 def get_user(session, user_id=None, email=None, do_abort=True):
     """
     Get User from database, abort(404) if do_abort==True and user not found
@@ -62,4 +69,4 @@ def get_post(session, post_id, do_abort=True) -> Post:
     return post
 
 
-__all__ = ['get_post', 'get_game', 'get_league', 'get_tour', 'get_team', 'get_user']
+__all__ = ['get_model', 'get_post', 'get_game', 'get_league', 'get_tour', 'get_team', 'get_user']

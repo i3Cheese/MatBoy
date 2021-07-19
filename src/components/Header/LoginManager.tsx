@@ -1,6 +1,6 @@
 import React from "react";
 import {FC} from "react";
-import {Navbar, Button} from "react-bootstrap";
+import {Button, Nav} from "react-bootstrap";
 import {User} from "../../types/models";
 import {Link} from "react-router-dom"
 
@@ -17,15 +17,14 @@ const Logged = connect(null, (dispatch => {
     }
 }))(({user, logout}: { user: User, logout: () => void }) => {
     return (
-        <div className="login_manager">
-            <Navbar.Brand
-                href={`/profile/${user.id}`}>
+        <Nav className="login_manager">
+            <Link to={`/profile/${user.id}`} className="navbar-brand">
                 {user.name}
-            </Navbar.Brand>
+            </Link>
             <Button variant="primary" onClick={logout}>
                 Выйти
             </Button>
-        </div>
+        </Nav>
     );
 });
 

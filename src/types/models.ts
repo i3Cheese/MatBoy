@@ -38,3 +38,18 @@ export interface League extends LeagueBasics {
     edit_access: boolean,
     link?: string,
 }
+
+export interface TeamBasics {
+    name: string,
+    id: number,
+}
+
+export interface Team extends TeamBasics {
+    motto: string | null,
+    tournament: TournamentBasics,
+    league: LeagueBasics | null,
+    status_string: "deleted" | "waiting" | "accepted",
+    trainer: User,
+    edit_access: boolean,
+
+}

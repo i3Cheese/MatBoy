@@ -193,6 +193,7 @@ def process_team_players(session, entries, team):
     return emails
 
 
+
 @blueprint.route('/tournament/<int:tour_id>/team/<int:team_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_team(tour_id: int, team_id: int):

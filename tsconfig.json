@@ -12,6 +12,8 @@
     "allowJs": true,
     "moduleResolution": "node",
     "outDir": "./static/",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "downlevelIteration": true,
+    "typeRoots": [ "./types", "./node_modules/@types"]
   }
 }

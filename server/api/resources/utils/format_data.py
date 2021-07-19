@@ -8,20 +8,6 @@ from datetime import date, datetime
 import logging
 
 
-def get_date_from_string(strdate: str):
-    if not strdate:
-        return None
-    return date.fromisoformat('-'.join(reversed(strdate.split("."))))
-
-
-def get_datetime_from_string(strdatetime: str):
-    if not strdatetime:
-        return None
-    dt, tm = strdatetime.split(' ')
-    dt = '-'.join(reversed(dt.split('.')))
-    return datetime.fromisoformat(dt + ' ' + tm)
-
-
 def abort_if_email_exist(session, email):
     user = session.query(User).filter(User.email == email).first()
     logging.info(repr(user))
@@ -38,4 +24,4 @@ def to_dict(obj):
         return obj.to_secure_dict()
 
 
-__all__ = ['get_datetime_from_string', 'get_date_from_string', 'abort_if_email_exist', 'to_dict']
+__all__ = ['abort_if_email_exist', 'to_dict']

@@ -7,7 +7,7 @@ from flask_restful.inputs import boolean
 
 from data import League, get_session
 from server.api import api
-from server.api.resources import get_tour, get_user
+from server.api.resources.utils import get_tour, get_user
 
 
 @api.resource('/league')

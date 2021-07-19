@@ -1,7 +1,14 @@
 import authService from "./auth.services";
-import tournamentService, {ITournamentFormRequest} from "./tournament.services";
-import leagueServices from "./league.services";
-
 export {authService};
-export {leagueServices};
+
+import tournamentService, {ITournamentFormRequest} from "./tournament.services";
 export {tournamentService, ITournamentFormRequest };
+
+import leagueServices from "./league.services";
+export {leagueServices};
+
+import teamServices, {TeamData} from "./team.sevices";
+export {teamServices, TeamData};
+
+import userServices from "./user.services";
+export {userServices};

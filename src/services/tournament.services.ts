@@ -1,5 +1,6 @@
 import {Tournament} from "../types/models";
 import revive from "../helpers/json/revive";
+import {ErrorResponse} from "./types";
 
 
 export const tournamentService = {
@@ -54,13 +55,12 @@ export const tournamentService = {
             body: JSON.stringify({form}),
         }
         const response = await fetch(`/api/tournament`, requestOptions);
-        const data = await response.text().then(t => JSON.parse(t, revive));
-        const {tournament: tour, success, message} : {tournament?: Tournament, success: boolean, message?: string} = data;
-        if (success) {
-            console.log('success')
-            return tour as Tournament;
+        const data: FullTournamentResponse = await response.text().then(t => JSON.parse(t, revive));
+
+        if (data.success) {
+            return data.tournament;
         } else {
-            const er = message || response.statusText;
+            const er = data.message || response.statusText;
             return Promise.reject(er);
         }
     },
@@ -74,16 +74,22 @@ export const tournamentService = {
             body: JSON.stringify({form}),
         }
         const response = await fetch(`/api/tournament/${tourId}`, requestOptions);
-        const data = await response.text().then(t => JSON.parse(t, revive));
-        const {tournament: tour, success, message} : {tournament?: Tournament, success: boolean, message?: string} = data;
-        if (success) {
-            return tour as Tournament;
+        const data: FullTournamentResponse = await response.text().then(t => JSON.parse(t, revive));
+        if (data.success) {
+            return data.tournament;
         } else {
-            const er = message || response.statusText;
+            const er = data.message || response.statusText;
             return Promise.reject(er);
         }
     }
 }
+
+interface TournamentResponse {
+    success: true,
+    tournament: Tournament,
+}
+
+type FullTournamentResponse = TournamentResponse | ErrorResponse;
 
 export interface ITournamentFormRequest {
     title: string,
