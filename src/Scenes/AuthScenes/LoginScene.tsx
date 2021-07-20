@@ -1,7 +1,7 @@
 import React, {FC} from "react";
-import LoginForm from "./LoginForm";
+import LoginForm from "../../components/models/User/LoginForm";
 import {Link} from "react-router-dom";
-import {FormBox} from "../../../components";
+import {FormBox} from "../../components";
 
 const LoginScene: FC = () => {
     return (

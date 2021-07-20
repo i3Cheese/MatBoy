@@ -1,5 +1,6 @@
 import {User} from "../types/models";
 import revive from "../helpers/json/revive";
+import {UserDataFormData} from "../components/models/User";
 
 export const authService = {
     login: function login(form: object) {
@@ -31,6 +32,34 @@ export const authService = {
             )
     },
 
+    registration: function (data: UserDataFormData) {
+        const requestOptions: RequestInit = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        };
+        return fetch(`/api/registration`, requestOptions)
+            .then(
+                r => r.text().then(t => JSON.parse(t, revive)).then(
+                    ({success, user, message}: { success: boolean, user?: User, message?: string }) => {
+                        if (success) {
+                            return user as User;
+                        } else {
+                            const er = message || r.statusText;
+                            return Promise.reject(er);
+                        }
+                    }
+                )
+                ,
+                r => r.json().then(({message}: { message?: string }) => {
+                    const er = message || r.statusText;
+                    return Promise.reject(er);
+                })
+            )
+    },
     logout: function () {
         return fetch('/api/logout', {method: 'POST'})
             .then(r => r.json().then(

@@ -5,10 +5,12 @@ from flask_login import login_user, logout_user, current_user
 # from data import db_session
 from server.api import api
 from server import app
-from data import User
+from data import User, get_session
+from server.api.resources.utils import date_type, abort_if_email_exist
 from server.forms import LoginForm
 
 
+@api.resource('/login')
 class LoginResource(Resource):
     def post(self):
         data = request.get_json()
@@ -33,9 +35,7 @@ class LoginResource(Resource):
         return jsonify(res)
 
 
-api.add_resource(LoginResource, '/login')
-
-
+@api.resource('/current_user')
 class CurrentUser(Resource):
     def get(self):
         if current_user.is_authenticated:
@@ -44,9 +44,7 @@ class CurrentUser(Resource):
             return jsonify({"loggedIn": False})
 
 
-api.add_resource(CurrentUser, '/current_user')
-
-
+@api.resource('/logout')
 class Logout(Resource):
     def post(self):
         if current_user.is_authenticated:
@@ -54,4 +52,30 @@ class Logout(Resource):
         return jsonify({'loggedIn': False, 'message': "Вы вышли из аккаунта"})
 
 
-api.add_resource(Logout, '/logout')
+@api.resource('/registration')
+class RegistrationResource(Resource):
+    reg_pars = reqparse.RequestParser()
+    reg_pars.add_argument('surname', required=True, type=str)
+    reg_pars.add_argument('name', required=True, type=str)
+    reg_pars.add_argument('patronymic', required=False, type=str)
+    reg_pars.add_argument('city', required=False, type=str)
+    reg_pars.add_argument('birthday', required=True, type=date_type)
+    reg_pars.add_argument('email', required=True, type=str)
+    reg_pars.add_argument('password', required=True, type=str)
+
+    @classmethod
+    def post(cls):
+        args = cls.reg_pars.parse_args()
+        session = get_session()
+        abort_if_email_exist(session, args['email'])
+        user = User().fill(email=args['email'],
+                           name=args['name'],
+                           surname=args['surname'],
+                           patronymic=args['patronymic'],
+                           city=args['city'],
+                           birthday=args['birthday'],
+                           )
+        user.set_password(args['password'])
+        session.add(user)
+        session.commit()
+        return jsonify({"success": "ok", "user": user.to_dict()})

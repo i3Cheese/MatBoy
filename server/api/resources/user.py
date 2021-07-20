@@ -64,7 +64,7 @@ class UsersResource(Resource):
         user.set_password(args['password'])
         session.add(user)
         session.commit()
-        return jsonify({"success": "ok"})
+        return jsonify({"success": "ok", "user": user.to_dict()})
 
     @classmethod
     def get(cls):

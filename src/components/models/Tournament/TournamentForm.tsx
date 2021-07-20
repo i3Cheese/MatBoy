@@ -2,7 +2,6 @@ import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandl
 import {Tournament} from "../../../types/models";
 import moment from 'moment';
 import {Button, Form} from "react-bootstrap";
-import {Fieldset} from "../../form/form";
 import produce from "immer";
 import {tournamentService, ITournamentFormRequest} from "../../../services";
 import {AppLoader} from "../../Loader";
@@ -89,7 +88,7 @@ export class TournamentForm extends Component<TournamentFormProps, TournamentFor
         if (this.props.isLoading) return <AppLoader/>
         return (
             <Form onSubmit={this.handleSubmit}>
-                <Fieldset>
+                <fieldset>
                     <Form.Group>
                         <Form.Label>Название *</Form.Label>
                         <Form.Control name="title" type="text" value={form.title} onChange={this.handleChange}/>
@@ -117,7 +116,7 @@ export class TournamentForm extends Component<TournamentFormProps, TournamentFor
                                       onChange={this.handleChange}/>
                     </Form.Group>
                     <Button variant="primary" type="submit">{this.props.tour ? "Изменить" : "Создать"}</Button>
-                </Fieldset>
+                </fieldset>
             </Form>
         );
     }

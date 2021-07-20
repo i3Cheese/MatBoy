@@ -1,5 +1,6 @@
 import React, {ComponentProps, FC} from 'react';
 import {Breadcrumb, BreadcrumbItem, BreadcrumbItemProps, BreadcrumbProps} from "react-bootstrap";
+import {Link, LinkProps} from "react-router-dom";
 
 export interface SimpleMenuProps extends ComponentProps<'div'> {
 }
@@ -20,7 +21,16 @@ export const SimpleMenuItem: FC<BreadcrumbItemProps> = ({children, ...props}) =>
     </BreadcrumbItem>
 )
 
+export const SimpleMenuLink: FC<LinkProps> = ({children, ...props}) => (
+    <li className="breadcrumb-item">
+        <Link {...props}>
+            {children}
+        </Link>
+    </li>
+)
+
 export const SimpleMenu = Object.assign(RawSimpleMenu, {
-    Item: SimpleMenuItem
+    Item: SimpleMenuItem,
+    Link: SimpleMenuLink,
 });
 export default SimpleMenu;

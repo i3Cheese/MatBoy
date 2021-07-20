@@ -1,11 +1,11 @@
 import React from "react";
 import {FC} from "react";
 import {Container, Nav, Navbar, NavItem} from "react-bootstrap";
-import Menu, {MenuList} from "./Menu";
 import LoginManager from "./LoginManager";
 import {Link} from "react-router-dom";
+import Menu from "./Menu";
 
-const Header: FC<{menu?: MenuList}> = ({menu}) => {
+const Header: FC = ({}) => {
     return (
         <header className="">
             <Navbar bg="dark" variant="dark" expand="lg">
@@ -15,7 +15,7 @@ const Header: FC<{menu?: MenuList}> = ({menu}) => {
                     </Link>
                     <Navbar.Toggle/>
                     <Navbar.Collapse>
-                        {menu && <Menu className="me-auto" menu={menu}/>}
+                        <Menu className="me-auto"/>
                         <Nav className="me-3">
                             <NavItem>
                                 <Link to="/feedback" className="nav-link">
@@ -30,5 +30,4 @@ const Header: FC<{menu?: MenuList}> = ({menu}) => {
         </header>
     );
 }
-export {MenuList};
 export default Header;

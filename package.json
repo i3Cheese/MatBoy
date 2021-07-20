@@ -57,6 +57,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/preset-react": "^7.12.1",
+    "@types/yup": "^0.29.13",
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "cross-env": "^7.0.3",

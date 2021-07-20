@@ -2,10 +2,10 @@ import React, {FC, useEffect, useState} from 'react';
 import {Route, Switch, useParams, useRouteMatch} from "react-router";
 import {Tournament} from "../../types/models";
 import {tournamentService} from "../../services";
-import {LoaderPage} from "../../components";
-import {TournamentPage} from "../../components/models/Tournament/Tournament";
+import {BoxContainer, LoaderPage} from "../../components";
 import {TeamScenes} from "./TeamScenes";
 import {EditTournamentFormBox, NewTournamentFormBox} from "../../components/models/Tournament/TournamentForm";
+import {TournamentPage} from "./TournamentPage";
 
 const TournamentIdScenes: FC = () => {
     const {path} = useRouteMatch();
@@ -20,18 +20,14 @@ const TournamentIdScenes: FC = () => {
         return <LoaderPage/>;
     return (
         <Switch>
-            <Route
-                path={path} exact
-                render={(props) =>
-                    <TournamentPage {...props} tour={tour}/>
-                }
-            />
-            <Route
-                path={`${path}/edit`}
-                render={props => (
-                    <EditTournamentFormBox {...props} tour={tour} setTour={setTour}/>
-                )}
-            />
+            <Route path={path} exact>
+                <TournamentPage tour={tour}/>
+            </Route>
+            <Route path={`${path}/edit`}>
+                <BoxContainer>
+                    <EditTournamentFormBox tour={tour} setTour={setTour}/>
+                </BoxContainer>
+            </Route>
             <Route
                 path={`${path}/team`}
                 render={props => (
@@ -46,7 +42,11 @@ const TournamentScenes: FC = () => {
     const {path} = useRouteMatch();
     return (
         <Switch>
-            <Route path={`${path}/new`} component={NewTournamentFormBox}/>
+            <Route path={`${path}/new`}>
+                <BoxContainer>
+                    <NewTournamentFormBox/>
+                </BoxContainer>
+            </Route>
             <Route path={`${path}/:tourId`} component={TournamentIdScenes}/>
         </Switch>
     )

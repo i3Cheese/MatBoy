@@ -1,6 +1,6 @@
 import logging
 
-from flask_login import current_user
+from flask_login import current_user, login_required
 from flask_restful import Resource, reqparse, abort
 from flask import jsonify, request
 from data import League, get_session, Team, User, Tournament
@@ -70,3 +70,64 @@ class TeamResource(Resource):
         team = get_model(Team, team_id)
         data = {'team': team.to_dict(), 'success': True}
         return jsonify(data)
+
+    put_pars = reqparse.RequestParser()
+    put_pars.add_argument('name', type=str)
+    put_pars.add_argument('motto', type=str)
+    put_pars.add_argument('status', type=int)
+    put_pars.add_argument('league.id', type=int)  # 0 == None
+
+    @login_required
+    def put(self, team_id):
+        """
+        If trainer.id and trainer.email specified in the same time
+        trainer was looking by trainer.id.
+        """
+        args = self.put_pars.parse_args()
+        logging.info(f"Team put request with args {args}")
+
+        session = get_session()
+        team = get_team(session, team_id)
+
+        if not (args['league.id'] is None and args['status'] is None):
+            # Change league and status can only tour chief
+            if not team.tournament.have_permission(current_user):
+                abort(403, message="You haven't access to tournament")
+            if args['league.id'] is not None:
+                if args['league.id'] == 0:
+                    team.league = None
+                else:
+                    team.league = get_model(League, args['league.id'])
+            if args['status'] is not None:
+                team.status = args['status']
+            if team.status >= 2 and team.league is None:
+                abort(400, message="Принятая команда должна быть привязана к лиге")
+
+        if not (args['name'] is None and args['motto'] is None) or args['send_info']:
+            if not team.have_permission(current_user):
+                abort(403, message="You haven't access to team")
+            if args['name'] is not None:
+                if not args['name']:
+                    abort(400, message="Название не может быть пустым")
+                team.name = args['name']
+            if args['motto'] is not None:
+                team.motto = args['motto']
+        session.merge(team)
+        session.commit()
+
+        response = {'success': 'ok'}
+        if args['send_info']:  # Send info about team if requested
+            response['team'] = team.to_dict()
+        return response
+
+    @login_required
+    def delete(self, team_id):
+        """Sets the status of team to zero. Thats mean that the team request was refused"""
+        session = get_session()
+        team = get_team(session, team_id)
+        if not team.have_permission(current_user):
+            abort(403, message="Permission denied")
+        team.status = 0
+        session.merge(team)
+        session.commit()
+        return jsonify({'success': 'ok'})

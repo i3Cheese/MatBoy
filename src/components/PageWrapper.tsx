@@ -1,11 +1,11 @@
 import React from "react";
 import {FC} from "react";
-import Header, {MenuList} from "./Header";
+import Header from "./Header";
 import {Main} from "./layout";
 
-const PageWrapper: FC<{menu?: MenuList}> = ({menu, children}) => (
+const PageWrapper: FC = ({children}) => (
     <>
-        <Header menu={menu}/>
+        <Header/>
         <Main>
             {children}
         </Main>

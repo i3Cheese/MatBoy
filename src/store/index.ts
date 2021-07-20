@@ -1,13 +1,14 @@
 import {configureStore } from '@reduxjs/toolkit'
-import {authReducer} from "./reducers";
+import {authReducer, menuReducer} from "./reducers";
+import AppAction from './actionTypes';
 
 const store = configureStore({
     reducer: {
         auth: authReducer,
+        menu: menuReducer,
     }
 });
 
-import AppAction from './actionTypes';
 export default store;
 export { AppAction };
 export type AppState = ReturnType<typeof store.getState>;

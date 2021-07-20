@@ -5,7 +5,7 @@ export type MenuState = {items: [string, string][]}
 
 const initialState: MenuState = {items: []}
 
-export function menuReduces(state: MenuState = initialState, action: AppAction): MenuState {
+export function menuReducer(state: MenuState = initialState, action: AppAction): MenuState {
     switch (action.type) {
         case "ADD_MENU":
             return produce(state, (d) => {

@@ -1,12 +1,12 @@
 import {authService} from '../services';
-import {Dispatch} from "redux";
 import {AppAction, AppDispatch} from '../store'
 import {User} from "../types/models";
+import {UserDataFormData} from "../components/models/User";
 
 export const authActions = {
     login,
     logout,
-    // register,
+    registration,
     getCurrentUser,
 };
 
@@ -42,8 +42,39 @@ function login(form: { email: string, password: string, }) {
     }
 }
 
+function registration(data: UserDataFormData) {
+    return (dispatch: AppDispatch) => {
+        dispatch(request());
+
+        return authService.registration(data)
+            .then(
+                (user: User) => {
+                    console.log(user);
+                    dispatch(success(user));
+                },
+                (error: string) => {
+                    console.log(error);
+                    dispatch(failure(error));
+                    // dispatch(alertActions.error(error));
+                }
+            );
+    };
+
+    function request(): AppAction {
+        return {type: "LOGIN_REQUEST"}
+    }
+
+    function success(user: User): AppAction {
+        return {type: "LOGIN_SUCCESS", user}
+    }
+
+    function failure(error: string): AppAction {
+        return {type: "LOGIN_FAILURE", error}
+    }
+}
+
 function logout() {
-    return (dispatch: Dispatch) => {
+    return (dispatch: AppDispatch) => {
         authService.logout().then(() => {
             dispatch(success());
         });

@@ -32,7 +32,7 @@ const Logged = connect(null, (dispatch => {
 const Logout: FC<{}> = ({}) => {
     return (
         <div className="login_manager">
-            <Link className="btn btn-success" to="/register">
+            <Link className="btn btn-success" to="/registration">
                 Зарегистрироваться
             </Link>
             <Link className="btn btn-primary" to="/login" role="button">
