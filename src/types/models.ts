@@ -27,29 +27,30 @@ export interface Tournament extends TournamentBasics{
 }
 
 export interface LeagueBasics {
-    id: string,
+    id: number,
     title: string,
+    tournament: TournamentBasics,
 }
 
 export interface League extends LeagueBasics {
     description: string,
     chief: User,
-    tournament: TournamentBasics,
     edit_access: boolean,
+    teams: TeamBasics[],
     link?: string,
 }
 
 export interface TeamBasics {
     name: string,
     id: number,
+    tournament: TournamentBasics,
 }
 
 export interface Team extends TeamBasics {
     motto: string | null,
-    tournament: TournamentBasics,
     league: LeagueBasics | null,
     status_string: "deleted" | "waiting" | "accepted",
     trainer: User,
+    players: User[],
     edit_access: boolean,
-
 }

@@ -6,7 +6,6 @@ import {BrowserRouter} from "react-router-dom";
 import store from './store';
 
 import App from "./App";
-import 'bootstrap/scss/bootstrap.scss';
 import './index.scss'
 import {setLocale} from "yup";
 import {ru} from "./helpers/yupLocales";

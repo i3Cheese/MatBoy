@@ -5,19 +5,19 @@ import { Link } from "react-router-dom";
 import {useSelector} from "react-redux";
 import {AppState} from "../../store";
 
-export type MenuList = [string, string][];
 
 export interface MenuProps extends NavProps {
 }
 
+
 const Menu: FC<MenuProps> = ({...props}) => {
-    const items = useSelector<AppState, MenuList>(({menu}) => menu.items);
+    const items = useSelector<AppState, AppState["menu"]["items"]>(({menu}) => menu.items);
     return (
         <Nav {...props}>
-            {items.map(([url, name],index) => (
+            {items.map(({url, title}, index) => (
                 <Nav.Item key={url}>
-                    <Nav.Link as={Link} to={url} disabled={index === items.length - 1}>
-                        {name}
+                    <Nav.Link as={Link} to={url}>
+                        {title}
                     </Nav.Link>
                 </Nav.Item>
             ))}

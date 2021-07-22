@@ -27,6 +27,7 @@ class Team(BaseModel):
                       "tournament.title",
                       "league.id",
                       "league.title",
+                      "players",
                       "link",
                       "edit_access",
                       )
@@ -76,10 +77,19 @@ class Team(BaseModel):
     def status_string(self):
         s = self.status
         if s == 0:
-            return "deleted"
+            return "declined"
         elif s == 1:
             return "waiting"
         elif s == 2:
             return "accepted"
         else:
-            return "deleted"
+            return "declined"
+
+    @status_string.setter
+    def status_string(self, s):
+        if s == "waiting":
+            self.status = 1
+        elif s == "accepted":
+            self.status =  2
+        elif True or s == "declined":
+            self.status = 0

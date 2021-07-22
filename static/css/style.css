@@ -367,9 +367,7 @@ button, input {
 }
 
 .box_item-title {
-    color: #333;
     font-size: 1.6em;
-    font-family: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
     font-weight: 700;
     width: 100%;
     margin-bottom: 0;

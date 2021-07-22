@@ -3,6 +3,7 @@ import {Route, Switch, useParams, useRouteMatch} from "react-router";
 import {Team, Tournament} from "../../../types/models";
 import {BoxContainer, LoaderPage, NewTeamFormBox} from "../../../components";
 import {teamServices} from "../../../services";
+import MenuItemComponent from "../../../components/MenuItemComponent";
 
 const TeamIdScenes: FC<{tour: Tournament}> = ({tour}) => {
     const {path} = useRouteMatch();
@@ -14,11 +15,11 @@ const TeamIdScenes: FC<{tour: Tournament}> = ({tour}) => {
     }, [teamId]);
     if (team === null) return <LoaderPage/>
     return (
-        <Switch>
+        <MenuItemComponent title={team.name}><Switch>
             <Route path={path} exact render={(...props) => (
                 team.name
             )}/>
-        </Switch>
+        </Switch></MenuItemComponent>
     )
 }
 
@@ -27,9 +28,11 @@ const TeamScenes: FC<{tour: Tournament}> = ({tour, ...props}) => {
     return (
         <Switch>
             <Route path={`${path}/new`}>
-                <BoxContainer>
-                    <NewTeamFormBox tour={tour}/>
-                </BoxContainer>
+                <MenuItemComponent title={"командная заявка"}>
+                    <BoxContainer>
+                        <NewTeamFormBox tour={tour}/>
+                    </BoxContainer>
+                </MenuItemComponent>
             </Route>
             <Route path={`${path}/:teamId`} render={(...props) => (
                 <TeamIdScenes tour={tour} {...props}/>

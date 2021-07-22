@@ -34,7 +34,7 @@ class TeamsResource(Resource):
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
 
     post_pars = reqparse.RequestParser()
-    post_pars.add_argument('tournament_id', type=ModelId(Tournament))
+    post_pars.add_argument('tournament_id', type=ModelId(Tournament), dest='tournament')
     post_pars.add_argument('name', type=str, required=True, trim=True)
     post_pars.add_argument('motto', type=str, trim=True)
     post_pars.add_argument('players.email', type=lower)
@@ -45,7 +45,7 @@ class TeamsResource(Resource):
         args = self.post_pars.parse_args()
         print(args)
         session = get_session()
-        tour = args['tournament_id']
+        tour = args['tournament']
         if not tour:
             abort(404)
         res = {'success': False}
@@ -75,7 +75,8 @@ class TeamResource(Resource):
     put_pars.add_argument('name', type=str)
     put_pars.add_argument('motto', type=str)
     put_pars.add_argument('status', type=int)
-    put_pars.add_argument('league.id', type=int)  # 0 == None
+    put_pars.add_argument('status_string', type=str)
+    put_pars.add_argument('league_id', type=ModelId(League), dest='league')  # 0 == None
 
     @login_required
     def put(self, team_id):
@@ -88,22 +89,22 @@ class TeamResource(Resource):
 
         session = get_session()
         team = get_team(session, team_id)
-
-        if not (args['league.id'] is None and args['status'] is None):
+        print(args['status_string'])
+        if not (args['league'] is None and args['status'] is None and args['status_string'] is None):
             # Change league and status can only tour chief
             if not team.tournament.have_permission(current_user):
                 abort(403, message="You haven't access to tournament")
-            if args['league.id'] is not None:
-                if args['league.id'] == 0:
-                    team.league = None
-                else:
-                    team.league = get_model(League, args['league.id'])
+            if args['league'] is not None:
+                team.league = args['league']
             if args['status'] is not None:
                 team.status = args['status']
+            if args['status_string'] is not None:
+                team.status_string = args['status_string']
+                print(team.status_string)
             if team.status >= 2 and team.league is None:
                 abort(400, message="Принятая команда должна быть привязана к лиге")
 
-        if not (args['name'] is None and args['motto'] is None) or args['send_info']:
+        if not (args['name'] is None and args['motto'] is None):
             if not team.have_permission(current_user):
                 abort(403, message="You haven't access to team")
             if args['name'] is not None:
@@ -115,19 +116,5 @@ class TeamResource(Resource):
         session.merge(team)
         session.commit()
 
-        response = {'success': 'ok'}
-        if args['send_info']:  # Send info about team if requested
-            response['team'] = team.to_dict()
+        response = {'success': True, 'team': team.to_dict()}
         return response
-
-    @login_required
-    def delete(self, team_id):
-        """Sets the status of team to zero. Thats mean that the team request was refused"""
-        session = get_session()
-        team = get_team(session, team_id)
-        if not team.have_permission(current_user):
-            abort(403, message="Permission denied")
-        team.status = 0
-        session.merge(team)
-        session.commit()
-        return jsonify({'success': 'ok'})

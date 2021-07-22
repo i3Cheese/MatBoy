@@ -12,6 +12,10 @@ class League(BaseModel):
                       "chief",
                       "tournament.id",
                       "tournament.title",
+                      "teams.id",
+                      "teams.name",
+                      "teams.tournament.id",
+                      "teams.tournament.title",
                       "edit_access",
                       "link",
                       )

@@ -1,17 +1,16 @@
 import {AppDispatch} from '../store';
+import {MenuItem} from "../types/menu";
 
-export function addMenuItem(url: string, title: string){
+export function addMenuItem(item: MenuItem){
     return (dispatch: AppDispatch) => {dispatch({
         type: "ADD_MENU",
-        url,
-        title,
+        item,
     })}
 }
 
-export function removeMenuItem(url: string, title: string) {
+export function removeMenuItem(item: MenuItem) {
     return (dispatch: AppDispatch) => {dispatch({
         type: "REMOVE_MENU",
-        url,
-        title,
+        item,
     })}
 }

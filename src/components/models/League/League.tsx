@@ -1,9 +1,9 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC} from "react";
 import {League} from "../../../types/models";
 import DivLink from "../../layout/DivLink";
 import {Box, BoxTitle} from "../../layout";
 import Loader from "react-loader-spinner";
-import {leagueServices} from "../../../services";
+import {useLeagues} from "../../../helpers/hooks";
 
 export const LeagueItem: FC<{ league: League }> = ({league}) => {
     return (
@@ -14,10 +14,7 @@ export const LeagueItem: FC<{ league: League }> = ({league}) => {
 };
 
 export const LeaguesBox: FC<{tourId: number}> = ({tourId}) => {
-    const [leagues, setLeagues] = useState<League[] | null>(null);
-    useEffect(() => {
-        leagueServices.getLeagues(tourId).then((leagues) => setLeagues(leagues));
-    }, [tourId])
+    const [leagues, setLeagues] = useLeagues(tourId);
     return (
         <Box size="large">
             <BoxTitle>

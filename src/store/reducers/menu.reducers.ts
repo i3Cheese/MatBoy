@@ -1,7 +1,8 @@
 import AppAction from "../actionTypes";
 import produce from "immer";
+import {MenuItem} from "../../types/menu";
 
-export type MenuState = {items: [string, string][]}
+export type MenuState = {items: MenuItem[]}
 
 const initialState: MenuState = {items: []}
 
@@ -9,11 +10,11 @@ export function menuReducer(state: MenuState = initialState, action: AppAction):
     switch (action.type) {
         case "ADD_MENU":
             return produce(state, (d) => {
-                d.items.push([action.url, action.title]);
+                d.items[action.item.priority] = action.item;
             });
         case "REMOVE_MENU":
             return produce(state, (d) => {
-                d.items = d.items.slice(0, d.items.indexOf([action.url, action.title]));
+                delete d.items[action.item.priority];
             });
         default:
             return state

@@ -8,6 +8,7 @@ import {teamServices, userServices} from "../../../services";
 import {Redirect} from "react-router";
 import {AppLoader} from "../../Loader";
 import {FormBox} from "../../layout";
+import {userObject} from "../../../helpers/yupFields";
 
 
 export interface TeamFormProps {
@@ -32,12 +33,7 @@ export const TeamForm: FC<TeamFormProps> = ({onSubmit, isLoading}) => {
         name: Yup.string().required("Необходимо указать название."),
         motto: Yup.string(),
         players: Yup.array().of(
-            Yup.object().shape({
-                email: Yup.string().required("Это поле обязательно").ensure()
-                    .transform((value) => value.toLowerCase())
-                    .email("Неправильный формат")
-                    .test('exist', "Пользователь не найден", email => userServices.exist(email))
-            }).test('email', 'Повторный игрок', function (value) {
+            userObject().test('email', 'Повторный игрок', function (value) {
                 if (!value || !value.email) {
                     return true;
                 }
@@ -90,7 +86,7 @@ export const TeamForm: FC<TeamFormProps> = ({onSubmit, isLoading}) => {
                     </FloatingLabel>
                     <FloatingLabel label="Девиз" className="mb-3">
                         <Form.Control {...register("motto")} as="textarea" style={{height: "100px"}}
-                                      isInvalid={errors.name !== undefined}/>
+                                      isInvalid={errors.motto !== undefined}/>
                         <Form.Control.Feedback type="invalid">
                             {errors.motto?.message}
                         </Form.Control.Feedback>
