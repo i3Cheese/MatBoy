@@ -150,15 +150,9 @@ export const RegistrationFormBox: FC<ComponentProps<typeof FormBox> > = ({...pro
                     На главную
                 </Link>
                 <br/>
-                Ещё нет аккаунта?&nbsp;
-                <Link to="/registration" className="form-additional-message__link">
-                    Зарегистрируйтесь
-                </Link>
-                <br/>
-                Забыли пароль?&nbsp;
-                <Link to="/reset_password" className="form-additional-message__link">
-                    {/*TODO: reset_password*/}
-                    Восстановить
+                 Уже зарегестрированы?&nbsp;
+                <Link to="/login" className="form-additional-message__link">
+                    Войдите
                 </Link>
             </FormBox.Item>
         </FormBox.Additions>

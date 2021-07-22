@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useMemo, useState} from "react";
+import React, {FC, useCallback, useMemo} from "react";
 import {League, Team} from "../../../types/models";
 import {Accordion, Badge, Button, ButtonGroup, Form, ListGroup, ListGroupItem} from "react-bootstrap";
 import {UserLink} from "../User";
@@ -77,7 +77,7 @@ const TeamItemBorder: FC<{ team: Team }> = ({children, team}) => {
             break;
     }
     return (
-        <Accordion.Item eventKey={`team#${team.id}`} className={`border border-${borderColor}`}>
+        <Accordion.Item eventKey={`team#${team.id}`} className={`border border-2 border-${borderColor}`}>
             <Accordion.Header>
                 <BoxTitle style={{flexGrow: 1}}>{team.name}</BoxTitle>
                 {team.status_string === "waiting" && <Badge bg={borderColor}>{statusText}</Badge>}
@@ -125,7 +125,7 @@ const TeamIterations: FC<{ team: Team, leagues: League[] } & TeamCallbacks> = ({
     return (
         <>
             {team.status_string === "waiting" || team.status_string === "deleted" ?
-                <ListGroup.Item as={Form.Select} {...register('leagueId')} isInvalid={errors.leagueId === undefined}>
+                <ListGroup.Item as={Form.Select} {...register('leagueId')} isInvalid={errors.leagueId !== undefined}>
                     <option/>
                     {leagues.map((league) => (
                         <option key={league.id} value={league.id}>

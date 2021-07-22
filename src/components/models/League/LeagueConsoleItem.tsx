@@ -33,6 +33,7 @@ export const EditableLeagueConsoleItem: FC<EditableLeagueConsoleItemProps> = (
                 <LeagueForm
                     league={league}
                     onSubmit={handleSubmit}
+                    onReset={handleToggle}
                 />
                 :
                 <ConsoleLeagueItemInfo
@@ -70,7 +71,7 @@ const ConsoleLeagueItemInfo: FC<{ league: League, teams: Team[], onEdit: () => v
         <ListGroup.Item variant="secondary">
             Команды
         </ListGroup.Item>
-        {teams.map((team, i) => (
+        {teams.map((team) => (
             <ListGroupItem key={team.id}>
                 <TeamLink team={team}/>
             </ListGroupItem>

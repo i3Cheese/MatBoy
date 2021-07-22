@@ -1,4 +1,4 @@
-import React, {ChangeEventHandler, Component, FormEventHandler} from "react";
+import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandler} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {Button, Form, FormProps} from "react-bootstrap";
 import produce from "immer";
@@ -6,6 +6,8 @@ import ArgsType = jest.ArgsType;
 import {authActions} from "../../../actions";
 import {AppDispatch, AppState} from "../../../store";
 import {Redirect} from "react-router";
+import {FormBox} from "../../layout";
+import {Link} from "react-router-dom";
 
 
 interface LoginState {
@@ -15,7 +17,7 @@ interface LoginState {
     }
 }
 
-class LoginForm extends Component<LoginProps, LoginState> {
+class RawLoginForm extends Component<LoginProps, LoginState> {
     constructor(props: LoginProps) {
         super(props);
         this.state = {
@@ -81,6 +83,33 @@ function mapDispatchToProps(dispatch: AppDispatch) {
 }
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type LoginProps = ConnectedProps<typeof connector> & FormProps;
+export const LoginForm = connector(RawLoginForm);
 
 
-export default connector(LoginForm);
+export const LoginFormBox: FC<ComponentProps<typeof FormBox> > = ({...props}) => (
+    <FormBox size="middle" {...props}>
+        <FormBox.Title>
+            Вход
+        </FormBox.Title>
+        <LoginForm/>
+        <FormBox.Additions>
+            <FormBox.Item>
+                Передумали?&nbsp;
+                <Link to="/" className="form-additional-message__link">
+                    На главную
+                </Link>
+                <br/>
+                Ещё нет аккаунта?&nbsp;
+                <Link to="/registration" className="form-additional-message__link">
+                    Зарегистрируйтесь
+                </Link>
+                <br/>
+                Забыли пароль?&nbsp;
+                <Link to="/reset_password" className="form-additional-message__link">
+                    {/*TODO: reset_password*/}
+                    Восстановить
+                </Link>
+            </FormBox.Item>
+        </FormBox.Additions>
+    </FormBox>
+);

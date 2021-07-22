@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {AppLoader} from "../../Loader";
-import {Button, FloatingLabel, Form} from "react-bootstrap";
+import {Button, ButtonGroup, FloatingLabel, Form} from "react-bootstrap";
 import {FormBox} from "../../layout";
 import {League,} from "../../../types/models";
 import {userObject} from "../../../helpers/yupFields";
@@ -11,6 +11,7 @@ import {useLoadingOnCallback} from "../../../helpers/hooks";
 
 export interface LeagueFormProps {
     onSubmit: (data: LeagueFormData) => Promise<any>,
+    onReset?: () => void,
     league?: League,
 }
 
@@ -23,7 +24,7 @@ export interface LeagueFormData {
 interface LeagueFormInputs extends LeagueFormData {
 }
 
-export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league}) => {
+export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league, onReset}) => {
     const validationSchema = Yup.object().shape({
         title: Yup.string().required(),
         description: Yup.string().optional(),
@@ -39,9 +40,12 @@ export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league}) => {
             reset,
         )
     ), [reset, loadingOnSubmit])
+    const handleReset = useCallback(() => {
+        (onReset || reset)();
+    }, [onReset, reset])
     if (isLoading) return <AppLoader/>
     return (
-        <Form onSubmit={handleSubmitFormHook(handleSubmit)}>
+        <Form onSubmit={handleSubmitFormHook(handleSubmit)} onReset={handleReset}>
             <FormBox.Group>
                 <FormBox.Item>
                     <FloatingLabel label="Имя" className="mb-3">
@@ -66,9 +70,14 @@ export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league}) => {
                     </FloatingLabel>
                 </FormBox.Item>
                 <FormBox.Item>
-                    <Button variant="primary" type="submit">
-                        Подтвердить
-                    </Button>
+                    <ButtonGroup className="w-100" >
+                        <Button variant="primary" type="submit">
+                            Подтвердить
+                        </Button>
+                        <Button variant="danger" type="reset">
+                            Отменить
+                        </Button>
+                    </ButtonGroup>
                 </FormBox.Item>
             </FormBox.Group>
         </Form>
