@@ -1,21 +1,7 @@
-function buildFormData(formData : FormData, data : any, parentKey: string = ''): void {
-    if (data && typeof data === 'object' && !(data instanceof Date) && !(data instanceof File)) {
-        Object.keys(data).forEach(key => {
-            buildFormData(formData, data[key], parentKey ? `${parentKey}[${key}]` : key);
-        });
-    } else {
-        const value = data == null ? '' : data;
+import {Team} from "../types/models";
 
-        formData.append(parentKey, value);
-    }
-}
-
-function jsonToFormData(data: object): FormData {
-    const formData = new FormData();
-
-    buildFormData(formData, data);
-
-    return formData;
-}
-
-export {jsonToFormData};
+export const sortTeams = (teams: Team[]) => [
+    ...teams.filter((team) => team.status_string == "waiting"),
+    ...teams.filter((team) => team.status_string == "accepted"),
+    ...teams.filter((team) => team.status_string == "deleted"),
+];

@@ -1,12 +1,9 @@
 @import "~bootstrap/scss/bootstrap";
-@import "~bootstrap/scss/reboot";
 
 $font-stack: "-apple-system", BlinkMacSystemFont, Arial, sans-serif;
 $background-color: $gray-200;
 
 body {
-  font: 100% $font-stack;
-  //color: ;
   background: url("./img/popcat.gif") repeat;
   min-height: 100vh;
   min-width: 100vw;

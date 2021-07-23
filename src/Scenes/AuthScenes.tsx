@@ -1,8 +1,7 @@
 import React, {FC} from "react";
 import {Route, Switch} from "react-router";
-import './AuthScenes.scss'
-import {BoxContainer} from "../../components";
-import {LoginFormBox, RegistrationFormBox} from "../../components/models/User";
+import {BoxContainer} from "../components";
+import {LoginFormBox, RegistrationFormBox} from "../components/models/User";
 
 const AuthScenes: FC = () => {
     return (

@@ -14,6 +14,7 @@ import {DeleteLeagueCallback, EditableLeagueConsoleItem, EditLeagueCallback} fro
 import {LeagueForm, LeagueFormData} from "../../League/LeagueForm";
 import {leagueServices, teamServices} from "../../../../services";
 import produce from "immer";
+import {sortTeams} from "../../../../helpers";
 
 
 export interface TournamentConsoleProps {
@@ -66,13 +67,12 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
     const [teams, setTeams, refreshTeams] = useTeams(tour.id);
 
     const editTeam = (team: Team) => {
-        setTeams(produce(teams, draft => {
-            if (draft === null) return;
+        setTeams(sortTeams(produce(teams as Team[], draft => {
             const i = draft.findIndex(l => l.id === team.id);
             if (i >= 0) {
                 draft[i] = team;
             }
-        }));
+        })));
         return team;
     };
     const teamCallbacks = {

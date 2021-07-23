@@ -4,6 +4,7 @@ import {useDispatch} from "react-redux";
 import {AppDispatch} from "../store";
 import {MenuItem} from "../types/menu";
 import {leagueServices, teamServices} from "../services";
+import {sortTeams} from "./funcs";
 
 export function useMenuItem(item: MenuItem) {
     const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +16,7 @@ export function useMenuItem(item: MenuItem) {
     }, [item,]);
 }
 
-export function useLoadingOnCallback<U, T>(f: (data: U) => Promise<T>) : [boolean, (data: U) => Promise<T>]{
+export function useLoadingOnCallback<U, T>(f: (data: U) => Promise<T>): [boolean, (data: U) => Promise<T>] {
     const [isLoading, setIsLoading] = useState(false);
     const callback = useCallback((data: U) => {
         setIsLoading(true);
@@ -33,12 +34,15 @@ export function useLoadingOnCallback<U, T>(f: (data: U) => Promise<T>) : [boolea
     return [isLoading, callback];
 }
 
-export function useService<T>(f : () => Promise<T>) : [T | null, React.Dispatch<T | null>, ()=>void]{
+export function useService<T>(f: () => Promise<T>): [T | null, React.Dispatch<T | null>, () => void] {
     const [data, setData] = useState<T | null>(null);
     const getData = useCallback(() => {
-        f().then((data: T) => setData(data))
-}, [f, setData]);
-    useEffect(() => {getData()}, [getData]);
+        setData(null);
+        f().then((data: T) => setData(data));
+    }, [f, setData]);
+    useEffect(() => {
+        getData()
+    }, [getData]);
     return [data, setData, getData];
 }
 
@@ -46,7 +50,8 @@ export function useLeagues(tourId: number) {
     const callback = useCallback(() => leagueServices.getLeagues(tourId), [tourId]);
     return useService(callback);
 }
+
 export function useTeams(tourId: number) {
-    const callback = useCallback(() => teamServices.getTeams(tourId), [tourId]);
+    const callback = useCallback(() => teamServices.getTeams(tourId).then(sortTeams), [tourId]);
     return useService(callback);
 }
