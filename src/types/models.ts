@@ -54,3 +54,14 @@ export interface Team extends TeamBasics {
     players: User[],
     edit_access: boolean,
 }
+
+export interface Game {
+    id: number,
+    place: string,
+    start: Date,
+    judge: User,
+    league: LeagueBasics,
+    tournament: TournamentBasics,
+    team1: TeamBasics,
+    team2: TeamBasics,
+}

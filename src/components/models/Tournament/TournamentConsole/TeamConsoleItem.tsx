@@ -1,11 +1,12 @@
 import React, {FC, useCallback, useMemo} from "react";
-import {League, Team} from "../../../types/models";
+import {League, Team} from "../../../../types/models";
 import {Accordion, Badge, Button, ButtonGroup, Form, ListGroup, ListGroupItem} from "react-bootstrap";
-import {UserLink} from "../User";
-import {BoxTitle} from "../../layout";
+import {UserLink} from "../../User";
+import {BoxTitle} from "../../../layout";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from 'yup';
+import {ListGroupUserData, TitledItem} from "../../../ConsoleItem";
 
 
 export type AcceptTeamCallback = (teamId: number, leagueId: number) => Promise<Team>
@@ -34,17 +35,9 @@ export const EditableTeamConsoleItem: FC<EditableTeamConsoleItemProps> = (
             <ListGroup.Item>
                 {team.motto}
             </ListGroup.Item>
-            <ListGroup.Item variant="secondary">
-                Отправил:
-            </ListGroup.Item>
-            <ListGroup horizontal>
-                <ListGroup.Item className="flex-fill">
-                    <UserLink user={team.trainer}/>
-                </ListGroup.Item>
-                <ListGroup.Item className="flex-fill">
-                    <a href={`mailto:${team.trainer.email}`}>{team.trainer.email}</a>
-                </ListGroup.Item>
-            </ListGroup>
+            <TitledItem label="Отправил" style={{padding: 0}}>
+                <ListGroupUserData user={team.trainer}/>
+            </TitledItem>
             <ListGroup.Item variant="secondary">
                 Участники
             </ListGroup.Item>

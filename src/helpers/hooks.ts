@@ -5,6 +5,7 @@ import {AppDispatch} from "../store";
 import {MenuItem} from "../types/menu";
 import {leagueServices, teamServices} from "../services";
 import {sortTeams} from "./funcs";
+import gameServices from "../services/game.services";
 
 export function useMenuItem(item: MenuItem) {
     const dispatch = useDispatch<AppDispatch>();
@@ -51,7 +52,12 @@ export function useLeagues(tourId: number) {
     return useService(callback);
 }
 
-export function useTeams(tourId: number) {
-    const callback = useCallback(() => teamServices.getTeams(tourId).then(sortTeams), [tourId]);
+export function useTeams(tourId?: number, leagueId?: number) {
+    const callback = useCallback(() => teamServices.getTeams(tourId, leagueId).then(sortTeams), [tourId, leagueId]);
+    return useService(callback);
+}
+
+export function useGames(leagueId: number) {
+    const callback = useCallback(() => gameServices.getLeagueGames(leagueId), [leagueId]);
     return useService(callback);
 }

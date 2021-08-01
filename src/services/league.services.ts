@@ -5,6 +5,14 @@ import axios from "axios";
 import {Response} from "./types";
 
 const leagueServices = {
+    get: async function(leagueId: number) {
+        const {data: r} = await axios.get<Response<{league: League}>>(`/api/league/${leagueId}`);
+        if (r.success) {
+            return r.league;
+        } else {
+            return Promise.reject(r.message);
+        }
+    },
     getLeagues: async function(tourId: number) {
         const requestOptions: RequestInit = {
             method: 'GET',
@@ -26,8 +34,7 @@ const leagueServices = {
         if (res.success) {
             return res.league;
         } else {
-            const er = res.message;
-            return Promise.reject(er);
+            throw res.message;
         }
     },
     changeLeague: async function(formData: LeagueFormData, leagueId: number) {

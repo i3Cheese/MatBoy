@@ -9,8 +9,8 @@ import {
     DeclineTeamCallback,
     EditableTeamConsoleItem, RestoreTeamCallback,
     TeamCallbacks
-} from "../../Team/TeamConsoleItem";
-import {DeleteLeagueCallback, EditableLeagueConsoleItem, EditLeagueCallback} from "../../League/LeagueConsoleItem";
+} from "./TeamConsoleItem";
+import {DeleteLeagueCallback, EditableLeagueConsoleItem, EditLeagueCallback} from "./LeagueConsoleItem";
 import {LeagueForm, LeagueFormData} from "../../League/LeagueForm";
 import {leagueServices, teamServices} from "../../../../services";
 import produce from "immer";
@@ -28,8 +28,7 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
         leagueServices.addLeague(data, tour.id).then(
             (league) => {
                 setLeagues(produce(leagues, (draft) => {
-                    if (draft !== null)
-                        draft.push(league);
+                    if (draft !== null) draft.push(league);
                 }));
                 return league;
             }
@@ -135,9 +134,6 @@ const LeagueList: FC<LeagueListProps> = (
     const [defaultActiveKey, setDefaultActiveKey] = useState("league#new")
     const handleAddLeague = useCallback(data => (
         onAddLeague(data).then((league) => {
-            if (accordionRef.current !== null) { // @ts-ignore
-                accordionRef.current.click();
-            }
             setDefaultActiveKey(`league#${league.id}`);
             return league;
         })

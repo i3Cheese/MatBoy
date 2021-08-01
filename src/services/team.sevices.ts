@@ -16,16 +16,22 @@ const teamServices = {
         const {team} = await response.text().then(t => JSON.parse(t, revive));
         return team as Team;
     },
-    getTeams: async function(tourId: number) {
+    getTeams: async function(tourId?: number, leagueId?: number) {
         const requestOptions: RequestInit = {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
             }
         }
-        const response = await fetch(`/api/team?tournament_id=${tourId}`, requestOptions);
+        let url = "/api/team?";
+        if (tourId !== undefined) {
+            url += `tournament_id=${tourId}&`;
+        }
+        if (leagueId!==undefined) {
+            url += `league_id=${leagueId}&`;
+        }
+        const response = await fetch(url, requestOptions);
         const {teams} = await response.text().then(t => JSON.parse(t, revive));
-        console.log(teams);
         return teams as Team[];
     },
     postNew: async function(tourId: number, data: TeamData) {

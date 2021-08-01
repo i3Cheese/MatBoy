@@ -1,10 +1,11 @@
 import React, {FC, useCallback, useState} from "react";
-import {League, Team} from "../../../types/models";
+import {League, Team} from "../../../../types/models";
 import {Accordion, Button, ButtonGroup, ListGroup, ListGroupItem, useAccordionButton} from "react-bootstrap";
-import {UserLink, UserMail} from "../User";
-import {BoxTitle} from "../../layout";
-import {TeamLink} from "../Team/Team";
-import {LeagueForm, LeagueFormData} from "./LeagueForm";
+import {UserLink, UserMail} from "../../User";
+import {BoxTitle} from "../../../layout";
+import {TeamLink} from "../../Team/Team";
+import {LeagueForm, LeagueFormData} from "../../League/LeagueForm";
+import {ListGroupUserData, TitledItem} from "../../../ConsoleItem";
 
 export type EditLeagueCallback = (data: LeagueFormData, leagueId: number) => Promise<League>;
 export type DeleteLeagueCallback = (leagueId: number) => Promise<any>;
@@ -51,23 +52,12 @@ const ConsoleLeagueItemInfo: FC<{ league: League, teams: Team[], onEdit: () => v
     {league, teams, onEdit, onDelete}
 ) => (
     <ListGroup variant="flush">
-        <ListGroup.Item variant="secondary">
-            Описание
-        </ListGroup.Item>
-        <ListGroup.Item>
+        <TitledItem label="Описание">
             {league.description}
-        </ListGroup.Item>
-        <ListGroup.Item variant="secondary">
-            Главный по лиге:
-        </ListGroup.Item>
-        <ListGroup horizontal>
-            <ListGroup.Item className="flex-fill">
-                <UserLink user={league.chief}/>
-            </ListGroup.Item>
-            <ListGroup.Item className="flex-fill">
-                <UserMail user={league.chief}/>
-            </ListGroup.Item>
-        </ListGroup>
+        </TitledItem>
+        <TitledItem label="Главный по лиге" style={{padding: 0}}>
+            <ListGroupUserData user={league.chief}/>
+        </TitledItem>
         <ListGroup.Item variant="secondary">
             Команды
         </ListGroup.Item>

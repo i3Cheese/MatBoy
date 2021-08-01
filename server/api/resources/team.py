@@ -27,10 +27,17 @@ def process_team_players(entries, team):
 class TeamsResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument('tournament_id', type=int)
+    get_pars.add_argument('league_id', type=int)
 
     def get(self):
         args = self.get_pars.parse_args()
-        teams = Team.query.filter_by(tournament_id=args['tournament_id']).all()
+        league_id = args['league_id']
+        tournament_id = args['tournament_id']
+        query = Team.query
+        if league_id is not None:
+            teams = query.filter_by(league_id=league_id).all()
+        if tournament_id is not None:
+            teams = query.filter_by(tournament_id=tournament_id).all()
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
 
     post_pars = reqparse.RequestParser()

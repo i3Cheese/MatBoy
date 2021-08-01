@@ -12,3 +12,6 @@ export {teamServices, TeamData};
 
 import userServices from "./user.services";
 export {userServices};
+
+import gameService from "./game.services";
+export {gameService};

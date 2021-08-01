@@ -37,7 +37,10 @@ export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league, onReset}) => 
     const [isLoading, loadingOnSubmit] = useLoadingOnCallback(onSubmit);
     const handleSubmit = useCallback((data: LeagueFormInputs) => (
         loadingOnSubmit(data).then(
-            reset,
+            (r) => {
+                reset();
+                return r;
+            },
         )
     ), [reset, loadingOnSubmit])
     const handleReset = useCallback(() => {

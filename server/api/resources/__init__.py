@@ -3,3 +3,4 @@ from server.api.resources.tournament import TournamentResource, TournamentsResou
 from . import league
 from . import team
 from . import user
+from . import game
