@@ -24,6 +24,7 @@
   "dependencies": {
     "@hookform/resolvers": "^2.6.1",
     "@reduxjs/toolkit": "^1.6.0",
+    "@types/classnames": "^2.3.1",
     "@types/history": "^4.7.8",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.4",
@@ -37,6 +38,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^10.0.0",
     "bootstrap": "^5.0.2",
+    "classnames": "^2.3.1",
     "date-fns": "^2.23.0",
     "history": "^4.10.1",
     "immer": "^9.0.3",
@@ -51,7 +53,6 @@
     "react-redux": "^7.2.4",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.3",
     "redux": "^4.1.0",
     "terser-webpack-plugin": "^5.1.4",
     "yup": "^0.32.9"

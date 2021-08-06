@@ -9,6 +9,7 @@ import {DateSpan} from "../../layout/";
 import Loader from 'react-loader-spinner';
 import DivLink from "../../layout/DivLink";
 import SimpleMenu from "../../SimpleMenu";
+import {tourLink} from "../../../helpers/links";
 
 export const TourDate: FC<ComponentProps<'div'> & { tour: Tournament }> = ({tour, className, children, ...props}) => {
     const content: ReactElement = (<>
@@ -30,7 +31,7 @@ export const TourDate: FC<ComponentProps<'div'> & { tour: Tournament }> = ({tour
 
 export const TournamentItem: FC<{ tour: Tournament }> = ({tour}) => {
     return (
-        <DivLink to={`/tournament/${tour.id}`}>
+        <DivLink to={tourLink(tour)}>
             <h2 className="item_title">{tour.title}</h2>
             <TourDate tour={tour}/>
         </DivLink>

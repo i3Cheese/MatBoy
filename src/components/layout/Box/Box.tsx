@@ -1,9 +1,11 @@
 import React, {ComponentProps, FC} from 'react';
 import './Box.scss';
 
-export interface BoxProps extends ComponentProps<'div'> {
+export interface BoxProps {
     size?: "tiny" | "middle" | "large",
     type?: "square",
+    title?: null | React.ReactNode,
+    className?: string,
 }
 
 const RawBox: FC<BoxProps> = (
@@ -12,14 +14,19 @@ const RawBox: FC<BoxProps> = (
         type,
         children,
         className,
-        ...props
+        title
     }) => {
     let classes = ["box",];
     if (size) classes.push("box-"+size);
     if (type) classes.push("box-"+type);
     if (className) classes.push(className);
     return (
-        <div className={classes.join(' ')} {...props}>
+        <div className={classes.join(' ')}>
+            {title != null &&
+                <BoxTitle>
+                    {title}
+                </BoxTitle>
+            }
             {children}
         </div>
     );

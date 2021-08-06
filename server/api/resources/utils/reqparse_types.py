@@ -1,11 +1,12 @@
 import json
 from datetime import date, datetime
+from dateutil import parser
 
-from data import User
+from data import User, Team, League, Tournament, Game
 
 
 class ModelId:
-    def __init__(self, cls: type):
+    def __init__(self, cls):
         self.cls = cls
 
     def __call__(self, value, name):
@@ -14,6 +15,24 @@ class ModelId:
         if not res:
             raise ValueError(f"Parameter {name} isn't existing id of {self.cls.__name__}")
         return res
+
+
+def model_with_id(cls):
+    def _model_with_id(value, name):
+        if 'id' not in value:
+            raise ValueError(f"Not passed id in parameter {name}")
+        res = cls.query.get(value['id'])
+        if res is None:
+            raise ValueError(f"Parameter {name} isn't existing id of {cls.__name__}")
+        return res
+
+    return _model_with_id
+
+
+team_type = model_with_id(Team)
+tournament_type = model_with_id(Tournament)
+league_type = model_with_id(League)
+game_type = model_with_id(Game)
 
 
 def user_type(value):
@@ -44,7 +63,17 @@ def date_type(strdate: str):
 def datetime_type(strdatetime: str):
     if not strdatetime:
         return None
-    return datetime.fromisoformat(strdatetime)
+    return parser.parse(strdatetime)
 
 
-__all__ = ['ModelId', 'user_type', 'lower', 'datetime_type', 'date_type']
+__all__ = [
+    'ModelId',
+    'user_type',
+    'lower',
+    'datetime_type',
+    'date_type',
+    'team_type',
+    'league_type',
+    'tournament_type',
+    'game_type',
+]

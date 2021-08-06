@@ -1,7 +1,6 @@
 import axios from "axios";
 import {Response} from "./types";
 import {Game} from "../types/models";
-import {LeagueFormData} from "../components/models/League/LeagueForm";
 import {GameFormData} from "../components/models/Game/GameForm";
 
 const gameService = {
@@ -25,6 +24,26 @@ const gameService = {
             throw res.message;
         }
     },
+    editGame: async function(formData: GameFormData, gameId: number) {
+        const sendData = {
+            ...formData,
+        }
+        const {data: res} = await axios.put<Response<{game: Game}>>(`/api/game/${gameId}`, sendData);
+        if (res.success) {
+            return res.game;
+        } else {
+            throw res.message;
+        }
+    },
+    deleteGame: async function(gameId: number) {
+        const {data: res} = await axios.delete<Response>(`/api/game/${gameId}`);
+        if (res.success) {
+            return;
+        } else {
+            const er = res.message;
+            return Promise.reject(er);
+        }
+    }
 }
 
 export default gameService;

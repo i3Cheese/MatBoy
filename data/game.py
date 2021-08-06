@@ -1,7 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
-from sqlalchemy_json import MutableJson
+from sqlalchemy_json import NestedMutableJson
 from data.exceptions import StatusError
 
 
@@ -17,32 +17,18 @@ class Game(BaseModel):
                       "judge.email",
                       "judge.fullname",
                       "team1.id",
+                      "team1.tournament",
                       "team1.name",
                       "team2.id",
                       "team2.name",
-                      "league.id",
-                      "league.title",
+                      "team2.tournament",
+                      "league",
                       "link",
                       )
-    secure_serialize_only = ("id",
-                             "title",
-                             "place",
-                             "start",
-                             "status",
-                             "judge.id",
-                             "judge.fullname",
-                             "team1.id",
-                             "team1.name",
-                             "team2.id",
-                             "team2.name",
-                             "league.id",
-                             "league.title",
-                             "link",
-                             )
 
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
-    protocol = sa.Column(MutableJson)
+    protocol = sa.Column(NestedMutableJson)
     status = sa.Column(sa.Integer, default=1)
     """
     0 - deleted
@@ -184,4 +170,3 @@ class Game(BaseModel):
             points[0], points[1] = points[1], points[0]
         if 'stars' in self.protocol:
             self.protocol['stars'].reverse()
-

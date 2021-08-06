@@ -36,7 +36,7 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
     ), [setLeagues, leagues, tour]);
 
     const handleEditLeague = useCallback<EditLeagueCallback>((data: LeagueFormData, leagueId) => (
-        leagueServices.changeLeague(data, leagueId).then(
+        leagueServices.editLeague(data, leagueId).then(
             (league) => {
                 setLeagues(produce(leagues, (draft) => {
                     if (draft === null) return;
@@ -55,7 +55,7 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
                 setLeagues(produce(leagues, (draft) => {
                     if (draft === null) return;
                     const i = draft.findIndex(l => l.id === leagueId);
-                    draft.splice(i);
+                    draft.splice(i, 1);
                 }));
                 refreshTeams();
             }

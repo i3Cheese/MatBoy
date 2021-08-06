@@ -1,10 +1,11 @@
 import React, {FC, useEffect, useState} from "react";
-import {League, Team, Tournament} from "../../../types/models";
+import {League, Tournament} from "../../../types/models";
 import {Route, Switch, useParams, useRouteMatch} from "react-router";
 import MenuItemComponent from "../../../components/MenuItemComponent";
-import {BoxContainer, LoaderPage, NewTeamFormBox} from "../../../components";
-import {leagueServices, teamServices} from "../../../services";
+import {LoaderPage} from "../../../components";
+import {leagueServices} from "../../../services";
 import LeagueConsole from "../../../components/models/League/LeagueConsole";
+import {LeaguePage} from "./LeaguePage";
 
 
 const LeagueIdScenes: FC<{tour: Tournament}> = ({tour}) => {
@@ -19,7 +20,7 @@ const LeagueIdScenes: FC<{tour: Tournament}> = ({tour}) => {
     return (
         <MenuItemComponent title={league.title}><Switch>
             <Route path={path} exact>
-                {league.title}
+                <LeaguePage league={league}/>
             </Route>
             <Route path={`${path}/console`}>
                 <MenuItemComponent title="Консоль">

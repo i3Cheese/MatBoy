@@ -9,6 +9,7 @@ from data.db_tools import SqlAlchemyBase, db_session
 
 
 class FormatSerializerMixin(SerializerMixin):
+    __abstract__ = True
     secure_serialize_only = ()
 
     def to_short_dict(self):
@@ -27,6 +28,8 @@ class FormatSerializerMixin(SerializerMixin):
 class BaseModel(SqlAlchemyBase, FormatSerializerMixin, ReprMixin, TimestampsMixin):
     __abstract__ = True
     short_serialize_only = ('id',)
+    date_format = '%Y-%m-%d'
+    datetime_format = '%Y-%m-%d %H:%M:%S%z'
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     query: Query = db_session.query_property()

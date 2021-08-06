@@ -35,9 +35,11 @@ class TeamsResource(Resource):
         tournament_id = args['tournament_id']
         query = Team.query
         if league_id is not None:
-            teams = query.filter_by(league_id=league_id).all()
+            query = query.filter_by(league_id=league_id)
         if tournament_id is not None:
-            teams = query.filter_by(tournament_id=tournament_id).all()
+            query = query.filter_by(tournament_id=tournament_id)
+        teams = query.all()
+        print([t.status_string for t in teams])
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
 
     post_pars = reqparse.RequestParser()
@@ -107,7 +109,6 @@ class TeamResource(Resource):
                 team.status = args['status']
             if args['status_string'] is not None:
                 team.status_string = args['status_string']
-                print(team.status_string)
             if team.status >= 2 and team.league is None:
                 abort(400, message="Принятая команда должна быть привязана к лиге")
 

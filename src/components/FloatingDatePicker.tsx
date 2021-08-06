@@ -1,8 +1,9 @@
 import {Controller, FieldError} from "react-hook-form";
 import React, {ComponentProps, FC} from "react";
 import DatePicker from "react-datepicker";
-import {FloatingLabel, Form} from "react-bootstrap";
 import ru from 'date-fns/locale/ru';
+import FormInput from "./FormInput";
+import classnames from 'classnames';
 
 export interface FloatingDatePickerProps extends ComponentProps<'div'>{
     control?: any,
@@ -10,33 +11,34 @@ export interface FloatingDatePickerProps extends ComponentProps<'div'>{
     showTimeSelect?: boolean,
     label: string,
     error?: FieldError,
+    showTime?: boolean,
+    mb?: boolean,
 }
 
-const FloatingDatePicker: FC<FloatingDatePickerProps> = ({label, control, name, error, className}) => (
-    <Controller
-        control={control}
-        name={name}
-        render={({field}) => (
-            <DatePicker
-                showTimeSelect
-                customInput={
-                    <FloatingLabel label={label}>
-                        <Form.Control {...field}
-                                      value={field.value?.toLocaleString() || ""}
-                                      isInvalid={error !== undefined}
-                        />
-                        <Form.Control.Feedback>
-                            {error?.message}
-                        </Form.Control.Feedback>
-                    </FloatingLabel>
-                }
-                locale={ru}
-                wrapperClassName={"w-100 " + className || ""}
-                selected={field.value}
-                onChange={(date) => {field.onChange(date); console.log(field.value);}}
-            />
-        )}
-    />
-)
+const FloatingDatePicker: FC<FloatingDatePickerProps> = (props) => {
+    const showTime = props.showTime || false;
+    const datePickerProps = {
+        locale: ru,
+        wrapperClassName: classnames("w-100", props.className),
+        showTimeSelect: props.showTime,
+        dateFormat: showTime?"dd.MM.yyyy HH:mm":"dd.MM.yyyy",
+    }
+    return (
+        <Controller
+            control={props.control}
+            name={props.name}
+            render={({field}) => (
+                <DatePicker
+                    {...datePickerProps}
+                    customInput={
+                        <FormInput label={props.label} error={props.error} mb={props.mb}/>
+                    }
+                    {...field}
+                    selected={field.value}
+                />
+            )}
+        />
+    );
+}
 
 export default FloatingDatePicker;

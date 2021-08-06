@@ -37,7 +37,7 @@ const leagueServices = {
             throw res.message;
         }
     },
-    changeLeague: async function(formData: LeagueFormData, leagueId: number) {
+    editLeague: async function(formData: LeagueFormData, leagueId: number) {
         const sendData = {
             ...formData,
         }

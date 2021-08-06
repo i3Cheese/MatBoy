@@ -4,7 +4,7 @@ import {ErrorResponse} from "./types";
 
 
 export const tournamentService = {
-    getAll: function getAll() {
+    getAll: async function getAll() {
         const requestOptions: RequestInit = {
             method: 'GET',
             headers: {

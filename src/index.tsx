@@ -9,6 +9,7 @@ import App from "./App";
 import './index.scss'
 import {setLocale} from "yup";
 import {ru} from "./helpers/yupLocales";
+import './helpers/axiosSetup';
 
 setLocale(ru);
 

@@ -64,7 +64,7 @@ const TeamItemBorder: FC<{ team: Team }> = ({children, team}) => {
             statusText = "Ожидает подтверждения";
             borderColor = "warning";
             break;
-        case "deleted":
+        case "declined":
             statusText = "Отклонена";
             borderColor = "danger";
             break;
@@ -117,7 +117,7 @@ const TeamIterations: FC<{ team: Team, leagues: League[] } & TeamCallbacks> = ({
         [props.onDecline]);
     return (
         <>
-            {team.status_string === "waiting" || team.status_string === "deleted" ?
+            {team.status_string === "waiting" || team.status_string === "declined" ?
                 <ListGroup.Item as={Form.Select} {...register('leagueId')} isInvalid={errors.leagueId !== undefined}>
                     <option/>
                     {leagues.map((league) => (
@@ -137,7 +137,7 @@ const TeamIterations: FC<{ team: Team, leagues: League[] } & TeamCallbacks> = ({
                 <>
                     {declineButton}{acceptButton}
                 </>}
-                {team.status_string === "deleted" && <>
+                {team.status_string === "declined" && <>
                     {acceptButton}{restoreButton}
                 </>}
             </ButtonGroup></ListGroup.Item>

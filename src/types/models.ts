@@ -49,7 +49,7 @@ export interface TeamBasics {
 export interface Team extends TeamBasics {
     motto: string | null,
     league: LeagueBasics | null,
-    status_string: "deleted" | "waiting" | "accepted",
+    status_string: "declined" | "waiting" | "accepted",
     trainer: User,
     players: User[],
     edit_access: boolean,
@@ -61,7 +61,6 @@ export interface Game {
     start: Date,
     judge: User,
     league: LeagueBasics,
-    tournament: TournamentBasics,
     team1: TeamBasics,
     team2: TeamBasics,
 }

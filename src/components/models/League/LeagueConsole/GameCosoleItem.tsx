@@ -1,18 +1,22 @@
 import React, {FC, useCallback, useState} from "react";
-import {Game, League, Team} from "../../../../types/models";
-import {Accordion, Button, ButtonGroup, ListGroup, ListGroupItem, useAccordionButton} from "react-bootstrap";
-import {BoxTitle} from "../../../layout";
+import {Game, Team} from "../../../../types/models";
+import {Accordion, Button, ListGroup, useAccordionButton} from "react-bootstrap";
+import {BoxTitle, DateTimeSpan} from "../../../layout";
 import {GameForm, GameFormData} from "../../Game/GameForm";
 import {ButtonGroupItem, ListGroupUserData, TitledItem} from "../../../ConsoleItem";
+import {gameName} from "../../../../helpers";
 
 export type EditGameCallback = (data: GameFormData, gameId: number) => Promise<Game>;
 export type DeleteGameCallback = (gameId: number) => Promise<any>;
 
-export interface GameConsoleItemProps {
-    game: Game,
-    teams: Team[],
+export interface GameCallbacks {
     onEditGame: EditGameCallback,
     onDeleteGame: DeleteGameCallback,
+}
+
+export interface GameConsoleItemProps extends GameCallbacks{
+    game: Game,
+    teams: Team[],
 }
 
 export const GameConsoleItem: FC<GameConsoleItemProps> = (
@@ -40,6 +44,9 @@ export const GameConsoleItem: FC<GameConsoleItemProps> = (
                     <TitledItem label="Место проведения">
                         {game.place}
                     </TitledItem>
+                    <TitledItem label={'Время начала'}>
+                        <DateTimeSpan date={game.start}/>
+                    </TitledItem>
                     <TitledItem label="Судья">
                         <ListGroupUserData user={game.judge}/>
                     </TitledItem>
@@ -60,7 +67,7 @@ const GameItemBorder: FC<{ game: Game, onClick: () => void }> = ({game, children
     return (
         <Accordion.Item eventKey={eventKey}>
             <h2 className="accordion-header">
-                <Accordion.Button onClick={decoratedOnClick}><BoxTitle>{game.team1.name} - {game.team2.name}</BoxTitle></Accordion.Button>
+                <Accordion.Button onClick={decoratedOnClick}><BoxTitle>{gameName(game)}</BoxTitle></Accordion.Button>
             </h2>
             <Accordion.Body className="p-0">
                 {children}

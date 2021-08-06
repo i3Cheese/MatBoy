@@ -5,8 +5,7 @@ import {Box, BoxContainer, BoxTitle} from "../../../layout";
 import {Accordion} from "react-bootstrap";
 import {TeamConsoleItem} from "./TeamConsoleItem";
 import {useGames, useTeams} from "../../../../helpers/hooks";
-import {LeagueForm} from "../LeagueForm";
-import {GameConsoleItem} from "./GameCosoleItem";
+import {GameCallbacks, GameConsoleItem} from "./GameCosoleItem";
 import {GameForm, GameFormData} from "../../Game/GameForm";
 import {gameService} from "../../../../services";
 import produce from "immer";
@@ -16,9 +15,9 @@ export interface LeagueConsoleProps {
     league: League,
 }
 
-const LeagueConsole: FC<LeagueConsoleProps> = ({tour, league}) => {
-    const [teams, setTeams, refreshTeams] = useTeams(undefined, league.id);
-    const [games, setGames, refreshGames] = useGames(league.id);
+const LeagueConsole: FC<LeagueConsoleProps> = ({league}) => {
+    const [teams, , refreshTeams] = useTeams(undefined, league.id);
+    const [games, setGames] = useGames(league.id);
 
     const handleAddGame = useCallback((data: GameFormData) => (
         gameService.addGame(data, league.id).then((game) => {
@@ -27,7 +26,32 @@ const LeagueConsole: FC<LeagueConsoleProps> = ({tour, league}) => {
             }))
             return game;
         })
-    ), [setGames, games])
+    ), [setGames, games]);
+
+    const handleEditGame = useCallback((data: GameFormData, gameId: number) => (
+        gameService.editGame(data, gameId).then(game => {
+            setGames(produce(games, draft => {
+                if (draft === null) return;
+                const i = draft.findIndex(g => g.id === gameId);
+                if (i >= 0) {
+                    draft[i] = game;
+                }
+            }));
+            return game;
+        })
+    ), [setGames, games]);
+    const handleDeleteGame = useCallback((gameId) => (
+        gameService.deleteGame(gameId).then(
+            () => {
+                setGames(produce(games, (draft) => {
+                    if (draft === null) return;
+                    const i = draft.findIndex(g => g.id === gameId);
+                    draft.splice(i, 1);
+                }));
+                refreshTeams();
+            }
+        )
+    ), [setGames, games]);
 
     if (teams === null || games === null)
         return <LoaderPage/>
@@ -39,13 +63,15 @@ const LeagueConsole: FC<LeagueConsoleProps> = ({tour, league}) => {
                     teams={teams}
                     games={games}
                     onAddGame={handleAddGame}
+                    onEditGame={handleEditGame}
+                    onDeleteGame={handleDeleteGame}
                 />
             </BoxContainer>
         )
     }
 }
 
-const TeamList: FC<{ teams: Team[] }> = ({children, teams}) => (
+const TeamList: FC<{ teams: Team[] }> = ({teams}) => (
     <Box size="middle">
         <BoxTitle>
             Команды
@@ -56,7 +82,7 @@ const TeamList: FC<{ teams: Team[] }> = ({children, teams}) => (
     </Box>
 )
 
-interface GameListProps {
+interface GameListProps extends GameCallbacks{
     teams: Team[],
     games: Game[]
     onAddGame: (data: GameFormData) => Promise<Game>,
@@ -73,9 +99,7 @@ const GameList: FC<GameListProps> = ({teams, games, onAddGame, ...callbacks}) =>
                     <GameConsoleItem key={game.id}
                                      teams={teams}
                                      game={game}
-                                     onEditGame={async (data: any, gameId: any) => games[0]}
-                                     onDeleteGame={async () => {
-                                     }}
+                                     {...callbacks}
                     />
                 ))}
                 <Accordion.Item eventKey="league#new" className="border-success">
