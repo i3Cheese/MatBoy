@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
@@ -10,14 +12,8 @@ class League(BaseModel):
                       "title",
                       "description",
                       "chief",
-                      "tournament.id",
-                      "tournament.title",
-                      "teams.id",
-                      "teams.name",
-                      "teams.tournament.id",
-                      "teams.tournament.title",
+                      "tournament",
                       "edit_access",
-                      "link",
                       )
 
     title = sa.Column(sa.String, unique=False)
@@ -55,7 +51,7 @@ class League(BaseModel):
         teams.sort(key=lambda x: x.name)
         n = len(teams)
         indexes = {teams[i]: i for i in range(n)}
-        table = [[[] for __ in range(n)] for _ in range(n)]
+        table: List[List[List[Tuple[int, 'Game']]]] = [[[] for __ in range(n)] for _ in range(n)]
         result = [0] * n
         for game in self.games:
             if non_ended or game.status >= 3:

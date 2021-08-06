@@ -1,9 +1,11 @@
 import datetime
 import sqlalchemy as sa
-from data.base_model import BaseModel, FormatSerializerMixin, ReprMixin
+
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import UserMixin, AnonymousUserMixin, current_user
 import werkzeug
+
+from data.base_model import BaseModel, FormatSerializerMixin, ReprMixin
 
 
 class UserInterface:
@@ -19,9 +21,9 @@ class UserInterface:
                       "birthday",
                       "email",
                       "is_creator",
-                      "link",
+                      "edit_access",
                       )
-    sensitive_fields = ('email', )
+    sensitive_fields = ('email', "is_creator")
 
     def to_dict(self, only=None):
         res = {}
@@ -91,8 +93,15 @@ class UserInterface:
         else:
             raise TypeError
 
+    def have_permission(self, user):
+        return user.is_admin
 
-class User(UserInterface, BaseModel, UserMixin,):
+    @property
+    def edit_access(self):
+        return self.have_permission(current_user)
+
+
+class User(UserInterface, BaseModel, UserMixin, ):
     __tablename__ = "users"
 
     id = BaseModel.id

@@ -13,7 +13,7 @@ export interface LoaderBoxProps extends BoxProps {
 
 }
 
-export const LoaderBox: FC<BoxProps> = ({className, ...props}) => (
+export const LoaderBox: FC<LoaderBoxProps> = ({className, ...props}) => (
     <Box className={className || ""} {...props}>
         <AppLoader />
     </Box>

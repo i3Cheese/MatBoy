@@ -13,17 +13,11 @@ class Game(BaseModel):
                       "place",
                       "start",
                       "status",
-                      "judge.id",
-                      "judge.email",
-                      "judge.fullname",
-                      "team1.id",
-                      "team1.tournament",
-                      "team1.name",
-                      "team2.id",
-                      "team2.name",
-                      "team2.tournament",
+                      "judge",
+                      "team1",
+                      "team2",
                       "league",
-                      "link",
+                      "edit_access",
                       )
 
     place = sa.Column(sa.String, nullable=True)

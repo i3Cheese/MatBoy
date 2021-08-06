@@ -11,12 +11,9 @@ export interface User {
     link: string,
 }
 
-export interface TournamentBasics {
+export interface Tournament {
     id: number,
     title: string,
-}
-
-export interface Tournament extends TournamentBasics{
     description: string,
     chief: User,
     place: string,
@@ -26,29 +23,22 @@ export interface Tournament extends TournamentBasics{
     link?: string,
 }
 
-export interface LeagueBasics {
+export interface League {
     id: number,
     title: string,
-    tournament: TournamentBasics,
-}
-
-export interface League extends LeagueBasics {
+    tournament: Tournament,
     description: string,
     chief: User,
     edit_access: boolean,
-    teams: TeamBasics[],
     link?: string,
 }
 
-export interface TeamBasics {
+export interface Team {
     name: string,
     id: number,
-    tournament: TournamentBasics,
-}
-
-export interface Team extends TeamBasics {
+    tournament: Tournament,
     motto: string | null,
-    league: LeagueBasics | null,
+    league: League | null,
     status_string: "declined" | "waiting" | "accepted",
     trainer: User,
     players: User[],
@@ -60,7 +50,7 @@ export interface Game {
     place: string,
     start: Date,
     judge: User,
-    league: LeagueBasics,
-    team1: TeamBasics,
-    team2: TeamBasics,
+    league: League,
+    team1: Team,
+    team2: Team,
 }

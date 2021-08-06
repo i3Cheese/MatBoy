@@ -4,9 +4,8 @@ import {Tournament} from "../../../types/models";
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../store";
 import {tournamentService} from "../../../services";
-import {Box,  BoxTitle, } from "../../layout";
+import {AppLoader, Box, BoxTitle,} from "../../layout";
 import {DateSpan} from "../../layout/";
-import Loader from 'react-loader-spinner';
 import DivLink from "../../layout/DivLink";
 import SimpleMenu from "../../SimpleMenu";
 import {tourLink} from "../../../helpers/links";
@@ -72,12 +71,7 @@ class TournamentsBox extends Component<TournamentBoxProps, { tours: Tournament[]
                 {this.state.tours?.map((tour) =>
                     <TournamentItem tour={tour} key={tour.id}/>
                 )}
-                {this.state.isWaiting && <div className="centered_block"><Loader
-                    type="Rings"
-                    color="#000000"
-                    height={100}
-                    width={100}
-                /></div>}
+                {this.state.isWaiting && <AppLoader/>}
             </Box>
         );
     }

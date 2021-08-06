@@ -27,7 +27,6 @@ class Tournament(BaseModel):
                       "place",
                       "start",
                       "end",
-                      "link",
                       "edit_access",
                       )
 

@@ -1,14 +1,14 @@
-import {Game, LeagueBasics, TeamBasics, TournamentBasics} from "../types/models";
+import {Game, League, Team, Tournament} from "../types/models";
 
-export function tourLink(tour: TournamentBasics) {
+export function tourLink(tour: Tournament) {
     return `/tournament/${tour.id}`;
 }
 
-export function leagueLink(league: LeagueBasics) {
+export function leagueLink(league: League) {
     return `${tourLink(league.tournament)}/league/${league.id}`;
 }
 
-export function teamLink(team: TeamBasics) {
+export function teamLink(team: Team) {
     return `${tourLink(team.tournament)}/team/${team.id}`;
 }
 

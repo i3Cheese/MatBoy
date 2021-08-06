@@ -23,12 +23,9 @@ class Team(BaseModel):
                       "status",
                       "status_string",
                       "trainer",
-                      "tournament.id",
-                      "tournament.title",
-                      "league.id",
-                      "league.title",
+                      "tournament",
+                      "league",
                       "players",
-                      "link",
                       "edit_access",
                       )
 

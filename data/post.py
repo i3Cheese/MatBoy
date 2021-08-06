@@ -14,24 +14,10 @@ class Post(BaseModel):
         "content",
         "status",
         "now",
-        "tournament.id",
-        "tournament.title",
-        "author.id",
-        "author.email",
-        "author.fullname",
-        "created_info"
-    )
-    secure_serialize_only = (
-        "id",
-        "title",
-        "content",
-        "status",
-        "now",
-        "tournament.id",
-        "tournament.title",
-        "author.id",
-        "author.fullname",
-        "created_info"
+        "tournament",
+        "author",
+        "created_info",
+        "edit_access",
     )
 
     title = sa.Column(sa.String, nullable=False)
