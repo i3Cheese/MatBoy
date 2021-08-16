@@ -64,6 +64,7 @@ export const authService = {
         return fetch('/api/logout', {method: 'POST'})
             .then(r => r.json().then(
                 (data) => {
+                    window.location.reload();
                     return data;
                 }
             ));
