@@ -35,7 +35,7 @@ class TeamsResource(Resource):
         tournament_id = args['tournament_id']
         query = Team.query
         if league_id is not None:
-            query = query.filter_by(league_id=league_id)
+            query = query.filter_by(league_id=league_id).filter(Team.status == 2)
         if tournament_id is not None:
             query = query.filter_by(tournament_id=tournament_id)
         teams = query.all()

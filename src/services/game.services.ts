@@ -4,8 +4,15 @@ import {Game} from "../types/models";
 import {GameFormData} from "../components/models/Game/GameForm";
 
 const gameService = {
-    getLeagueGames: async function (leagueId: number) {
-        const {data: r} = await axios.get<Response<{games: Game[]}>>(`/api/game?league_id=${leagueId}`);
+    getGames: async function (leagueId?: number, teamId?: number) {
+        let url = `/api/game?`
+        if (leagueId != undefined) {
+            url += `league_id=${leagueId}&`
+        }
+        if (teamId != undefined) {
+            url += `team_id=${teamId}&`
+        }
+        const {data: r} = await axios.get<Response<{games: Game[]}>>(url);
         if (r.success) {
             return r.games;
         } else {

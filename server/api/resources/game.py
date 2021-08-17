@@ -8,7 +8,8 @@ from flask_restful.inputs import boolean
 
 from data import get_session, Game, Team, League
 from server.api import api
-from server.api.resources.utils import datetime_type, get_model, get_user, get_team, ModelId, user_type, team_type
+from server.api.resources.utils import datetime_type, get_model, get_user, get_team, ModelId, user_type, team_type, \
+    league_type
 
 
 @api.resource('/game/<int:game_id>')
@@ -87,16 +88,25 @@ class GameResource(Resource):
 class GamesResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument('league_id', type=ModelId(League), dest='league',
-                          help="Неправильно указана лига", required=True)
+                          help="Неправильно указана лига",)
+    get_pars.add_argument('team_id', type=ModelId(Team), dest='team',
+                          help="Неправильно указана команда", )
 
     def get(self):
         args = self.get_pars.parse_args()
         league = args['league']
-        games = filter(lambda g: not g.is_deleted, league.games)
-        print([f'{g!r} {g.is_deleted}' for g in games])
+        team = args['team']
+        if league is not None:
+            games = league.games
+        elif team is not None:
+            games = team.games
+        else:
+            abort(400, message='Details not provided')
+            return
+        games = filter(lambda g: not g.is_deleted, games)
         res = {
             'success': True,
-            'games': [g.to_dict() for g in league.games if not g.is_deleted]
+            'games': [g.to_dict() for g in games]
         }
         return jsonify(res)
 

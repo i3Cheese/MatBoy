@@ -57,7 +57,7 @@ export function useTeams(tourId?: number, leagueId?: number) {
     return useService(callback);
 }
 
-export function useGames(leagueId: number) {
-    const callback = useCallback(() => gameServices.getLeagueGames(leagueId), [leagueId]);
+export function useGames(leagueId?: number, teamId?: number) {
+    const callback = useCallback(() => gameServices.getGames(leagueId, teamId), [leagueId, teamId]);
     return useService(callback);
 }

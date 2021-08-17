@@ -13,7 +13,7 @@ users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
 class Team(BaseModel):
     """
     Represent Team module from db.
-    :status: 0-deleted 1-waiting 2-accepted
+    :status: 0-declined 1-waiting 2-accepted
     """
     __tablename__ = "teams"
     __repr_attrs__ = ["name", "tournament"]

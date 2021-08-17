@@ -27,7 +27,7 @@ interface GamesBoxProps extends BoxProps {
 }
 
 export const GamesBox: FC<GamesBoxProps> = ({games, title, ...props}) => (
-    <Box size='large' title={title || 'Игры'} {...props}>
+    <Box title={title || 'Игры'} {...props}>
         {games === null ?
             <AppLoader/>
             :

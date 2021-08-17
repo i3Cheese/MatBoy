@@ -6,6 +6,7 @@ export interface BoxProps {
     type?: "square",
     title?: null | React.ReactNode,
     className?: string,
+    border?: string,
 }
 
 const RawBox: FC<BoxProps> = (
@@ -14,12 +15,14 @@ const RawBox: FC<BoxProps> = (
         type,
         children,
         className,
-        title
+        title,
+        border,
     }) => {
     let classes = ["box",];
     if (size) classes.push("box-"+size);
     if (type) classes.push("box-"+type);
     if (className) classes.push(className);
+    if (border) classes.push(`border border-${border}`);
     return (
         <div className={classes.join(' ')}>
             {title != null &&
