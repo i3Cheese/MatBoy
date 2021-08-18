@@ -28,16 +28,23 @@ class TeamsResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument('tournament_id', type=int)
     get_pars.add_argument('league_id', type=int)
+    get_pars.add_argument('user_id', type=int)
 
     def get(self):
         args = self.get_pars.parse_args()
         league_id = args['league_id']
         tournament_id = args['tournament_id']
+        user_id = args['user_id']
         query = Team.query
         if league_id is not None:
             query = query.filter_by(league_id=league_id).filter(Team.status == 2)
         if tournament_id is not None:
             query = query.filter_by(tournament_id=tournament_id)
+        if user_id is not None:
+            query = query.filter(Team.players.any(User.id == user_id))
+            if (user := User.query.get(user_id)) is not None and not user.have_permission(current_user):
+                query = query.filter(Team.status == 2)
+
         teams = query.all()
         print([t.status_string for t in teams])
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})

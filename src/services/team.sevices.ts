@@ -16,7 +16,7 @@ const teamServices = {
         const {team} = await response.text().then(t => JSON.parse(t, revive));
         return team as Team;
     },
-    getTeams: async function(tourId?: number, leagueId?: number) {
+    getTeams: async function(tourId?: number, leagueId?: number, userId?: number) {
         const requestOptions: RequestInit = {
             method: 'GET',
             headers: {
@@ -29,6 +29,9 @@ const teamServices = {
         }
         if (leagueId!==undefined) {
             url += `league_id=${leagueId}&`;
+        }
+        if (userId!==undefined) {
+            url += `user_id=${userId}&`;
         }
         const response = await fetch(url, requestOptions);
         const {teams} = await response.text().then(t => JSON.parse(t, revive));

@@ -1,8 +1,8 @@
 import React, {FC, useCallback, useState} from "react";
 import {Game, Team} from "../../../../types/models";
 import {Accordion, Button, ListGroup, useAccordionButton} from "react-bootstrap";
-import {BoxTitle, DateTimeSpan} from "../../../layout";
-import {GameForm, GameFormData} from "../../Game/GameForm";
+import {BoxTitle, DateSpan} from "../../../layout";
+import {GameForm, GameFormData} from "../../Game";
 import {ButtonGroupItem, ListGroupUserData, TitledItem} from "../../../ConsoleItem";
 import {gameName} from "../../../../helpers";
 
@@ -45,7 +45,7 @@ export const GameConsoleItem: FC<GameConsoleItemProps> = (
                         {game.place}
                     </TitledItem>
                     <TitledItem label={'Время начала'}>
-                        <DateTimeSpan date={game.start}/>
+                        <DateSpan date={game.start} time={true} local={true}/>
                     </TitledItem>
                     <TitledItem label="Судья">
                         <ListGroupUserData user={game.judge}/>

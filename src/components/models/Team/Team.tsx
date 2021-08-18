@@ -1,12 +1,11 @@
 import React, {FC} from "react";
 import {Team} from "../../../types/models";
 import {Link} from "react-router-dom";
-import {AppLoader, Box, BoxProps, BoxTitle, DateSpan, InfoBox} from "../../layout";
+import {AppLoader, Box, BoxProps, InfoBox} from "../../layout";
 import DivLink from "../../layout/DivLink";
 import {leagueLink, teamLink, tourLink} from "../../../helpers/links";
 import { Col } from "react-bootstrap";
 import {teamStatus, teamStatusColor} from "../../../helpers";
-import classnames from "classnames";
 
 export const TeamLink: FC<{team: Team}> = ({team, children}) => (
     <Link to={teamLink(team)}>{children === undefined?team.name:children}</Link>
@@ -38,8 +37,8 @@ export const TeamsBox: FC<TeamsBoxProps> = ({teams, title, ...props}) => (
 export interface TeamInfoBoxProps extends BoxProps {
     team: Team | null,
 }
-export const TeamInfoBox: FC<TeamInfoBoxProps> = ({team, title, className, ...props}) => (
-    <Box type="square" title={title || 'Информация'} border={teamStatusColor(team)} >
+export const TeamInfoBox: FC<TeamInfoBoxProps> = ({team, title, border, ...props}) => (
+    <Box type="square" title={title || 'Информация'} border={border || teamStatusColor(team)} {...props}>
         {team === null ?
             <AppLoader/>
             :

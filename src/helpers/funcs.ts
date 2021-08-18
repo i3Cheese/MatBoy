@@ -1,9 +1,9 @@
 import {Game, Team} from "../types/models";
 
 export const sortTeams = (teams: Team[]) => [
-    ...teams.filter((team) => team.status_string == "waiting"),
-    ...teams.filter((team) => team.status_string == "accepted"),
-    ...teams.filter((team) => team.status_string == "declined"),
+    ...teams.filter((team) => team.status == "waiting"),
+    ...teams.filter((team) => team.status == "accepted"),
+    ...teams.filter((team) => team.status == "declined"),
 ];
 
 export function gameName(game: Game) {
@@ -11,7 +11,7 @@ export function gameName(game: Game) {
 }
 
 export function teamStatus(team: Team) {
-    switch (team.status_string) {
+    switch (team.status) {
         case "accepted":
             return 'Заявка одобрена';
         case "waiting":
@@ -23,7 +23,7 @@ export function teamStatus(team: Team) {
 }
 export function teamStatusColor(team: Team | null) {
     if (team === null) return 'light';
-    switch (team.status_string) {
+    switch (team.status) {
         case "accepted":
             return 'success';
         case "waiting":

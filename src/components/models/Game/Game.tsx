@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {Game} from "../../../types/models";
 import {Link} from "react-router-dom";
-import {AppLoader, Box, BoxProps, DateTimeSpan} from "../../layout";
+import {AppLoader, Box, BoxProps, DateSpan} from "../../layout";
 import DivLink from "../../layout/DivLink";
 import {gameLink} from "../../../helpers/links";
 import {gameName} from "../../../helpers";
@@ -16,7 +16,7 @@ export const GameItem: FC<{ game: Game }> = ({game}) => (
     <DivLink to={gameLink(game)}>
         <Row>
             <Col sm={6}><h2 className="item_title">{gameName(game)}</h2></Col>
-            <Col sm={3}><DateTimeSpan date={game.start}/></Col>
+            <Col sm={3}><DateSpan date={game.start} time={true} local={true}/></Col>
             <Col sm={3}>{game.place}</Col>
         </Row>
     </DivLink>
@@ -27,7 +27,7 @@ interface GamesBoxProps extends BoxProps {
 }
 
 export const GamesBox: FC<GamesBoxProps> = ({games, title, ...props}) => (
-    <Box title={title || 'Игры'} {...props}>
+    <Box size='large' title={title || 'Игры'} {...props}>
         {games === null ?
             <AppLoader/>
             :
