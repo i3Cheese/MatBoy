@@ -37,7 +37,9 @@ class Tournament(BaseModel):
     end = sa.Column(sa.Date, nullable=False)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
 
-    chief = orm.relationship("User", backref="tournaments")
+    chief = orm.relationship("User")
+    leagues = orm.relationship("League", back_populates="tournament")
+    teams = orm.relationship('Team', back_populates='tournament')
 
     users_subscribe_email = orm.relationship(
         "User", secondary="subscribe_user_to_tournament_email", backref="tours_subscribe_email"

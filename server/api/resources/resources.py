@@ -49,7 +49,7 @@ class ProtocolResource(Resource):
                         if player:
                             team['player'] = player.to_short_dict()
                         else:
-                            team['player'] = AnonymousUser().to_short_dict()
+                            team['player'] = AnonymousUser().to_dict()
             game.protocol['rounds'] = rounds
             game.protocol['points'] = teams_points + \
                 [len(rounds) * 12 - sum(teams_points), ]  # Count judge points

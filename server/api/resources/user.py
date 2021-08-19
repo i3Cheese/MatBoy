@@ -16,7 +16,7 @@ class UserResource(Resource):
         session = get_session()
         user = get_user(session, user_id)
         d = user.to_dict()
-        return jsonify({"user": d})
+        return jsonify({"user": d, "success": True})
 
     def put(self, user_id: int):
         args = self.put_pars.parse_args()

@@ -21,7 +21,6 @@ class Team(BaseModel):
                       "name",
                       "motto",
                       "status",
-                      "status_string",
                       "trainer",
                       "tournament",
                       "league",
@@ -31,7 +30,7 @@ class Team(BaseModel):
 
     name = sa.Column(sa.String)
     motto = sa.Column(sa.String, nullable=True)
-    status = sa.Column(sa.Integer, default=1)
+    status = sa.Column(sa.String, default='waiting')
     trainer_id = sa.Column(
         sa.Integer, sa.ForeignKey("users.id"), nullable=True)
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey(
@@ -39,12 +38,12 @@ class Team(BaseModel):
     league_id = sa.Column(sa.Integer, sa.ForeignKey(
         "leagues.id"), nullable=True)
 
-    trainer = orm.relationship("User", backref="teams_for_train")
-    tournament = orm.relationship("Tournament", backref="teams")
-    league = orm.relationship("League", backref="teams")
-
-    players = orm.relationship(
-        "User", secondary="users_to_teams", backref="teams")
+    trainer = orm.relationship("User")
+    tournament = orm.relationship("Tournament", back_populates="teams")
+    league = orm.relationship("League", back_populates="teams")
+    players = orm.relationship("User", secondary="users_to_teams", back_populates="teams")
+    games_1 = orm.relationship("Game", back_populates="team_1")
+    games_2 = orm.relationship("Game", back_populates="team_2")
 
     def __str__(self):
         return self.name
@@ -69,24 +68,3 @@ class Team(BaseModel):
     @property
     def games(self):
         return list(set(self.games_1 + self.games_2))
-
-    @property
-    def status_string(self):
-        s = self.status
-        if s == 0:
-            return "declined"
-        elif s == 1:
-            return "waiting"
-        elif s == 2:
-            return "accepted"
-        else:
-            return "declined"
-
-    @status_string.setter
-    def status_string(self, s):
-        if s == "waiting":
-            self.status = 1
-        elif s == "accepted":
-            self.status =  2
-        elif True or s == "declined":
-            self.status = 0

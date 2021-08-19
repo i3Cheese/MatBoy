@@ -21,8 +21,10 @@ class League(BaseModel):
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"))
 
-    chief = orm.relationship("User", backref="leagues")
-    tournament = orm.relationship("Tournament", backref="leagues")
+    chief = orm.relationship("User")
+    tournament = orm.relationship("Tournament", back_populates="leagues")
+    games = orm.relationship('Game', back_populates='league')
+    teams = orm.relationship('Team', back_populates='league')
 
     def __str__(self):
         return self.title

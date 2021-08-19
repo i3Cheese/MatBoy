@@ -1,7 +1,6 @@
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
-from sqlalchemy_json import NestedMutableJson
 from data.exceptions import StatusError
 
 
@@ -22,8 +21,7 @@ class Game(BaseModel):
 
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
-    protocol = sa.Column(NestedMutableJson)
-    status = sa.Column(sa.Integer, default=1)
+    status = sa.Column(sa.String(10), default='created', nullable=False)
     """
     0 - deleted
     1 - created
@@ -31,16 +29,17 @@ class Game(BaseModel):
     3 - finished
     """
     judge_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
-    team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"))
-    team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"))
-    league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"))
+    team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
+    team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
+    league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=False)
 
-    judge = orm.relationship("User", backref="judged_games")
-    team1 = orm.relationship("Team", backref="games_1",
-                             foreign_keys=[team1_id, ])
-    team2 = orm.relationship("Team", backref="games_2",
-                             foreign_keys=[team2_id, ])
-    league = orm.relationship("League", backref="games")
+    judge = orm.relationship("User")
+    team1 = orm.relationship("Team", back_populates="games_1",
+                             foreign_keys=[team1_id])
+    team2 = orm.relationship("Team", back_populates="games_2",
+                             foreign_keys=[team2_id])
+    league = orm.relationship("League", back_populates="games")
+    protocol = orm.relationship("Protocol", uselist=False, back_populates='game')
 
     @property
     def title(self):
@@ -59,19 +58,6 @@ class Game(BaseModel):
 
     def check_relation(self, tour_id, league_id) -> bool:
         return league_id == self.league_id and self.league.check_relation(tour_id)
-
-    @staticmethod
-    def default_round():
-        return {'teams': [{'player': 0,
-                           'points': 0,
-                           'stars': 0},
-                          {'player': 0,
-                           'points': 0,
-                           'stars': 0}],
-                'problem': 0,
-                'type': 1,
-                'additional': "",
-                }
 
     @property
     def teams(self):
@@ -125,42 +111,65 @@ class Game(BaseModel):
             self.protocol['result'] = [1, 1]
 
     def delete(self):
-        self.status = 0
+        self.status = 'deleted'
 
     def restore(self):
-        self.status = 1
+        self.status = 'created'
 
     def start_game(self):
-        self.status = 2
+        self.status = 'started'
 
     def finish(self):
         self.set_result()
-        self.status = 3
+        self.status = 'finished'
 
-    @property
-    def is_deleted(self):
-        return self.status == 0
 
-    def started(self):
-        return self.status >= 2
+class Protocol(BaseModel):
+    __tablename__ = "protocols"
+    __repr_attrs__ = []
 
-    def finished(self):
-        return self.status >= 3
+    game_id = sa.Column(sa.Integer, sa.ForeignKey('games.id'), unique=True)
+    game = orm.relationship('Game', back_populates='protocol')
 
-    def deleted(self):
-        return self.status <= 0
+    captain_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True, )
+    captain = orm.relationship('User', foreign_keys=captain_id)
 
-    def swap_teams(self):
-        self.team1, self.team2 = self.team2, self.team1
-        if 'teams' in self.protocol:
-            self.protocol['teams'].reverse()
+    deputy_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True)
+    deputy = orm.relationship('User', foreign_keys=deputy_id)
 
-        if 'rounds' in self.protocol:
-            for round in self.protocol['rounds']:
-                round['teams'].reverse()
-                round['type'] = ((round['type'] - 1) ^ 1) + 1
-        if 'points' in self.protocol:
-            points = self.protocol['points']
-            points[0], points[1] = points[1], points[0]
-        if 'stars' in self.protocol:
-            self.protocol['stars'].reverse()
+    rounds = orm.relationship('Round', back_populates='protocol')
+
+    captain_task = sa.Column(sa.Text, nullable=True)
+    captain_winner_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id'), nullable=True)
+    captain_winner = orm.relationship('Team')
+
+    additional = sa.Column(sa.Text, default='', nullable=False)
+
+
+class Round(BaseModel):
+    __tablename__ = "rounds"
+
+    protocol_id = sa.Column(sa.Integer, sa.ForeignKey('protocols.id'), nullable=False)
+    protocol = orm.relationship('Protocol', back_populates='rounds')
+
+    team1_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
+    team1_data = orm.relationship('TeamRoundData', foreign_keys=team1_data_id)
+    team2_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
+    team2_data = orm.relationship('TeamRoundData', foreign_keys=team2_data_id)
+
+    additional = sa.Column(sa.String, sa.Text, default='', nullable=False)
+
+
+players_to_team_round_data = sa.Table(
+    'players_to_team_round_data', BaseModel.metadata,
+    sa.Column('user_id', sa.ForeignKey('users.id'), primary_key=True),
+    sa.Column('team_round_data_id', sa.ForeignKey('users.id'), primary_key=True),
+)
+
+
+class TeamRoundData(BaseModel):
+    __tablename__ = "teams_round_data"
+    points = sa.Column(sa.Integer, nullable=False)
+    stars = sa.Column(sa.Integer, default=0, nullable=False)
+
+    players = orm.relationship("User", secondary=players_to_team_round_data)

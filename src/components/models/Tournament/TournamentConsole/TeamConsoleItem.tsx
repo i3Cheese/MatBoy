@@ -55,7 +55,7 @@ export const EditableTeamConsoleItem: FC<EditableTeamConsoleItemProps> = (
 const TeamItemBorder: FC<{ team: Team }> = ({children, team}) => {
     let statusText: string;
     let borderColor: string;
-    switch (team.status_string) {
+    switch (team.status) {
         case "accepted":
             statusText = "Участвует в турнире";
             borderColor = "success";
@@ -73,7 +73,7 @@ const TeamItemBorder: FC<{ team: Team }> = ({children, team}) => {
         <Accordion.Item eventKey={`team#${team.id}`} className={`border border-2 border-${borderColor}`}>
             <Accordion.Header>
                 <BoxTitle style={{flexGrow: 1}}>{team.name}</BoxTitle>
-                {team.status_string === "waiting" && <Badge bg={borderColor}>{statusText}</Badge>}
+                {team.status === "waiting" && <Badge bg={borderColor}>{statusText}</Badge>}
             </Accordion.Header>
             <Accordion.Body style={{padding: 0}}>
                 {children}
@@ -117,7 +117,7 @@ const TeamIterations: FC<{ team: Team, leagues: League[] } & TeamCallbacks> = ({
         [props.onDecline]);
     return (
         <>
-            {team.status_string === "waiting" || team.status_string === "declined" ?
+            {team.status === "waiting" || team.status === "declined" ?
                 <ListGroup.Item as={Form.Select} {...register('leagueId')} isInvalid={errors.leagueId !== undefined}>
                     <option/>
                     {leagues.map((league) => (
@@ -130,14 +130,14 @@ const TeamIterations: FC<{ team: Team, leagues: League[] } & TeamCallbacks> = ({
                 <ListGroup.Item>{team.league?.title || "error"}</ListGroup.Item>
             }
             <ListGroup.Item style={{padding: 0}}><ButtonGroup className="w-100">
-                {team.status_string === "accepted" && <>
+                {team.status === "accepted" && <>
                     {restoreButton}
                 </>}
-                {team.status_string === "waiting" &&
+                {team.status === "waiting" &&
                 <>
                     {declineButton}{acceptButton}
                 </>}
-                {team.status_string === "declined" && <>
+                {team.status === "declined" && <>
                     {acceptButton}{restoreButton}
                 </>}
             </ButtonGroup></ListGroup.Item>
