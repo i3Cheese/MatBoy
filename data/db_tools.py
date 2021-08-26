@@ -1,11 +1,10 @@
 import sqlalchemy as sa
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session, scoped_session
-import sqlalchemy.ext.declarative as dec
 from config import config
 import logging
 
-SqlAlchemyBase = dec.declarative_base()
+SqlAlchemyBase = orm.declarative_base()
 
 conn_str = config.DATA_BASE_URL
 logging.info(f'Подключение к базе данных по адресу {repr(conn_str)}')
@@ -24,5 +23,5 @@ def global_init() -> None:
 
 
 def get_session() -> Session:
-    """Create the data base session. Previosly global_init() should be call. Deprecated."""
+    """Create the data base session. Previosly global_init() should be call."""
     return db_session()

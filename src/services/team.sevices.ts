@@ -58,13 +58,13 @@ const teamServices = {
         }
     },
     acceptTeam: function(teamId: number, leagueId: number) {
-        return teamStatusChanger(teamId, {league_id: leagueId, status_string: "accepted"});
+        return teamStatusChanger(teamId, {league_id: leagueId, status: "accepted"});
     },
     declineTeam: function(teamId: number) {
-        return teamStatusChanger(teamId, {status_string: "declined"});
+        return teamStatusChanger(teamId, {status: "declined"});
     },
     restoreTeam: function(teamId: number) {
-        return teamStatusChanger(teamId, {status_string: "waiting"});
+        return teamStatusChanger(teamId, {status: "waiting"});
     },
 
 }

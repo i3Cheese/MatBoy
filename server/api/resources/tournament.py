@@ -31,12 +31,13 @@ class TournamentsResource(Resource):
         if form.validate():
             # Validate posted data. Create tour
             session = get_session()
-            tournament = Tournament().fill(title=form.title.data,
-                                           description=form.description.data,
-                                           place=form.place.data,
-                                           start=form.start.data,
-                                           end=form.end.data,
-                                           chief_id=current_user.id, )
+            tournament = Tournament(title=form.title.data,
+                                    description=form.description.data,
+                                    place=form.place.data,
+                                    start=form.start.data,
+                                    end=form.end.data,
+                                    chief=current_user,
+                                    )
             session.add(tournament)
             session.commit()
             res['success'] = True

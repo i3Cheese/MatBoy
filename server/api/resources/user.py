@@ -54,13 +54,13 @@ class UsersResource(Resource):
         args = UsersResource.reg_pars.parse_args()
         session = get_session()
         abort_if_email_exist(session, args['email'])
-        user = User().fill(email=args['email'],
-                           name=args['name'],
-                           surname=args['surname'],
-                           patronymic=args['patronymic'],
-                           city=args['city'],
-                           birthday=args['birthday'],
-                           )
+        user = User(email=args['email'],
+                    name=args['name'],
+                    surname=args['surname'],
+                    patronymic=args['patronymic'],
+                    city=args['city'],
+                    birthday=args['birthday'],
+                    )
         user.set_password(args['password'])
         session.add(user)
         session.commit()

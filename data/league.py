@@ -1,41 +1,46 @@
-from typing import List, Tuple
+import typing as t
 
 import sqlalchemy as sa
 from sqlalchemy import orm
+
+from data.access_group import AccessMixin
 from data.base_model import BaseModel
 
 
-class League(BaseModel):
+class League(BaseModel, AccessMixin):
     __tablename__ = "leagues"
-    __repr_attrs__ = ["title", "chief"]
-    serialize_only = ("id",
-                      "title",
-                      "description",
-                      "chief",
-                      "tournament",
-                      "edit_access",
-                      )
+    __repr_attrs__ = ["id", "title", "tournament_id"]
+    _serialize_only = ("id",
+                       "title",
+                       "description",
+                       "tournament",
+                       "full_access",
+                       "manage_access",
+                       )
+    _sensitive_fields = ('access_group',)
 
-    title = sa.Column(sa.String, unique=False)
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    title = sa.Column(sa.String, nullable=False)
     description = sa.Column(sa.Text, nullable=True)
-    chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey("tournaments.id"))
 
-    chief = orm.relationship("User")
-    tournament = orm.relationship("Tournament", back_populates="leagues")
+    tournament: t.Final = orm.relationship("Tournament", back_populates="leagues")
     games = orm.relationship('Game', back_populates='league')
     teams = orm.relationship('Team', back_populates='league')
 
+    def __init__(self, *args,
+                 title: str,
+                 description: t.Optional[str] = None,
+                 tournament,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title = title
+        self.description = description
+        self.tournament = tournament
+        self.access_group.parent_access_group = tournament.access_group
+
     def __str__(self):
         return self.title
-
-    def have_permission(self, user) -> bool:
-        if user.is_admin or self.chief == user:
-            return True
-        elif self.tournament.have_permission(user):
-            return True
-        else:
-            return False
 
     @property
     def link(self) -> str:
@@ -53,7 +58,7 @@ class League(BaseModel):
         teams.sort(key=lambda x: x.name)
         n = len(teams)
         indexes = {teams[i]: i for i in range(n)}
-        table: List[List[List[Tuple[int, 'Game']]]] = [[[] for __ in range(n)] for _ in range(n)]
+        table: list[list[list[tuple[int, 'Game']]]] = [[[] for __ in range(n)] for _ in range(n)]
         result = [0] * n
         for game in self.games:
             if non_ended or game.status >= 3:

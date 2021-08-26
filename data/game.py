@@ -1,45 +1,71 @@
+import datetime as dt
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
 from data.exceptions import StatusError
+from data.access_group import AccessMixin, DefaultAccess
+
+import typing as t
 
 
-class Game(BaseModel):
+class Game(BaseModel, AccessMixin):
     __tablename__ = "games"
-    __repr_attrs__ = ["team1", "team2", "league", "start"]
-    serialize_only = ("id",
-                      "title",
-                      "place",
-                      "start",
-                      "status",
-                      "judge",
-                      "team1",
-                      "team2",
-                      "league",
-                      "edit_access",
-                      )
+    __repr_attrs__ = ["id", "league_id", "start"]
+    _serialize_only = ("id",
+                       "title",
+                       "place",
+                       "start",
+                       "status",
+                       "team1",
+                       "team2",
+                       "league",
+                       "full_access",
+                       "manage_access",
+                       )
+    _sensitive_fields = ("access_group",)
 
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     place = sa.Column(sa.String, nullable=True)
     start = sa.Column(sa.DateTime, nullable=True)
-    status = sa.Column(sa.String(10), default='created', nullable=False)
+    status: t.Literal['deleted', 'created', 'started', 'finished'] = sa.Column(
+        sa.String(10), default='created', nullable=False
+    )
     """
     0 - deleted
     1 - created
     2 - started
     3 - finished
     """
-    judge_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
     team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
-    league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=False)
-
-    judge = orm.relationship("User")
     team1 = orm.relationship("Team", back_populates="games_1",
                              foreign_keys=[team1_id])
     team2 = orm.relationship("Team", back_populates="games_2",
                              foreign_keys=[team2_id])
+
+    league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=False)
     league = orm.relationship("League", back_populates="games")
+
     protocol = orm.relationship("Protocol", uselist=False, back_populates='game')
+
+    def __init__(self, *args,
+                 place: t.Optional[str] = None,
+                 start: t.Optional[dt.datetime] = None,
+                 team1,
+                 team2,
+                 league,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.place = place
+        self.start = start
+        self.team1 = team1
+        self.team2 = team2
+        self.league = league
+
+        self.access_group.parent_access_group = league.access_group
+
+        self.protocol = Protocol(game=self)
 
     @property
     def title(self):
@@ -47,10 +73,6 @@ class Game(BaseModel):
 
     def __str__(self):
         return self.title
-
-    def have_permission(self, user) -> bool:
-        """Check if user has access to this game"""
-        return user.is_admin or self.judge == user or self.league.have_permission(user)
 
     @property
     def link(self) -> str:
@@ -63,53 +85,6 @@ class Game(BaseModel):
     def teams(self):
         return [self.team1, self.team2]
 
-    @property
-    def captain_winner(self):
-        team_id = self.protocol.get('captain_winner', {'id': 0})['id']
-        for team in self.teams:
-            if team.id == team_id:
-                return team
-        return None
-
-    @captain_winner.setter
-    def captain_winner(self, team_data):
-        """:team_data - Union[int, Team]"""
-        if isinstance(team_data, int):
-            if team_data == 0:
-                self.protocol.pop('captain_winner', None)
-                return
-            for team in self.teams:
-                if team.id == team_data:
-                    self.protocol['captain_winner'] = team.to_short_dict()
-                    return
-            raise ValueError("Team doesn't participate in this game")
-        else:
-            if team_data in self.teams:
-                self.protocol['captain_winner'] = team_data.to_short_dict()
-                return
-            else:
-                raise ValueError("Team doesn't participate in this game")
-
-    def result_for_team(self, num, first=0):
-        if self.status < 3:
-            raise StatusError
-        if 'result' not in self.protocol:
-            self.set_result()
-        num -= first
-        if num in (0, 1):
-            return self.protocol['result'][num]
-        else:
-            raise ValueError
-
-    def set_result(self):
-        points = self.protocol['points']
-        if points[0] - points[1] > 3:
-            self.protocol['result'] = [2, 0]
-        elif points[1] - points[0] > 3:
-            self.protocol['result'] = [0, 2]
-        else:
-            self.protocol['result'] = [1, 1]
-
     def delete(self):
         self.status = 'deleted'
 
@@ -120,24 +95,32 @@ class Game(BaseModel):
         self.status = 'started'
 
     def finish(self):
-        self.set_result()
         self.status = 'finished'
 
 
-class Protocol(BaseModel):
+class Protocol(BaseModel, DefaultAccess):
     __tablename__ = "protocols"
-    __repr_attrs__ = []
+    __repr_attrs__ = ['game_id', ]
 
-    game_id = sa.Column(sa.Integer, sa.ForeignKey('games.id'), unique=True)
+    _serialize_only = (
+        'captain',
+        'deputy',
+        'rounds',
+        'captain_task',
+        'captain_winner',
+        'additional',
+    )
+
+    def have_full_access(self, user) -> bool:
+        return self.game.have_full_access(user)
+
+    def have_manage_access(self, user) -> bool:
+        return self.game.have_manage_access(user)
+
+    game_id = sa.Column(sa.Integer, sa.ForeignKey('games.id'), unique=True, primary_key=True)
     game = orm.relationship('Game', back_populates='protocol')
 
-    captain_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True, )
-    captain = orm.relationship('User', foreign_keys=captain_id)
-
-    deputy_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True)
-    deputy = orm.relationship('User', foreign_keys=deputy_id)
-
-    rounds = orm.relationship('Round', back_populates='protocol')
+    rounds = orm.relationship("Round", order_by="Round.order", back_populates='protocol')
 
     captain_task = sa.Column(sa.Text, nullable=True)
     captain_winner_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id'), nullable=True)
@@ -145,19 +128,49 @@ class Protocol(BaseModel):
 
     additional = sa.Column(sa.Text, default='', nullable=False)
 
+    def __init__(self, *args,
+                 game: Game,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.game = game
+
 
 class Round(BaseModel):
     __tablename__ = "rounds"
+    __repr_attrs__ = ['protocol_id', 'order']
 
-    protocol_id = sa.Column(sa.Integer, sa.ForeignKey('protocols.id'), nullable=False)
+    serialize_only = (
+        'order',
+        'team1_data',
+        'team2_data',
+        'additional',
+    )
+
+    protocol_id = sa.Column(sa.Integer, sa.ForeignKey('games.id'), primary_key=True)
     protocol = orm.relationship('Protocol', back_populates='rounds')
+
+    def __init__(self, *args,
+                 protocol,
+                 order: int,
+                 team1_data: t.Optional['TeamRoundData'] = None,
+                 team2_data: t.Optional['TeamRoundData'] = None,
+                 additional: str = '',
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.protocol = protocol,
+        self.order = order,
+        self.team1_data = team1_data
+        self.team2_data = team2_data
+        self.additional = additional
+
+    order = sa.Column(sa.Integer, primary_key=True)
 
     team1_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
     team1_data = orm.relationship('TeamRoundData', foreign_keys=team1_data_id)
     team2_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
     team2_data = orm.relationship('TeamRoundData', foreign_keys=team2_data_id)
 
-    additional = sa.Column(sa.String, sa.Text, default='', nullable=False)
+    additional = sa.Column(sa.String, default='', nullable=False)
 
 
 players_to_team_round_data = sa.Table(
@@ -169,6 +182,28 @@ players_to_team_round_data = sa.Table(
 
 class TeamRoundData(BaseModel):
     __tablename__ = "teams_round_data"
+    __repr_attrs__ = ['id']
+
+    def __init__(self, *args,
+                 captain=None,
+                 deputy=None,
+                 points: int,
+                 start: int = 0,
+                 **kwargs):
+        super(TeamRoundData, self).__init__(*args, **kwargs)
+        self.captain = captain
+        self.deputy = deputy
+        self.points = points
+        self.stars = self.stars
+
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+
+    captain_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True, )
+    captain = orm.relationship('User', foreign_keys=captain_id)
+
+    deputy_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=True)
+    deputy = orm.relationship('User', foreign_keys=deputy_id)
+
     points = sa.Column(sa.Integer, nullable=False)
     stars = sa.Column(sa.Integer, default=0, nullable=False)
 

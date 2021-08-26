@@ -46,7 +46,7 @@ class TeamsResource(Resource):
                 query = query.filter(Team.status == 2)
 
         teams = query.all()
-        print([t.status_string for t in teams])
+        print([t.status for t in teams])
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
 
     post_pars = reqparse.RequestParser()
@@ -65,11 +65,11 @@ class TeamsResource(Resource):
         if not tour:
             abort(404)
         res = {'success': False}
-        team = Team().fill(
+        team = Team(
             name=args['name'],
             motto=args.get('motto', None) or None,
-            trainer_id=current_user.id,
-            tournament_id=tour.id,
+            trainer=current_user,
+            tournament=tour,
         )
         users = args['players']
         team.players.extend(users)
@@ -90,8 +90,7 @@ class TeamResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('name', type=str)
     put_pars.add_argument('motto', type=str)
-    put_pars.add_argument('status', type=int)
-    put_pars.add_argument('status_string', type=str)
+    put_pars.add_argument('status', type=str)
     put_pars.add_argument('league_id', type=ModelId(League), dest='league')  # 0 == None
 
     @login_required
@@ -105,8 +104,8 @@ class TeamResource(Resource):
 
         session = get_session()
         team = get_team(session, team_id)
-        print(args['status_string'])
-        if not (args['league'] is None and args['status'] is None and args['status_string'] is None):
+        print(args['status'])
+        if not (args['league'] is None and args['status'] is None and args['status'] is None):
             # Change league and status can only tour chief
             if not team.tournament.have_permission(current_user):
                 abort(403, message="You haven't access to tournament")
@@ -114,9 +113,7 @@ class TeamResource(Resource):
                 team.league = args['league']
             if args['status'] is not None:
                 team.status = args['status']
-            if args['status_string'] is not None:
-                team.status_string = args['status_string']
-            if team.status >= 2 and team.league is None:
+            if team.status == 'accepted' and team.league is None:
                 abort(400, message="Принятая команда должна быть привязана к лиге")
 
         if not (args['name'] is None and args['motto'] is None):

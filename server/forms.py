@@ -197,7 +197,7 @@ class BasicUserForm(BaseForm):
             meta = {'csrf': False}
         else:
             meta['csrf'] = False
-        super(BasicUserForm, self).__init__(*args, meta=meta, **kwargs)
+        super().__init__(*args, meta=meta, **kwargs)
 
     def validate_email(form, field):
         session = get_session()

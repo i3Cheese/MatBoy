@@ -1,18 +1,38 @@
-import datetime
+import datetime as dt
+import typing as t
+
 import sqlalchemy as sa
-from sqlalchemy import orm
-
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin, AnonymousUserMixin, current_user
 import werkzeug
+from flask_login import UserMixin, AnonymousUserMixin
+from sqlalchemy import orm
+from werkzeug.security import generate_password_hash, check_password_hash
 
-from data.base_model import BaseModel, FormatSerializerMixin, ReprMixin
+from data.access_group import DefaultAccess
+from data.base_model import BaseModel
 
 
-class User(BaseModel, UserMixin, ):
+class User(BaseModel, UserMixin, DefaultAccess):
     __tablename__ = "users"
 
-    id = BaseModel.id
+    __repr_attrs__ = ["surname", "name"]
+
+    _serialize_only = ("id",
+                       "name",
+                       "surname",
+                       "patronymic",
+                       "fullname",
+                       "city",
+                       "birthday",
+                       "years_old",
+                       "email",
+                       "is_creator",
+                       )
+    _sensitive_fields = ('email', "is_creator",)
+
+    def have_manage_access(self, user) -> bool:
+        return user == self or super().have_manage_access(user)
+
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     surname = sa.Column(sa.String, nullable=False)
     name = sa.Column(sa.String, nullable=False)
     patronymic = sa.Column(sa.String, nullable=True)
@@ -28,30 +48,27 @@ class User(BaseModel, UserMixin, ):
 
     teams = orm.relationship('Team', secondary='users_to_teams', back_populates='players')
 
+    def __init__(self, *args,
+                 surname: str,
+                 name: str,
+                 patronymic: t.Optional[str] = None,
+                 city: t.Optional[str] = None,
+                 birthday: dt.datetime,
+                 email: str,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.surname = surname
+        self.name = name
+        self.patronymic = patronymic
+        self.city = city
+        self.birthday = birthday
+        self.email = email
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.hashed_password, password)
-
-
-    """User interface for both User and AnonymousUser classes"""
-    __repr_attrs__ = ["surname", "name"]
-
-    serialize_only = ("id",
-                      "name",
-                      "surname",
-                      "patronymic",
-                      "fullname",
-                      "city",
-                      "birthday",
-                      "years_old",
-                      "email",
-                      "is_creator",
-                      "edit_access",
-                      )
-    sensitive_fields = ('email', "is_creator")
 
     @property
     def fullname(self):
@@ -69,7 +86,7 @@ class User(BaseModel, UserMixin, ):
 
     @property
     def years_old(self):
-        today = datetime.date.today()
+        today = dt.date.today()
         birth = self.birthday
         years = today.year - birth.year
         if int(today.strftime("%j")) < int(birth.strftime("%j")):
@@ -88,17 +105,9 @@ class User(BaseModel, UserMixin, ):
         else:
             raise TypeError
 
-    def have_permission(self, user):
-        return user.is_admin or user == self
-
-    @property
-    def edit_access(self):
-        return self.have_permission(current_user)
-
 
 class AnonymousUser(AnonymousUserMixin):
     id = 0
-    is_admin = False
 
     def __eq__(self, other):
         if isinstance(other, (User, AnonymousUser, werkzeug.local.LocalProxy)):
