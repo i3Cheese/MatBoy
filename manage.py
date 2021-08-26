@@ -75,8 +75,7 @@ def make_robots():
              "Джоел",
              "Элли"]
     for i, name in enumerate(names):
-        user = User()
-        user.fill(
+        user = User(
             surname='Маск',
             name=name,
             city='Владивосток',

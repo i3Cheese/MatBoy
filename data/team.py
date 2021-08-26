@@ -1,3 +1,4 @@
+import typing as t
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
@@ -17,46 +18,63 @@ class Team(BaseModel):
     """
     __tablename__ = "teams"
     __repr_attrs__ = ["name", "tournament"]
-    serialize_only = ("id",
-                      "name",
-                      "motto",
-                      "status",
-                      "trainer",
-                      "tournament",
-                      "league",
-                      "players",
-                      "edit_access",
-                      )
+    _serialize_only = ("id",
+                       "name",
+                       "motto",
+                       "status",
+                       "trainer",
+                       "tournament",
+                       "league",
+                       "players",
+                       "full_access",
+                       "manage_access",
+                       )
+    _sensitive_fields = ('access_group',)
 
-    name = sa.Column(sa.String)
+    def have_full_access(self, user) -> bool:
+        return self.tournament.have_manage_access(user)
+
+    def have_manage_access(self, user) -> bool:
+        return self.trainer == user or self.have_full_access(user)
+
+    id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
+    name = sa.Column(sa.String, nullable=False)
     motto = sa.Column(sa.String, nullable=True)
     status = sa.Column(sa.String, default='waiting')
+
     trainer_id = sa.Column(
         sa.Integer, sa.ForeignKey("users.id"), nullable=True)
+    trainer = orm.relationship("User")
+
     tournament_id = sa.Column(sa.Integer, sa.ForeignKey(
         "tournaments.id"), nullable=True)
+    tournament = orm.relationship("Tournament", back_populates="teams")
+
     league_id = sa.Column(sa.Integer, sa.ForeignKey(
         "leagues.id"), nullable=True)
-
-    trainer = orm.relationship("User")
-    tournament = orm.relationship("Tournament", back_populates="teams")
     league = orm.relationship("League", back_populates="teams")
+
     players = orm.relationship("User", secondary="users_to_teams", back_populates="teams")
-    games_1 = orm.relationship("Game", back_populates="team_1")
-    games_2 = orm.relationship("Game", back_populates="team_2")
+
+    games_1 = orm.relationship("Game", back_populates="team1", foreign_keys='Game.team1_id')
+    games_2 = orm.relationship("Game", back_populates="team2", foreign_keys='Game.team2_id')
+
+    def __init__(self, *args,
+                 name: str,
+                 motto: t.Optional[str] = None,
+                 tournament,
+                 trainer,
+                 players,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = name
+        self.motto = motto
+        self.tournament = tournament
+        self.trainer = trainer
+        self.players = players
 
     def __str__(self):
         return self.name
-
-    def have_permission(self, user):
-        if user.is_admin or self.trainer == user:
-            return True
-        elif self.league and self.league.have_permission(user):
-            return True
-        elif self.tournament.have_permission(user):
-            return True
-        else:
-            return False
 
     @property
     def link(self) -> str:

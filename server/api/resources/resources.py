@@ -1,11 +1,11 @@
-from flask_restful import reqparse, abort, Resource
-from flask_restful.inputs import boolean
-from flask import jsonify, request
-from flask_login import current_user, login_required
 import logging
 
+from flask import jsonify, request
+from flask_login import current_user
+from flask_restful import reqparse, abort, Resource
+
+from data import Post, get_session
 from data.user import AnonymousUser
-from data import User, Team, Tournament, League, Game, Post, get_session
 from server.api.resources.utils import *
 
 

@@ -36,12 +36,12 @@ class LeaguesResource(Resource):
         if not tour.have_permission(current_user):
             abort('403', message="Permission denied")
 
-        league = League()
-        league.tournament = tour
-        league.chief = chief
-        league.title = args['title']
-        if args['description']:
-            league.description = args['description']
+        league = League(
+            tournament=tour,
+            chief=chief,
+            title=args['title'],
+            description=args['description'] or None,
+        )
 
         session.add(league)
         session.commit()
@@ -55,8 +55,8 @@ class LeagueResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('title', type=str)
     put_pars.add_argument('description', type=str)
-    put_pars.add_argument('chief', type=user_type,)
-    put_pars.add_argument('tournament_id', type=ModelId(Tournament), dest='tournament',)
+    put_pars.add_argument('chief', type=user_type, )
+    put_pars.add_argument('tournament_id', type=ModelId(Tournament), dest='tournament', )
 
     def get(self, league_id: int):
         league = get_model(League, league_id)
