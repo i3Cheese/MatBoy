@@ -111,6 +111,7 @@ class User(BaseModel, UserMixin, DefaultAccess):
 
 class AnonymousUser(AnonymousUserMixin):
     id = 0
+    is_admin = False
 
     def __eq__(self, other):
         if isinstance(other, (User, AnonymousUser, werkzeug.local.LocalProxy)):

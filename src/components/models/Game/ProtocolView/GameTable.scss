@@ -1,0 +1,84 @@
+$cell_height: 2.5rem;
+
+
+.GameTable {
+  width: 100%;
+  min-width: 720px;
+
+  td, th {
+    border: 1px solid;
+    padding: .25rem;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+
+  .form-control, .form-select {
+    background-color: inherit;
+    padding: 0;
+  }
+
+  .form-select {
+    padding-right: 30px;
+  }
+
+  select, input, textarea {
+    height: $cell_height;
+    border: none;
+    border-radius: 0;
+    min-height: unset;
+    overflow: hidden;
+  }
+  &__points, &__problem{
+    width: $cell_height;
+  }
+  td.GameTable__points, td.GameTable__problem, td.GameTable__callType {
+    font-size: 1.2em;
+  }
+  &__callType {
+    width: $cell_height;
+  }
+  &__players {
+    position: relative;
+    min-width: 200px;
+    &__player {
+      height: $cell_height;
+      width: 100%;
+      &__link{
+        display: table-cell;
+        vertical-align: middle;
+        height: $cell_height;
+        text-decoration: none;
+        color: inherit;
+      }
+    }
+    &__buttons {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      button {
+        border: none;
+        background: none;
+      }
+    }
+    &__stars {
+      position: absolute;
+      top: 0;
+      left: 0;
+      &__star {
+        border: none;
+        background: none;
+        font-size: 1.2em;
+        &-new {
+          opacity: .5;
+        }
+      }
+    }
+  }
+  &__additional {
+    font-size: .9em;
+    textarea {
+      font-size: inherit;
+    }
+  }
+}

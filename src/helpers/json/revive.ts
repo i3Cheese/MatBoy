@@ -26,19 +26,7 @@ function revive(key: any, value: any) {
 }
 
 function parseJson(data: string) {
-    console.log(data);
     return JSON.parse(data, revive);
-    // console.log(typeof data);
-    // console.log(data);
-    // const nData = {}
-    // for (let key in data) {
-    //     // @ts-ignore
-    //     nData[key] = revive(key, data[key]);
-    //     // @ts-ignore
-    //     if (typeof nData[key] === 'object') nData[key] = transformData(nData[key]);
-    // }
-    // console.log(nData);
-    // return nData;
 }
 
 

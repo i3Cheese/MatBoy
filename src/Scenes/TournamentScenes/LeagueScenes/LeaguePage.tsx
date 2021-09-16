@@ -18,7 +18,7 @@ export const LeaguePage: FC<{league: League}> = ({league}) => {
                     {league.title}
                 </PageHeader.Title>
                 <SimpleMenu>
-                    {league.edit_access && [
+                    {league.manage_access && [
                         <SimpleMenu.Link to={`${url}/console`} key='console'>управлять</SimpleMenu.Link>,
                     ]}
                 </SimpleMenu>

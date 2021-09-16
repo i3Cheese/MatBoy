@@ -1,4 +1,4 @@
-import {Game, Team} from "../types/models";
+import {CallType, Game, Team} from "../types/models";
 
 export const sortTeams = (teams: Team[]) => [
     ...teams.filter((team) => team.status == "waiting"),
@@ -32,4 +32,17 @@ export function teamStatusColor(team: Team | null) {
         default:
             return 'danger';
     }
+}
+
+export const callTypes: [CallType, string][] = [
+    [1, "→"],
+    [2, "←"],
+    [3, "⇄"],
+    [4, "⇆"],
+    [5, "⥇"],
+    [6, "⬾"],
+]
+
+export function callTypeToUnicode(num: CallType) {
+    return callTypes[num - 1][1];
 }

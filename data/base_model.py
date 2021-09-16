@@ -19,8 +19,8 @@ class BaseModel(SqlAlchemyBase, SecureSerializerMixin, ReprMixin, TimestampsMixi
 
     query: Query = db_session.query_property()
     
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def fill(self, **kwargs):
         """Set the attibutes. Equal to self.key = value.
@@ -35,19 +35,20 @@ class BaseModel(SqlAlchemyBase, SecureSerializerMixin, ReprMixin, TimestampsMixi
         elif type(self) == type(other):
             return hash(self) == hash(other.id)
         else:
-            raise TypeError
+            super(BaseModel, self).__eq__(other)
+            # raise TypeError(f"{type(self)} not compatible with {type(other)}")
 
-    __primary_keys: t.Optional[list[str]] = None
+    __primary_keys: t.Optional[list[sa.Column]] = None
 
     @classmethod
     @property
-    def _primary_keys(cls) -> list[str]:
+    def _primary_keys(cls) -> list[sa.Column]:
         if cls.__primary_keys is None:
             cls.__primary_keys = sa.inspect(cls).primary_key
         return cls.__primary_keys
 
     def __hash__(self):
-        return hash(tuple(getattr(self, name) for name in self._primary_keys))
+        return hash(tuple(getattr(self, col.name) for col in self._primary_keys))
 
     def have_permission(self, user):
         """Check if user can edit self"""

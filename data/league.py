@@ -7,9 +7,9 @@ from data.access_group import AccessMixin
 from data.base_model import BaseModel
 
 
-class League(BaseModel, AccessMixin):
+class League(AccessMixin, BaseModel):
     __tablename__ = "leagues"
-    __repr_attrs__ = ["id", "title", "tournament_id"]
+    __repr_attrs__ = ["title", "tournament_id"]
     _serialize_only = ("id",
                        "title",
                        "description",
@@ -33,13 +33,10 @@ class League(BaseModel, AccessMixin):
                  description: t.Optional[str] = None,
                  tournament,
                  **kwargs):
-        super().__init__()
+        super().__init__(parent_access_group=tournament.access_group)
         self.title = title
         self.description = description
         self.tournament = tournament
-
-        AccessMixin.__init__(self)
-        self.access_group.parent_access_group = tournament.access_group
 
     def __str__(self):
         return self.title

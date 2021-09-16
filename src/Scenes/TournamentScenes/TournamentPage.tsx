@@ -17,7 +17,7 @@ export const TournamentPage: FC<{tour: Tournament}> = ({tour}) => {
                 </PageHeader.Title>
                 <SimpleMenu>
                     <SimpleMenu.Link to={`${url}/team/new`}>подать заявку</SimpleMenu.Link>
-                    {tour.edit_access && [
+                    {tour.manage_access && [
                         <SimpleMenu.Link to={`${url}/edit`}>редактировать</SimpleMenu.Link>,
                         <SimpleMenu.Link to={`${url}/console`}>управлять</SimpleMenu.Link>,
                         <SimpleMenu.Link to={`${url}/post/new`}>создать новость</SimpleMenu.Link>,

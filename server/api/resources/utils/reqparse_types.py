@@ -35,19 +35,20 @@ league_type = model_with_id(League)
 game_type = model_with_id(Game)
 
 
-def user_type(value):
-    if isinstance(value, str):
-        value = json.loads(value)
-    if 'id' in value:
-        user = User.query.get(value['id'])
-    elif 'email' in value:
-        user = User.query.filter_by(email=value['email'].lower()).first()
-    else:
-        raise ValueError(f"Not found any details")
-
-    if user is None:
-        raise ValueError(f"Not found user")
-    return user
+def user_type(should_exist=True):
+    def _user_type(value):
+        if isinstance(value, str):
+            value = json.loads(value)
+        if 'id' in value:
+            user = User.query.get(value['id'])
+        elif 'email' in value:
+            user = User.query.filter_by(email=value['email'].lower()).first()
+        else:
+            raise ValueError(f"Not found any details")
+        if user is None and should_exist:
+            raise ValueError(f"Not found user")
+        return user
+    return _user_type
 
 
 def lower(value):

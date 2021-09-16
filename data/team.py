@@ -2,6 +2,7 @@ import typing as t
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
+from data.access_interface import AccessInterface
 
 users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
                           sa.Column('user', sa.Integer,
@@ -11,7 +12,7 @@ users_to_teams = sa.Table('users_to_teams', BaseModel.metadata,
                           )
 
 
-class Team(BaseModel):
+class Team(AccessInterface, BaseModel):
     """
     Represent Team module from db.
     :status: 0-declined 1-waiting 2-accepted
@@ -29,7 +30,7 @@ class Team(BaseModel):
                        "full_access",
                        "manage_access",
                        )
-    _sensitive_fields = ('access_group',)
+    _sensitive_fields = tuple()
 
     def have_full_access(self, user) -> bool:
         return self.tournament.have_manage_access(user)
@@ -40,7 +41,8 @@ class Team(BaseModel):
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String, nullable=False)
     motto = sa.Column(sa.String, nullable=True)
-    status = sa.Column(sa.String, default='waiting')
+    status: t.Literal['declined', 'waiting', 'accepted'] = sa.Column(sa.String, default='waiting')
+    """0-declined 1-waiting 2-accepted"""
 
     trainer_id = sa.Column(
         sa.Integer, sa.ForeignKey("users.id"), nullable=True)

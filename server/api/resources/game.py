@@ -19,8 +19,6 @@ class GameResource(Resource):
     # Empty string == None
     put_pars.add_argument(
         'start', type=datetime_type, help="Неверный формат даты")
-    put_pars.add_argument('status', type=int)
-    put_pars.add_argument('judge', type=user_type, )
 
     put_pars.add_argument('team1', type=team_type,
                           help="Неправильный указана команда", dest='team1')
@@ -31,7 +29,7 @@ class GameResource(Resource):
     def get(self, game_id):
         game = get_model(Game, game_id)
         d = game.to_dict()
-        return jsonify({'game': d})
+        return jsonify({'game': d, 'success': True})
 
     def delete(self, game_id):
         game = get_model(Game, game_id)
@@ -50,25 +48,10 @@ class GameResource(Resource):
         if not game.have_permission(current_user):
             abort(403)
 
-        if args['status'] is not None:
-            s = args['status']
-            if s == 3:
-                game.finish()
-            elif s == 2:
-                game.start_game()
-            elif s == 1:
-                game.restore()
-            elif s == 0:
-                game.delete()
-            else:
-                abort(400, message="Wrong status value")
-
         if args['place'] is not None:
             game.place = args['place']
         if args['start'] is not None:
             game.start = args['start']
-        if args['judge'] is not None:
-            game.judge = args['judge']
         if args['team1'] is not None:
             game.team1 = args['team1']
         if args['team2'] is not None:
@@ -88,7 +71,7 @@ class GameResource(Resource):
 class GamesResource(Resource):
     get_pars = reqparse.RequestParser()
     get_pars.add_argument('league_id', type=ModelId(League), dest='league',
-                          help="Неправильно указана лига",)
+                          help="Неправильно указана лига", )
     get_pars.add_argument('team_id', type=ModelId(Team), dest='team',
                           help="Неправильно указана команда", )
 
@@ -103,6 +86,7 @@ class GamesResource(Resource):
         else:
             abort(400, message='Details not provided')
             return
+        print(games)
         games = filter(lambda g: not g.is_deleted, games)
         res = {
             'success': True,
@@ -127,21 +111,18 @@ class GamesResource(Resource):
         if not league.have_permission(current_user):
             abort(403)
 
-        game = Game()
-        game.league = league
-        if args['place'] is not None:
-            game.place = args['place']
-        if args['start'] is not None:
-            game.start = args['start']
-        if args['judge'] is not None:
-            game.judge = args['judge']
-        else:
-            abort(400, message="Не указана информация о судье")
-
-        game.team1 = args['team1']
-        game.team2 = args['team2']
-        if game.team1 == game.team2:
+        team1 = args['team1']
+        team2 = args['team2']
+        if team1 == team2:
             abort(400, message="Команды должны быть различны")
+
+        game = Game(
+            league=league,
+            place=args['place'],
+            start=args['start'],
+            team1=team1,
+            team2=team2,
+        )
 
         session.add(game)
         session.commit()

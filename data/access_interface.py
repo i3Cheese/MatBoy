@@ -7,7 +7,7 @@ import flask_login
 class AccessInterface:
     @abc.abstractmethod
     def have_full_access(self, user) -> bool:
-        raise NotImplementedError
+        return user.is_admin
 
     @abc.abstractmethod
     def have_manage_access(self, user) -> bool:

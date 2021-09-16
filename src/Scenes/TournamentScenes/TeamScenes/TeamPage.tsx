@@ -18,7 +18,7 @@ export const TeamPage: FC<{team: Team}> = ({team}) => {
                     {team.name}
                 </PageHeader.Title>
                 <SimpleMenu>
-                    {team.edit_access && [
+                    {team.manage_access && [
                         <SimpleMenu.Link to={`${url}/edit`} key='edit'>редактировать</SimpleMenu.Link>
                     ]}
                 </SimpleMenu>

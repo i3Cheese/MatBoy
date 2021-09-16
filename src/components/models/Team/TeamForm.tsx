@@ -8,7 +8,8 @@ import {teamServices, userServices} from "../../../services";
 import {Redirect} from "react-router";
 import {AppLoader} from "../../Loader";
 import {FormBox} from "../../layout";
-import {userObject} from "../../../helpers/yupFields";
+import {UserInputs} from "../User";
+import {usersObject} from "../../../helpers/yupFields";
 
 
 export interface TeamFormProps {
@@ -16,14 +17,10 @@ export interface TeamFormProps {
     isLoading: boolean,
 }
 
-interface PlayerInputs {
-    email: string,
-}
-
 export interface TeamFormInputs {
     name: string,
     motto: string,
-    players: PlayerInputs[],
+    players: UserInputs[],
 }
 
 export const TeamForm: FC<TeamFormProps> = ({onSubmit, isLoading}) => {
@@ -32,26 +29,7 @@ export const TeamForm: FC<TeamFormProps> = ({onSubmit, isLoading}) => {
     const validationSchema = Yup.object().shape({
         name: Yup.string().required("Необходимо указать название."),
         motto: Yup.string(),
-        players: Yup.array().of(
-            userObject().test('email', 'Повторный игрок', function (value) {
-                if (!value || !value.email) {
-                    return true;
-                }
-                const { path } = this;
-                const options = [...this.parent];
-                const currentIndex = options.indexOf(value);
-
-                const subOptions = options.slice(0, currentIndex);
-
-                if (subOptions.some((option) => option.email === value.email)) {
-                    throw this.createError({
-                        path: `${path}.email`,
-                        message: 'Повторяющийся игрок',
-                    });
-                }
-                return true;
-            })
-        ).min(minPlayers).max(maxPlayers),
+        players: usersObject().min(minPlayers).max(maxPlayers),
     });
 
     const {register, handleSubmit, formState: {errors}} = useForm<TeamFormInputs>({

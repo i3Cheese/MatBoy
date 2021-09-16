@@ -1,0 +1,30 @@
+.ProtocolToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: -1em;
+  &__status {
+    opacity: 70%;
+    &-failed {
+      color: red;
+    }
+    &-saved {
+      color: darkgreen;
+    }
+    &-saving {
+
+    }
+    &__savedTime {
+      margin: 0 .2em;
+      color: black;
+    }
+  }
+  &__buttons {
+    button {
+      padding: 0 .2em;
+    }
+    &__swap {
+
+    }
+  }
+}

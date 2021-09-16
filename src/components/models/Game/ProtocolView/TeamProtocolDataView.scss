@@ -1,0 +1,50 @@
+.TeamProtocolDataViewContainer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.TeamProtocolDataView {
+  flex-basis: 45%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  box-sizing: border-box;
+  padding: .25em;
+  margin-bottom: 1em;
+  &__header {
+
+  }
+  &__list {
+    display: inline-block;
+    &__player {
+      &__link {
+        color: inherit;
+        text-decoration: none;
+      }
+      &__rank {
+        margin-left: 1em;
+        font-weight: bold;
+      }
+    }
+  }
+  &__filler {
+    flex-grow: 1;
+  }
+  &__selects {
+    &__group:first-child{
+      margin-top: 0;
+    }
+    &__group {
+      margin-top: 1em;
+      label {
+        font-weight: 550;
+      }
+      select {
+        max-width: 300px;
+        float: right;
+      }
+    }
+  }
+}

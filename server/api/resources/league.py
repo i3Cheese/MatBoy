@@ -23,7 +23,6 @@ class LeaguesResource(Resource):
     post_pars = reqparse.RequestParser()
     post_pars.add_argument('title', type=str, required=True, help="Необходимо указать название")
     post_pars.add_argument('description', type=str)
-    post_pars.add_argument('chief', type=user_type, required=True)
     post_pars.add_argument('tournament_id', type=ModelId(Tournament), dest='tournament', required=True)
 
     def post(self):
@@ -32,13 +31,11 @@ class LeaguesResource(Resource):
 
         session = get_session()
         tour = args['tournament']
-        chief = args['chief']
         if not tour.have_permission(current_user):
             abort('403', message="Permission denied")
 
         league = League(
             tournament=tour,
-            chief=chief,
             title=args['title'],
             description=args['description'] or None,
         )
@@ -55,7 +52,6 @@ class LeagueResource(Resource):
     put_pars = reqparse.RequestParser()
     put_pars.add_argument('title', type=str)
     put_pars.add_argument('description', type=str)
-    put_pars.add_argument('chief', type=user_type, )
     put_pars.add_argument('tournament_id', type=ModelId(Tournament), dest='tournament', )
 
     def get(self, league_id: int):
@@ -74,8 +70,6 @@ class LeagueResource(Resource):
         if not league.edit_access():
             abort(403, message="Permission denied")
 
-        if args['chief'] is not None:
-            league.chief = args['chief']
         if args['tournament'] is not None:
             league.tournament = args['tournament']
         if args['title'] is not None:

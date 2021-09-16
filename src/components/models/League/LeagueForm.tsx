@@ -6,7 +6,6 @@ import {AppLoader} from "../../Loader";
 import {Button, ButtonGroup, FloatingLabel, Form} from "react-bootstrap";
 import {FormBox} from "../../layout";
 import {League,} from "../../../types/models";
-import {userObject} from "../../../helpers/yupFields";
 import {useLoadingOnCallback} from "../../../helpers/hooks";
 
 export interface LeagueFormProps {
@@ -28,7 +27,6 @@ export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league, onReset}) => 
     const validationSchema = Yup.object().shape({
         title: Yup.string().required(),
         description: Yup.string().optional(),
-        chief: userObject(),
     })
     const {register, handleSubmit: handleSubmitFormHook, formState: {errors}, reset} = useForm<LeagueFormInputs>({
         resolver: yupResolver(validationSchema),
@@ -62,13 +60,6 @@ export const LeagueForm: FC<LeagueFormProps> = ({onSubmit, league, onReset}) => 
                                       isInvalid={errors.description !== undefined}/>
                         <Form.Control.Feedback type="invalid">
                             {errors.description?.message}
-                        </Form.Control.Feedback>
-                    </FloatingLabel>
-                    <FloatingLabel label={`Почта главного по лиге`}>
-                        <Form.Control {...register(`chief.email`)}
-                                      isInvalid={errors.chief?.email !== undefined}/>
-                        <Form.Control.Feedback type="invalid">
-                            {errors.chief?.email?.message}
                         </Form.Control.Feedback>
                     </FloatingLabel>
                 </FormBox.Item>

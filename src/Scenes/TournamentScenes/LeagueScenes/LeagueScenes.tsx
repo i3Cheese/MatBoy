@@ -6,6 +6,7 @@ import {LoaderPage} from "../../../components";
 import {leagueServices} from "../../../services";
 import LeagueConsole from "../../../components/models/League/LeagueConsole";
 import {LeaguePage} from "./LeaguePage";
+import GameScenes from "./GameScenes/GameScenes";
 
 
 const LeagueIdScenes: FC<{tour: Tournament}> = ({tour}) => {
@@ -26,6 +27,9 @@ const LeagueIdScenes: FC<{tour: Tournament}> = ({tour}) => {
                 <MenuItemComponent title="Консоль">
                     <LeagueConsole tour={tour} league={league}/>
                 </MenuItemComponent>
+            </Route>
+            <Route path={`${path}/game`}>
+                <GameScenes tour={tour} league={league}/>
             </Route>
         </Switch></MenuItemComponent>
     )

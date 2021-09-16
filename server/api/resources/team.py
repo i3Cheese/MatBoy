@@ -37,7 +37,7 @@ class TeamsResource(Resource):
         user_id = args['user_id']
         query = Team.query
         if league_id is not None:
-            query = query.filter_by(league_id=league_id).filter(Team.status == 2)
+            query = query.filter_by(league_id=league_id).filter(Team.status == 'accepted')
         if tournament_id is not None:
             query = query.filter_by(tournament_id=tournament_id)
         if user_id is not None:
@@ -54,12 +54,10 @@ class TeamsResource(Resource):
     post_pars.add_argument('name', type=str, required=True, trim=True)
     post_pars.add_argument('motto', type=str, trim=True)
     post_pars.add_argument('players.email', type=lower)
-    post_pars.add_argument('players', type=user_type, action='append', location='json')
+    post_pars.add_argument('players', type=user_type(), action='append', location='json')
 
     def post(self):
-        print(request.get_json())
         args = self.post_pars.parse_args()
-        print(args)
         session = get_session()
         tour = args['tournament']
         if not tour:
@@ -70,9 +68,8 @@ class TeamsResource(Resource):
             motto=args.get('motto', None) or None,
             trainer=current_user,
             tournament=tour,
+            players=args['players']
         )
-        users = args['players']
-        team.players.extend(users)
         session.add(team)
         session.commit()
         res['success'] = True

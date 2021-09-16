@@ -9,17 +9,18 @@ from data.access_group import AccessMixin, DefaultAccess
 import typing as t
 
 
-class Game(BaseModel, AccessMixin):
+class Game(AccessMixin, BaseModel):
     __tablename__ = "games"
-    __repr_attrs__ = ["id", "league_id", "start"]
+    __repr_attrs__ = ["league_id", "start"]
     _serialize_only = ("id",
                        "title",
                        "place",
                        "start",
                        "status",
+                       "league",
                        "team1",
                        "team2",
-                       "league",
+                       "protocol",
                        "full_access",
                        "manage_access",
                        )
@@ -38,7 +39,8 @@ class Game(BaseModel, AccessMixin):
     3 - finished
     """
     team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
-    team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
+    team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False,
+                         )
     team1 = orm.relationship("Team", back_populates="games_1",
                              foreign_keys=[team1_id])
     team2 = orm.relationship("Team", back_populates="games_2",
@@ -47,7 +49,7 @@ class Game(BaseModel, AccessMixin):
     league_id = sa.Column(sa.Integer, sa.ForeignKey("leagues.id"), nullable=False)
     league = orm.relationship("League", back_populates="games")
 
-    protocol = orm.relationship("Protocol", uselist=False, back_populates='game')
+    protocol = orm.relationship("Protocol", uselist=False, back_populates='game', cascade="all, delete-orphan")
 
     def __init__(self, *args,
                  place: t.Optional[str] = None,
@@ -56,15 +58,12 @@ class Game(BaseModel, AccessMixin):
                  team2,
                  league,
                  **kwargs):
-        super().__init__()
+        super().__init__(parent_access_group=league.access_group)
         self.place = place
         self.start = start
         self.team1 = team1
         self.team2 = team2
         self.league = league
-
-        AccessMixin.__init__(self)
-        self.access_group.parent_access_group = league.access_group
 
         self.protocol = Protocol(game=self)
 
@@ -86,6 +85,10 @@ class Game(BaseModel, AccessMixin):
     def teams(self):
         return [self.team1, self.team2]
 
+    @property
+    def is_deleted(self):
+        return self.status == 'deleted'
+
     def delete(self):
         self.status = 'deleted'
 
@@ -104,14 +107,13 @@ class Protocol(BaseModel, DefaultAccess):
     __repr_attrs__ = ['game_id', ]
 
     _serialize_only = (
-        'captain',
-        'deputy',
         'rounds',
         'captain_task',
         'captain_winner',
         'team1_data',
-        'team2_data'
+        'team2_data',
         'additional',
+        'updated_at',
     )
 
     def have_full_access(self, user) -> bool:
@@ -123,16 +125,18 @@ class Protocol(BaseModel, DefaultAccess):
     game_id = sa.Column(sa.Integer, sa.ForeignKey('games.id'), unique=True, primary_key=True)
     game = orm.relationship('Game', back_populates='protocol')
 
-    rounds = orm.relationship("Round", order_by="Round.order", back_populates='protocol')
+    rounds = orm.relationship("Round", order_by="Round.order", back_populates='protocol', cascade="all, delete-orphan")
 
     captain_task = sa.Column(sa.Text, nullable=True)
     captain_winner_id = sa.Column(sa.Integer, sa.ForeignKey('teams.id'), nullable=True)
     captain_winner = orm.relationship('Team')
 
     team1_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_protocol_data.id'), nullable=False)
-    team1_data = orm.relationship('TeamProtocolData', foreign_keys=team1_data_id)
+    team1_data = orm.relationship('TeamProtocolData', foreign_keys=team1_data_id,
+                                  cascade="all, delete-orphan", single_parent=True)
     team2_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_protocol_data.id'), nullable=False)
-    team2_data = orm.relationship('TeamProtocolData', foreign_keys=team2_data_id)
+    team2_data = orm.relationship('TeamProtocolData', foreign_keys=team2_data_id,
+                                  cascade="all, delete-orphan", single_parent=True)
 
     additional = sa.Column(sa.Text, default='', nullable=False)
 
@@ -141,6 +145,11 @@ class Protocol(BaseModel, DefaultAccess):
                  **kwargs):
         super().__init__(*args, **kwargs)
         self.game = game
+        self.team1_data = TeamProtocolData()
+        self.team2_data = TeamProtocolData()
+
+    def clear_rounds(self):
+        pass
 
 
 class TeamProtocolData(BaseModel):
@@ -178,32 +187,39 @@ class Round(BaseModel):
         'team1_data',
         'team2_data',
         'call_type',
+        'problem',
         'additional',
     )
 
     protocol_id = sa.Column(sa.Integer, sa.ForeignKey('protocols.game_id'), primary_key=True)
-    protocol = orm.relationship('Protocol', back_populates='rounds')
+    protocol = orm.relationship('Protocol',
+                                back_populates='rounds',)
 
     def __init__(self, *,
-                 protocol,
                  order: int,
                  team1_data: t.Optional['TeamRoundData'] = None,
                  team2_data: t.Optional['TeamRoundData'] = None,
+                 problem: int,
+                 call_type: int,
                  additional: str = '',):
         super().__init__()
-        self.protocol = protocol,
-        self.order = order,
+        self.order = order
         self.team1_data = team1_data
         self.team2_data = team2_data
+        self.problem = problem
+        self.call_type = call_type
         self.additional = additional
 
     order = sa.Column(sa.Integer, primary_key=True)
 
     team1_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
-    team1_data = orm.relationship('TeamRoundData', foreign_keys=team1_data_id)
+    team1_data = orm.relationship('TeamRoundData', foreign_keys=team1_data_id,
+                                  cascade="all, delete-orphan", single_parent=True)
     team2_data_id = sa.Column(sa.Integer, sa.ForeignKey('teams_round_data.id'), nullable=False)
-    team2_data = orm.relationship('TeamRoundData', foreign_keys=team2_data_id)
+    team2_data = orm.relationship('TeamRoundData', foreign_keys=team2_data_id,
+                                  cascade="all, delete-orphan", single_parent=True)
 
+    problem = sa.Column(sa.Integer, nullable=False)
     call_type = sa.Column(sa.Integer, nullable=False)
     """
     1 - →
@@ -235,12 +251,15 @@ class TeamRoundData(BaseModel):
 
     def __init__(self, *args,
                  points: int,
-                 start: int = 0,
+                 stars: int = 0,
+                 players = None,
                  **kwargs):
         super(TeamRoundData, self).__init__(*args, **kwargs)
 
         self.points = points
-        self.stars = self.stars
+        self.stars = stars
+        if players is not None:
+            self.players = players
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
 

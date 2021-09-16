@@ -8,7 +8,13 @@ export interface User {
     birthday: Date,
     email?: string,
     is_creator?: boolean,
-    link: string,
+}
+
+export interface AccessGroup {
+    id: number,
+    full_access: boolean,
+    manage_access: boolean,
+    members: User[],
 }
 
 export interface Tournament {
@@ -19,8 +25,9 @@ export interface Tournament {
     place: string,
     start: Date | null,
     end: Date | null,
-    edit_access: boolean,
-    link?: string,
+    full_access: boolean,
+    manage_access: boolean,
+    access_group?: AccessGroup,
 }
 
 export interface League {
@@ -28,9 +35,9 @@ export interface League {
     title: string,
     tournament: Tournament,
     description: string,
-    chief: User,
-    edit_access: boolean,
-    link?: string,
+    full_access: boolean,
+    manage_access: boolean,
+    access_group?: AccessGroup,
 }
 
 export interface Team {
@@ -42,15 +49,53 @@ export interface Team {
     status: "declined" | "waiting" | "accepted",
     trainer: User,
     players: User[],
-    edit_access: boolean,
+    full_access: boolean,
+    manage_access: boolean,
 }
 
 export interface Game {
     id: number,
+    title: string,
     place: string,
     start: Date,
-    judge: User,
+    status: "deleted" | "created" | "started" | "finished",
     league: League,
     team1: Team,
     team2: Team,
+    protocol: Protocol,
+    full_access: boolean,
+    manage_access: boolean,
+    access_group?: AccessGroup,
+}
+
+export interface Protocol {
+    rounds: Round[],
+    captain_task: string | null,
+    captain_winner: Team | null,
+    team1_data: TeamProtocolData,
+    team2_data: TeamProtocolData,
+    additional: string,
+    updated_at: Date,
+}
+
+export interface TeamProtocolData {
+    captain: User | null,
+    deputy: User | null,
+}
+
+
+export type CallType = 1 | 2 | 3 | 4 | 5 | 6;
+
+export interface Round {
+    team1_data: TeamRoundData,
+    team2_data: TeamRoundData,
+    call_type: CallType,
+    problem: number,
+    additional: string,
+}
+
+export interface TeamRoundData {
+    points: number,
+    stars: number,
+    players: User[],
 }

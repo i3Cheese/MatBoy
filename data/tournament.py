@@ -21,9 +21,9 @@ subscribe_user_to_tournament_vk = sa.Table('subscribe_user_to_tournament_vk',
                                                      sa.ForeignKey('tournaments.id')))
 
 
-class Tournament(BaseModel, AccessMixin):
+class Tournament(AccessMixin, BaseModel):
     __tablename__ = "tournaments"
-    __repr_attrs__ = ["title", "id"]
+    __repr_attrs__ = ["title"]
     _serialize_only = ("id",
                        "title",
                        "description",
@@ -58,19 +58,21 @@ class Tournament(BaseModel, AccessMixin):
         "User", secondary="subscribe_user_to_tournament_vk", backref="tours_subscribe_vk"
     )
 
-    def __init__(self, title: str, place: str, start: dt.date, end: dt.date, chief, description: str = '',):
-        super().__init__()
+    def __init__(self, *args,
+                 title: str,
+                 place: str,
+                 start: dt.date,
+                 end: dt.date, chief,
+                 description: str = '',
+                 **kwargs):
+        parent_access_group = AccessGroup(members=[chief])
+        super().__init__(*args, parent_access_group=parent_access_group, **kwargs)
         self.title = title
         self.place = place
         self.start = start
         self.end = end
         self.chief = chief
         self.description = description
-
-        AccessMixin.__init__(self)
-        parent_access_group = AccessGroup()
-        parent_access_group.members.append(self.chief)
-        self.access_group.parent_access_group = parent_access_group
 
     def __str__(self):
         return self.title

@@ -1,10 +1,11 @@
 import React, {FC, useCallback, useState} from "react";
-import {Game, Team} from "../../../../types/models";
+import {AccessGroup, Game, Team} from "../../../../types/models";
 import {Accordion, Button, ListGroup, useAccordionButton} from "react-bootstrap";
 import {BoxTitle, DateSpan} from "../../../layout";
 import {GameForm, GameFormData} from "../../Game";
 import {ButtonGroupItem, ListGroupUserData, TitledItem} from "../../../ConsoleItem";
 import {gameName} from "../../../../helpers";
+import AccessGroupEditor from "../../AccessGroup/AccessGroupEditor";
 
 export type EditGameCallback = (data: GameFormData, gameId: number) => Promise<Game>;
 export type DeleteGameCallback = (gameId: number) => Promise<any>;
@@ -47,8 +48,8 @@ export const GameConsoleItem: FC<GameConsoleItemProps> = (
                     <TitledItem label={'Время начала'}>
                         <DateSpan date={game.start} time={true} local={true}/>
                     </TitledItem>
-                    <TitledItem label="Судья">
-                        <ListGroupUserData user={game.judge}/>
+                    <TitledItem label="Судьи" style={{padding: 0}}>
+                        <AccessGroupEditor accessGroup={game.access_group as AccessGroup}/>
                     </TitledItem>
                     <ButtonGroupItem>
                         <Button variant="warning" onClick={() => setIsEditing(true)}>Редактировать</Button>

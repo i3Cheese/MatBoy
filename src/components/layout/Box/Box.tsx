@@ -1,5 +1,6 @@
 import React, {ComponentProps, FC} from 'react';
 import './Box.scss';
+import classnames from "classnames";
 
 export interface BoxProps {
     size?: "tiny" | "middle" | "large",
@@ -37,7 +38,7 @@ const RawBox: FC<BoxProps> = (
 
 export const BoxTitle: FC<ComponentProps<'div'>> = ({children, className,...props}) => {
     return (
-        <div className={"box_title"+ (className || "")} {...props}>
+        <div className={classnames("box_title", className)} {...props}>
             {children}
         </div>
     );

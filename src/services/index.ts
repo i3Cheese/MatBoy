@@ -13,5 +13,11 @@ export {teamServices, TeamData};
 import userServices from "./user.services";
 export {userServices};
 
-import gameService from "./game.services";
-export {gameService};
+import gameServices from "./game.services";
+export {gameServices};
+
+import agServices from "./accessGroup.services";
+export {agServices};
+
+import protocolServices from "./protocol.services";
+export {protocolServices};

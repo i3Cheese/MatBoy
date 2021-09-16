@@ -1,0 +1,19 @@
+.CaptainTask {
+  margin-left: 1em;
+  margin-bottom: 2em;
+  &__label {
+    font-weight: 550;
+  }
+  &__text {
+    margin-bottom: 1em;
+  }
+  &__winner {
+    label {
+      margin-right: 1em;
+    }
+    select {
+      max-width: 300px;
+      display: inline;
+    }
+  }
+}

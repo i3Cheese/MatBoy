@@ -30,7 +30,7 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 loader: 'ts-loader',
                 // include: [path.resolve(__dirname, 'yourAppPath')],
-                exclude: '/node_modules',
+                exclude: [path.resolve(__dirname, '/node_modules')],
             },
             {
                 test: /\.html$/,
@@ -48,18 +48,21 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template:  path.join(__dirname, 'public', 'index.html'),
+            template: path.join(__dirname, 'public', 'index.html'),
             filename: "./index.html"
         })
     ],
     devServer: {
         historyApiFallback: true,
-        contentBase: path.join(__dirname, '/dist'),
+        static: {
+            directory:
+                path.join(__dirname, '/dist'),
+        },
         port: 8000,
         proxy: {
             "/api": {
                 target: "http://localhost:5000",
-                pathRewrite: {"^/api" : ""}
+                pathRewrite: {"^/api": ""}
             }
         },
         hot: true

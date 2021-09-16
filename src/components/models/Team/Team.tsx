@@ -1,11 +1,12 @@
 import React, {FC} from "react";
-import {Team} from "../../../types/models";
+import {Team, User} from "../../../types/models";
 import {Link} from "react-router-dom";
 import {AppLoader, Box, BoxProps, InfoBox} from "../../layout";
 import DivLink from "../../layout/DivLink";
 import {leagueLink, teamLink, tourLink} from "../../../helpers/links";
-import { Col } from "react-bootstrap";
+import {Col, Form} from "react-bootstrap";
 import {teamStatus, teamStatusColor} from "../../../helpers";
+import {Control, Controller} from "react-hook-form";
 
 export const TeamLink: FC<{team: Team}> = ({team, children}) => (
     <Link to={teamLink(team)}>{children === undefined?team.name:children}</Link>
@@ -58,4 +59,23 @@ export const TeamInfoBox: FC<TeamInfoBoxProps> = ({team, title, border, ...props
             </InfoBox>
         }
     </Box>
+)
+
+
+export const TeamSelect: FC<{ control?: Control<any>, path: string, teams: Team[] }> = (
+    {control, path, teams, ...props}) => (
+    <Controller
+        control={control}
+        name={`${path}.id`}
+        render={({field, fieldState}) => (
+            <Form.Select {...props} {...field} isInvalid={fieldState.invalid}>
+                <option/>
+                {teams.map((team, i) => (
+                    <option value={team.id} key={team.id}>
+                        {team.name}
+                    </option>
+                ))}
+            </Form.Select>
+        )}
+    />
 )

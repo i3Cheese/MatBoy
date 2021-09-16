@@ -7,7 +7,7 @@ import {TeamConsoleItem} from "./TeamConsoleItem";
 import {useGames, useTeams} from "../../../../helpers/hooks";
 import {GameCallbacks, GameConsoleItem} from "./GameCosoleItem";
 import {GameForm, GameFormData} from "../../Game/GameForm";
-import {gameService} from "../../../../services";
+import {gameServices} from "../../../../services";
 import produce from "immer";
 
 export interface LeagueConsoleProps {
@@ -20,7 +20,7 @@ const LeagueConsole: FC<LeagueConsoleProps> = ({league}) => {
     const [games, setGames] = useGames(league.id);
 
     const handleAddGame = useCallback((data: GameFormData) => (
-        gameService.addGame(data, league.id).then((game) => {
+        gameServices.addGame(data, league.id).then((game) => {
             setGames(produce(games, (draft) => {
                 if (draft !== null) draft.push(game);
             }))
@@ -29,7 +29,7 @@ const LeagueConsole: FC<LeagueConsoleProps> = ({league}) => {
     ), [setGames, games]);
 
     const handleEditGame = useCallback((data: GameFormData, gameId: number) => (
-        gameService.editGame(data, gameId).then(game => {
+        gameServices.editGame(data, gameId).then(game => {
             setGames(produce(games, draft => {
                 if (draft === null) return;
                 const i = draft.findIndex(g => g.id === gameId);
@@ -41,7 +41,7 @@ const LeagueConsole: FC<LeagueConsoleProps> = ({league}) => {
         })
     ), [setGames, games]);
     const handleDeleteGame = useCallback((gameId) => (
-        gameService.deleteGame(gameId).then(
+        gameServices.deleteGame(gameId).then(
             () => {
                 setGames(produce(games, (draft) => {
                     if (draft === null) return;

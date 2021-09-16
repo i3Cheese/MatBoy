@@ -9,62 +9,6 @@ from data.user import AnonymousUser
 from server.api.resources.utils import *
 
 
-class ProtocolResource(Resource):
-    def put(self, game_id):
-        """Gets parts of protocol and complements it"""
-        session = get_session()
-        game = get_game(session, game_id)
-        logging.info("Protocol put with json " + str(request.json))
-        if not game.have_permission(current_user):
-            abort(403)
-
-        if 'teams' in request.json:
-            game.protocol['teams'] = request.json['teams']
-        if 'captain_task' in request.json:
-            game.protocol['captain_task'] = request.json['captain_task']
-        if 'captain_winner' in request.json:
-            try:
-                game.captain_winner = int(request.json['captain_winner'])
-            except ValueError as e:
-                abort(400, error={'captain_winner': str(e)})
-
-        if 'rounds' in request.json:
-            rounds = request.json['rounds']
-            teams_points = [0, 0]
-            teams_stars = [0, 0]
-            for round in rounds:
-                for i, team in enumerate(round['teams']):
-                    team['points'] = int(team.get('points', 0))
-                    team['stars'] = int(team.get('stars', 0))
-                    teams_points[i] += team['points']
-                    teams_stars[i] += team['stars']
-                    if 'player' in team:
-                        player = None
-                        if isinstance(team['player'], int):
-                            player = get_user(
-                                session, team['player'], do_abort=False)
-                        elif isinstance(team['player'], dict):
-                            player = get_user(session, team['player'].get(
-                                'id', 0), do_abort=False)
-                        if player:
-                            team['player'] = player.to_short_dict()
-                        else:
-                            team['player'] = AnonymousUser().to_dict()
-            game.protocol['rounds'] = rounds
-            game.protocol['points'] = teams_points + \
-                [len(rounds) * 12 - sum(teams_points), ]  # Count judge points
-            game.protocol['stars'] = teams_stars
-
-        session.merge(game)
-        session.commit()
-        return jsonify({"success": "ok"})
-
-    def get(self, game_id):
-        session = get_session()
-        game = get_game(session, game_id)
-        return jsonify(game.protocol)
-
-
 class PostResource(Resource):
     put_parse = reqparse.RequestParser()
     put_parse.add_argument('title', type=str)

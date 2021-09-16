@@ -1,9 +1,9 @@
+import typing as t
+
 import sqlalchemy as sa
 from sqlalchemy import orm
-import flask_login
 
 from data.access_interface import AccessInterface
-
 from data.base_model import BaseModel
 
 
@@ -14,6 +14,9 @@ class DefaultAccess(AccessInterface):
     def have_manage_access(self, user) -> bool:
         return self.have_full_access(user)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
 
 users_to_access_groups = sa.Table(
     'users_to_access_groups', BaseModel.metadata,
@@ -22,7 +25,7 @@ users_to_access_groups = sa.Table(
 )
 
 
-class AccessGroup(BaseModel, DefaultAccess):
+class AccessGroup(DefaultAccess, BaseModel):
     __tablename__ = "access_groups"
     _serialize_only = (
         "id",
@@ -38,6 +41,15 @@ class AccessGroup(BaseModel, DefaultAccess):
 
     parent_access_group_id = sa.Column(sa.Integer, sa.ForeignKey('access_groups.id'))
     parent_access_group = orm.relationship("AccessGroup", remote_side=[id])
+
+    def __init__(self, *args,
+                 parent_access_group: t.Optional['AccessGroup'] = None,
+                 members: t.Optional[list] = None,
+                 **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent_access_group = parent_access_group
+        if members is not None:
+            self.members = members
 
     def have_manage_access(self, user) -> bool:
         return user in self.members or super().have_manage_access(user)
@@ -62,8 +74,8 @@ class AccessMixin(DefaultAccess):
 
     @orm.declared_attr
     def access_group(cls):
-        return orm.relationship("AccessGroup", backref=cls.__tablename__)
+        return orm.relationship("AccessGroup")
 
-    def __init__(self):
-        super().__init__()
-        self.access_group = AccessGroup()
+    def __init__(self, *args, parent_access_group=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.access_group = AccessGroup(parent_access_group=parent_access_group)

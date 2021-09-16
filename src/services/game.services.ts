@@ -1,9 +1,9 @@
 import axios from "axios";
 import {Response} from "./types";
 import {Game} from "../types/models";
-import {GameFormData} from "../components/models/Game/GameForm";
+import {GameFormData} from "../components";
 
-const gameService = {
+const gameServices = {
     getGames: async function (leagueId?: number, teamId?: number) {
         let url = `/api/game?`
         if (leagueId != undefined) {
@@ -15,6 +15,15 @@ const gameService = {
         const {data: r} = await axios.get<Response<{games: Game[]}>>(url);
         if (r.success) {
             return r.games;
+        } else {
+            throw r.message;
+        }
+    },
+    get: async function (gameId: number) {
+        let url = `/api/game/${gameId}`
+        const {data: r} = await axios.get<Response<{game: Game}>>(url);
+        if (r.success) {
+            return r.game;
         } else {
             throw r.message;
         }
@@ -53,4 +62,4 @@ const gameService = {
     }
 }
 
-export default gameService;
+export default gameServices;

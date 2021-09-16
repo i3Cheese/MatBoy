@@ -6,7 +6,7 @@ import {Button, ButtonGroup, Form, FormSelectProps} from "react-bootstrap";
 import {AppLoader} from "../../Loader";
 import {FormBox} from "../../layout";
 import {Game, Team,} from "../../../types/models";
-import {teamObject, userObject} from "../../../helpers/yupFields";
+import {teamObject} from "../../../helpers/yupFields";
 import {useLoadingOnCallback} from "../../../helpers/hooks";
 import FloatingDatePicker from "../../FloatingDatePicker";
 import FormInput from "../../FormInput";
@@ -26,7 +26,6 @@ interface TeamData {
 export interface GameFormData {
     place: string,
     start: Date,
-    judge: { email: string },
     team1: TeamData,
     team2: TeamData,
 }
@@ -39,9 +38,9 @@ export const GameForm: FC<GameFormProps> = ({onSubmit, game, teams, onReset}) =>
     const validationSchema = Yup.object().shape({
         place: Yup.string().notRequired(),
         start: Yup.date().notRequired(),
-        judge: userObject(),
-        team1: teamObject({teams}),
-        team2: teamObject({teams}).test('not-same-teams', 'Команды не должны совпадать', function (value) {
+        // judge: userObject(),
+        team1: teamObject(teams),
+        team2: teamObject(teams).test('not-same-teams', 'Команды не должны совпадать', function (value) {
             if (this.parent.team1.id === value.id) {
                 throw this.createError({
                     path: `${this.path}.id`,
@@ -92,7 +91,7 @@ export const GameForm: FC<GameFormProps> = ({onSubmit, game, teams, onReset}) =>
                                         mb
                                         showTime
                     />
-                    <FormInput label={`Почта судьи`} {...register(`judge.email`)} error={errors.judge?.email}/>
+                    {/*<FormInput label={`Почта судьи`} {...register(`judge.email`)} error={errors.judge?.email}/>*/}
                 </FormBox.Item>
                 <FormBox.Item>
                     <FormInput label={"Первая команда"} customInput={<TeamSelect teams={teams}/>}
