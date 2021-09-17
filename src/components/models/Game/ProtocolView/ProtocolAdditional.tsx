@@ -30,9 +30,13 @@ export const ProtocolAdditionalEdit: FC = () => (
     </ProtocolAdditionalBase>
 );
 
-export const ProtocolAdditionalView: FC<{additional: string}> = ({additional}) => (
-    <ProtocolAdditionalBase>
-        <i className={"ProtocolAdditional__text"}>{additional}</i>
-    </ProtocolAdditionalBase>
+export const ProtocolAdditionalView: FC<{ additional: string }> = ({additional}) => (
+    <>
+        {additional &&
+        <ProtocolAdditionalBase>
+            <i className={"ProtocolAdditional__text"}>{additional}</i>
+        </ProtocolAdditionalBase>
+        }
+    </>
 );
 

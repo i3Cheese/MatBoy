@@ -29,8 +29,8 @@ class Tournament(AccessMixin, BaseModel):
                        "description",
                        "chief",
                        "place",
-                       "start",
-                       "end",
+                       "start_time",
+                       "end_time",
                        "manage_access",
                        "full_access",
                        )
@@ -42,8 +42,8 @@ class Tournament(AccessMixin, BaseModel):
     title = sa.Column(sa.String, nullable=False)
     description = sa.Column(sa.Text, nullable=None, default='')
     place = sa.Column(sa.String, nullable=False)
-    start = sa.Column(sa.Date, nullable=False)
-    end = sa.Column(sa.Date, nullable=False)
+    start_time = sa.Column(sa.Date, nullable=False)
+    end_time = sa.Column(sa.Date, nullable=False)
     chief_id = sa.Column(sa.Integer, sa.ForeignKey("users.id"))
     chief = orm.relationship("User")
 
@@ -69,8 +69,8 @@ class Tournament(AccessMixin, BaseModel):
         super().__init__(*args, parent_access_group=parent_access_group, **kwargs)
         self.title = title
         self.place = place
-        self.start = start
-        self.end = end
+        self.start_time = start
+        self.end_time = end
         self.chief = chief
         self.description = description
 

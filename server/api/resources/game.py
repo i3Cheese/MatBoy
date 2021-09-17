@@ -6,7 +6,8 @@ from flask_login import current_user
 from flask_restful import Resource, reqparse, abort
 from flask_restful.inputs import boolean
 
-from data import get_session, Game, Team, League
+from data import get_session, Game, Team, League, db_session
+from data.exceptions import StatusError
 from server.api import api
 from server.api.resources.utils import datetime_type, get_model, get_user, get_team, ModelId, user_type, team_type, \
     league_type
@@ -18,13 +19,12 @@ class GameResource(Resource):
     put_pars.add_argument('place', type=str)
     # Empty string == None
     put_pars.add_argument(
-        'start', type=datetime_type, help="Неверный формат даты")
+        'start_time', type=datetime_type, help="Неверный формат даты")
 
     put_pars.add_argument('team1', type=team_type,
                           help="Неправильный указана команда", dest='team1')
     put_pars.add_argument('team2', type=team_type,
                           help="Неправильно указана команда", dest='team2')
-    put_pars.add_argument('send_info', type=boolean, default=False)
 
     def get(self, game_id):
         game = get_model(Game, game_id)
@@ -45,26 +45,47 @@ class GameResource(Resource):
 
         session = get_session()
         game = get_model(Game, game_id)
-        if not game.have_permission(current_user):
+        if not game.have_full_access(current_user):
             abort(403)
 
         if args['place'] is not None:
             game.place = args['place']
-        if args['start'] is not None:
-            game.start = args['start']
+        if args['start_time'] is not None:
+            game.start_time = args['start_time']
         if args['team1'] is not None:
             game.team1 = args['team1']
         if args['team2'] is not None:
             game.team2 = args['team2']
-        if game.team1 == game.team2:
+        if (args['team1'] or args['team2']) and game.team1 == game.team2:
             abort(400, message="Команды должны быть различны")
 
         session.merge(game)
         session.commit()
 
-        response = {"success": "ok", "game": game.to_dict()}
+        response = {"success": True, "game": game.to_dict()}
         logging.info(f"Game put response: {response}")
         return jsonify(response)
+
+
+@api.resource('/game/<int:game_id>/status')
+class GameStatusResource(Resource):
+    put_pars = reqparse.RequestParser()
+    put_pars.add_argument('status', type=str, required=True)
+
+    def put(self, game_id):
+        args = self.put_pars.parse_args()
+        game = get_model(Game, game_id)
+        status = args['status']
+        if not game.have_manage_access(current_user) or (status == 'created' and not game.have_full_access(current_user)):
+            abort(403)
+        try:
+            game.cast_status_to(status)
+        except (StatusError, ValueError) as e:
+            abort(400, message=str(e))
+
+        db_session.merge(game)
+        db_session.commit()
+        return {"game": game.to_dict(), "success": True}
 
 
 @api.resource('/game')
@@ -119,7 +140,7 @@ class GamesResource(Resource):
         game = Game(
             league=league,
             place=args['place'],
-            start=args['start'],
+            start=args['start_time'],
             team1=team1,
             team2=team2,
         )

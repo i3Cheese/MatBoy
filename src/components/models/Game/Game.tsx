@@ -16,7 +16,7 @@ export const GameItem: FC<{ game: Game }> = ({game}) => (
     <DivLink to={gameLink(game)}>
         <Row>
             <Col sm={6}><h2 className="item_title">{gameName(game)}</h2></Col>
-            <Col sm={3}><DateSpan date={game.start} time={true} local={true}/></Col>
+            <Col sm={3}><DateSpan date={game.start_time} time={true} local={true}/></Col>
             <Col sm={3}>{game.place}</Col>
         </Row>
     </DivLink>

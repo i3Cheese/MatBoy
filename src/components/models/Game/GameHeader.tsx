@@ -12,7 +12,6 @@ interface GameHeaderBaseProps {
 const GameHeaderBase: FC<GameHeaderBaseProps> = (
     {
         game,
-        children,
     }
 ) => (
     <Box className={"GameHeader"}>
@@ -21,7 +20,7 @@ const GameHeaderBase: FC<GameHeaderBaseProps> = (
         </BoxTitle>
         <Row className={"GameHeader__info"}>
             <Col className={"GameHeader__time"}>
-                <DateSpan date={game.start} time/>
+                <DateSpan date={game.start_time} time/>
             </Col>
             <Col className={"GameHeader__place"}>
                 {game.place}

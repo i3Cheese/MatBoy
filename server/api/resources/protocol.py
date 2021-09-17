@@ -1,4 +1,4 @@
-import logging
+import typing as t
 
 from flask import jsonify, request
 from flask_login import current_user
@@ -9,7 +9,15 @@ from server.api import api
 from server.api.resources.utils import *
 
 
-def parse_user(data) -> User:
+def parse_team(data, nullable=False) -> t.Optional[Team]:
+    if nullable and data is None:
+        return None
+    return get_model(Team, data['id'])
+
+
+def parse_user(data, nullable=False) -> t.Optional[User]:
+    if nullable and data is None:
+        return None
     return get_model(User, data['id'])
 
 
@@ -52,15 +60,16 @@ class ProtocolResource(Resource):
         data = request.json
         try:
             protocol.captain_task = data['captain_task']
-            protocol.captain_winner = get_model(Team, data['captain_winner']['id'])
+            protocol.captain_winner = parse_team(data['captain_winner'], nullable=True)
             protocol.additional = data['additional']
 
             protocol.team1_data = parse_team_protocol_data(data['team1_data'])
             protocol.team2_data = parse_team_protocol_data(data['team2_data'])
 
-            protocol.rounds.clear()
-            for i, round_data in enumerate(data['rounds']):
-                protocol.rounds.append(parse_round(round_data, i))
+            if 'rounds' in data:
+                protocol.rounds.clear()
+                for i, round_data in enumerate(data['rounds']):
+                    protocol.rounds.append(parse_round(round_data, i))
 
             db_session.merge(protocol)
             db_session.commit()

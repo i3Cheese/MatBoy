@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from wtforms import StringField, TextAreaField, SubmitField
 
 from data import get_session, Tournament
-from server.api.resources.utils import get_tour
+from server.api.resources.utils import get_tour, get_model
 from server.api import api
 from server.forms import BaseForm, RuDataRequired, RuDateField
 
@@ -34,8 +34,8 @@ class TournamentsResource(Resource):
             tournament = Tournament(title=form.title.data,
                                     description=form.description.data,
                                     place=form.place.data,
-                                    start=form.start.data,
-                                    end=form.end.data,
+                                    start=form.start_time.data,
+                                    end=form.end_time.data,
                                     chief=current_user,
                                     )
             session.add(tournament)
@@ -52,7 +52,7 @@ class TournamentsResource(Resource):
 @api.resource('/tournament/<int:tour_id>')
 class TournamentResource(Resource):
     def get(self, tour_id):
-        tour = Tournament.query.get(tour_id)
+        tour = get_model(Tournament, tour_id)
         data = {'tournament': tour.to_dict(), 'success': True}
         return jsonify(data)
 
@@ -83,8 +83,8 @@ class TournamentResource(Resource):
             tour.title = form.title.data
             tour.description = form.description.data
             tour.place = form.place.data
-            tour.start = form.start.data
-            tour.end = form.end.data
+            tour.start_time = form.start_time.data
+            tour.end_time = form.end_time.data
             session.merge(tour)
             session.commit()
             res['success'] = True

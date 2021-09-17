@@ -1,10 +1,8 @@
 import React, {FC, useEffect, useState} from 'react';
 import {Game, League, Tournament} from "../../../../types/models";
 import {Route, Switch, useParams, useRouteMatch} from "react-router";
-import {string} from "yup";
 import {LoaderPage} from "../../../../components";
 import {gameServices} from "../../../../services";
-import {gameName} from "../../../../helpers";
 import GameConsole from "../../../../components/models/Game/GameConsole";
 import GameView from "../../../../components/models/Game/GameView";
 
@@ -24,7 +22,7 @@ const GameIdScenes: FC<{ tour: Tournament, league: League }> = ({tour, league}) 
                 <GameView game={game}/>
             </Route>
             <Route path={`${path}/console`}>
-                <GameConsole game={game}/>
+                <GameConsole game={game} setGame={setGame}/>
             </Route>
         </Switch>
     )

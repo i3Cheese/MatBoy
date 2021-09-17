@@ -1,7 +1,5 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {Game, Protocol} from "../../../types/models";
-import {Box, BoxTitle} from "../../layout";
-import {gameName} from "../../../helpers";
+import {Game} from "../../../types/models";
 import {CaptainTaskEdit, GameTable, GameTableRoundEdit} from "./ProtocolView";
 import {TeamProtocolDataEdit, TeamProtocolDataViewContainer} from "./ProtocolView";
 import {protocolObject} from "../../../helpers/yupFields";
@@ -10,43 +8,59 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {Button, ButtonGroup} from "react-bootstrap";
 import {FormProvider} from 'react-hook-form';
 import {ProtocolBox, ProtocolPage} from "./ProtocolView/Protocol";
-import {ProtocolToolbarEdit} from "./ProtocolView/ProtocolToolbarEdit";
+import {ProtocolToolbarEdit} from "./ProtocolView/ProtocolToolbar";
 import {ProtocolAdditionalEdit} from "./ProtocolView/ProtocolAdditional";
-import {protocolServices} from "../../../services";
+import {gameServices} from "../../../services";
 import {GameHeaderEdit} from "./GameHeader";
+import {useHistory} from "react-router";
+import {gameLink} from "../../../helpers/links";
 
 export interface GameConsoleProps {
     game: Game,
+    setGame: (game: Game) => any,
 }
 
-function useProtocol(initialGame: Game) {
-    const gameId = initialGame.id;
-    const [game, setGame] = useState(initialGame);
+function useProtocol(game: Game, setGame: (game: Game) => any) {
+    const gameId = game.id;
+    // const [game, setGame] = useState(initialGame);
     const [status, setStatus] = useState<"saved" | "failed" | "saving">("saved");
     const [savedTime, setSavedTime] = useState(new Date());
+    const history = useHistory();
+    const setAndReturn = (game: Game) => {
+        setStatus("saved");
+        setSavedTime(new Date());
+        setGame(game);
+        return game;
+    }
+    const failAndReturn = (e: any) => {setStatus("failed"); console.log(e); return Promise.reject(e);}
+
     const sendProtocol = useCallback((data: any) => {
         setStatus("saving");
-        return protocolServices.edit(data, gameId).then(
-            (game) => {
-                setStatus("saved");
-                setSavedTime(new Date());
-                setGame(game);
-                return game;
-            }).catch(()=>setStatus("failed"));
+        return gameServices.editProtocol(data, gameId).then(setAndReturn, failAndReturn);
     }, [setStatus, gameId]);
-    return {game, status, savedTime, sendProtocol};
+    const startGame = useCallback((data) => {
+        sendProtocol(data).then(g => gameServices.startGame(gameId).then(setAndReturn, failAndReturn));
+    }, [gameId]);
+    const finishGame = useCallback((data) => {
+        sendProtocol(data).then(g => gameServices.finishGame(gameId).then(
+            g=>{setAndReturn(g); history.push(gameLink(g)); return g;}, failAndReturn));
+    }, [gameId]);
+    const restoreGame = useCallback((data) => {
+        sendProtocol(data).then(g => gameServices.restoreGame(gameId).then(setAndReturn, failAndReturn));
+    }, [gameId]);
+    return {game, status, savedTime, sendProtocol, startGame, finishGame, restoreGame};
 }
 
 
-const GameConsole: FC<GameConsoleProps> = ({game: initialGame, ...props}) => {
-    const {game, status, sendProtocol, savedTime} = useProtocol(initialGame);
+const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
+    const {game, status, sendProtocol, savedTime, startGame, finishGame, restoreGame} = useProtocol(initialGame, setGame);
     const validationSchema = protocolObject(game);
     const formMethods = useForm({
         resolver: yupResolver(validationSchema),
         defaultValues: game.protocol,
         mode: "all",
     });
-    const {control, handleSubmit, formState} = formMethods;
+    const {control, handleSubmit} = formMethods;
     const {fields: rounds, append: appendRound, remove: removeRound} = useFieldArray({
         control,
         name: "rounds",
@@ -69,7 +83,7 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, ...props}) => {
     const removeLastRound = useCallback(() => removeRound(rounds.length - 1),
         [removeRound, rounds.length]);
     useEffect(() => {
-        if (rounds.length == 0) appendDefaultRound();
+        if (rounds.length == 0 && game.status == 'started') appendDefaultRound();
     }, [rounds.length]);
 
     const [swapped, setSwapped] = useState(false);
@@ -79,12 +93,13 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, ...props}) => {
             <ProtocolPage>
                 <GameHeaderEdit game={game}/>
                 <ProtocolBox>
-                    <ProtocolToolbarEdit status={status} onSwapTeams={()=>setSwapped(!swapped)} savedTime={savedTime}/>
+                    <ProtocolToolbarEdit game={game} status={status} onSwapTeams={() => setSwapped(!swapped)}
+                                         savedTime={savedTime}/>
                     <TeamProtocolDataViewContainer>
                         {swapped ?
                             <>
-                            <TeamProtocolDataEdit path={"team1_data"} team={game.team1} key={1}/>
-                            <TeamProtocolDataEdit path={"team2_data"} team={game.team2} key={2}/>
+                                <TeamProtocolDataEdit path={"team1_data"} team={game.team1} key={1}/>
+                                <TeamProtocolDataEdit path={"team2_data"} team={game.team2} key={2}/>
                             </>
                             :
                             <>
@@ -94,13 +109,41 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, ...props}) => {
                         }
                     </TeamProtocolDataViewContainer>
                     <CaptainTaskEdit game={game}/>
+                    {game.status != "created" &&
                     <GameTable game={game}>
                         {rounds.map((field, index) => (
                             <GameTableRoundEdit game={game} index={index} key={field.id} swapped={swapped}/>
                         ))}
                     </GameTable>
+                    }
                     <ProtocolAdditionalEdit/>
-                    <div className={"mt-4 d-flex justify-content-between"}>
+
+                    <div className={"mt-4 d-flex justify-content-between flex-row-reverse"}>
+                        <ButtonGroup>
+                            <Button
+                                onClick={handleSubmit(sendProtocol)}
+                                variant={"success"}
+                            >Сохранить</Button>
+                            {game.status == 'started' &&
+                            <Button
+                                onClick={handleSubmit(finishGame)}
+                                variant={"secondary"}
+                            >Завершить</Button>
+                            }
+                            {game.status == 'created' &&
+                            <Button
+                                onClick={handleSubmit(startGame)}
+                                variant={"primary"}
+                            >Начать</Button>
+                            }
+                            {game.status == 'finished' &&
+                            <Button
+                                onClick={handleSubmit(restoreGame)}
+                                variant={"secondary"}
+                            >Востановить</Button>
+                            }
+                        </ButtonGroup>
+                        {game.status != "created" &&
                         <ButtonGroup>
                             <Button
                                 onClick={removeLastRound}
@@ -112,17 +155,7 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, ...props}) => {
                                 variant={"primary"}
                             >Добавить раунд</Button>
                         </ButtonGroup>
-                        <ButtonGroup>
-                            <Button
-                                onClick={handleSubmit(sendProtocol)}
-                                variant={"success"}
-                            >Сохранить</Button>
-                            <Button
-                                onClick={appendDefaultRound}
-                                title={"Добавить раунд"}
-                                variant={"secondary"}
-                            >Завершить</Button>
-                        </ButtonGroup>
+                        }
                     </div>
                 </ProtocolBox>
             </ProtocolPage>

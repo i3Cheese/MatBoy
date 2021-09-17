@@ -1,7 +1,6 @@
 import * as Yup from "yup";
 import {userServices} from "../services";
 import {Game, Team, User} from "../types/models";
-import exp from "constants";
 
 
 export const userObject = () => Yup.object().shape({
@@ -33,7 +32,7 @@ export const usersObject = (duplicateMessage = 'Этот пользовател�
 )
 
 export const userSelectObject = (users: User[]) => Yup.object({
-    id: Yup.number().required().oneOf(users.map(user => user.id)),
+    id: Yup.number().oneOf(users.map(user => user.id)),
 });
 
 export const usersSelectObject = (users: User[], duplicateMessage = 'Этот пользователь указан несколько раз') => Yup.array().of(
@@ -86,7 +85,7 @@ export const roundsObject = (game: Game) => Yup.array(roundObject(game))
 export const protocolObject = (game: Game) => Yup.object({
     rounds: roundsObject(game),
     captain_task: Yup.string().ensure(),
-    captain_winner: teamObject([game.team1, game.team2]),
+    captain_winner: teamObject([game.team1, game.team2]).nullable(),
     team1_data: teamProtocolDataObject(game.team1),
     team2_data: teamProtocolDataObject(game.team2),
     additional: Yup.string().ensure(),

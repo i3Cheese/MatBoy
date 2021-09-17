@@ -12,11 +12,11 @@ import {tourLink} from "../../../helpers/links";
 
 export const TourDate: FC<ComponentProps<'div'> & { tour: Tournament }> = ({tour, className, children, ...props}) => {
     const content: ReactElement = (<>
-        {tour.start instanceof Date && (<>
-            <DateSpan date={tour.start}/>
-            {tour.end instanceof Date && (<>
+        {tour.start_time instanceof Date && (<>
+            <DateSpan date={tour.start_time}/>
+            {tour.end_time instanceof Date && (<>
                 -
-                <DateSpan date={tour.end}/>
+                <DateSpan date={tour.end_time}/>
             </>)}
         </>)}
     </>)

@@ -18,6 +18,3 @@ export {gameServices};
 
 import agServices from "./accessGroup.services";
 export {agServices};
-
-import protocolServices from "./protocol.services";
-export {protocolServices};

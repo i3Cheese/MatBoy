@@ -46,8 +46,8 @@ export class TournamentForm extends Component<TournamentFormProps, TournamentFor
                 title: tour.title,
                 description: tour.description,
                 place: tour.place,
-                start: tour.start == null ? "" : moment(tour.start).format("YYYY-MM-DD"),
-                end: tour.end == null ? "" : moment(tour.start).format("YYYY-MM-DD"),
+                start: tour.start_time == null ? "" : moment(tour.start_time).format("YYYY-MM-DD"),
+                end: tour.end_time == null ? "" : moment(tour.start_time).format("YYYY-MM-DD"),
             };
         this.state = {
             form,

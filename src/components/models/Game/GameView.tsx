@@ -1,25 +1,23 @@
 import React, {FC, useState} from 'react';
 import {Game} from "../../../types/models";
-import {Box, BoxTitle} from "../../layout";
-import {gameName} from "../../../helpers";
 import {GameTable, GameTableRoundView, TeamProtocolDataView} from "./ProtocolView";
 import {TeamProtocolDataViewContainer} from "./ProtocolView";
 import {ProtocolBox, ProtocolPage} from "./ProtocolView/Protocol";
 import {ProtocolAdditionalView} from "./ProtocolView/ProtocolAdditional";
 import {GameHeader} from "./GameHeader";
-import {ProtocolToolbarView} from "./ProtocolView/ProtocolToolbarEdit";
+import {ProtocolToolbarView} from "./ProtocolView/ProtocolToolbar";
 
 export interface GameViewProps {
     game: Game,
 }
 
-const GameView: FC<GameViewProps> = ({game, ...props}) => {
+const GameView: FC<GameViewProps> = ({game}) => {
     const [swapped, setSwapped] = useState(false);
     return (
         <ProtocolPage>
             <GameHeader game={game}/>
             <ProtocolBox>
-                <ProtocolToolbarView game={game} onSwapTeams={()=>setSwapped(!swapped)}/>
+                <ProtocolToolbarView game={game} onSwapTeams={() => setSwapped(!swapped)}/>
                 <TeamProtocolDataViewContainer>
                     {swapped ?
                         <>
@@ -33,11 +31,12 @@ const GameView: FC<GameViewProps> = ({game, ...props}) => {
                         </>
                     }
                 </TeamProtocolDataViewContainer>
+                {game.status != "created" &&
                 <GameTable game={game}>
                     {game.protocol.rounds.map((round, index) => (
                         <GameTableRoundView round={round} index={index} key={index} swapped={swapped}/>
                     ))}
-                </GameTable>
+                </GameTable>}
                 <ProtocolAdditionalView additional={game.protocol.additional}/>
             </ProtocolBox>
         </ProtocolPage>

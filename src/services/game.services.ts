@@ -4,13 +4,13 @@ import {Game} from "../types/models";
 import {GameFormData} from "../components";
 
 const gameServices = {
-    getGames: async function (leagueId?: number, teamId?: number) {
+    getGames: async function (leagueId?: number, gameId?: number) {
         let url = `/api/game?`
         if (leagueId != undefined) {
             url += `league_id=${leagueId}&`
         }
-        if (teamId != undefined) {
-            url += `team_id=${teamId}&`
+        if (gameId != undefined) {
+            url += `team_id=${gameId}&`
         }
         const {data: r} = await axios.get<Response<{games: Game[]}>>(url);
         if (r.success) {
@@ -59,7 +59,38 @@ const gameServices = {
             const er = res.message;
             return Promise.reject(er);
         }
+    },
+    editProtocol: async function(formData: any, gameId: number) {
+        const sendData = {
+            ...formData,
+        }
+        const {data: res} = await axios.put<Response<{game: Game}>>(`/api/game/${gameId}/protocol`, sendData);
+        if (res.success) {
+            return res.game;
+        } else {
+            throw res.message;
+        }
+    },
+    startGame: function(gameId: number) {
+        return gameStatusChanger(gameId, {status: "started"});
+    },
+    finishGame: function(gameId: number) {
+        return gameStatusChanger(gameId, {status: "finished"});
+    },
+    restoreGame: function(gameId: number) {
+        return gameStatusChanger(gameId, {status: "created"});
+    },
+}
+
+async function gameStatusChanger(gameId: number, data: any): Promise<Game> {
+    const {data: res} = await axios.put<Response<{game:Game}>>(`/api/game/${gameId}/status`, data);
+    if (res.success) {
+        return res.game;
+    } else {
+        const er = res.message;
+        return Promise.reject(er);
     }
 }
+
 
 export default gameServices;

@@ -14,13 +14,13 @@
     &-saving {
 
     }
-    &__savedTime {
+    &__time {
       margin: 0 .2em;
       color: black;
     }
   }
   &__buttons {
-    button {
+    .btn {
       padding: 0 .2em;
     }
     &__swap {

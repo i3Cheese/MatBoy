@@ -4,8 +4,7 @@ import {useRouteMatch} from "react-router";
 import PageHeader from "../../components/PageHeader";
 import SimpleMenu from "../../components/SimpleMenu";
 import {Box, BoxContainer, BoxTitle, DateSpan, InfoBox} from "../../components";
-import {LeaguesBox} from "../../components/models/League/League";
-import {useMenuItem} from "../../helpers/hooks";
+import {LeaguesBox} from "../../components";
 
 export const TournamentPage: FC<{tour: Tournament}> = ({tour}) => {
     const {url} = useRouteMatch();
@@ -34,9 +33,9 @@ export const TournamentPage: FC<{tour: Tournament}> = ({tour}) => {
                         <dd className="col-sm-8">Место проведения:</dd>
                         <dt className="col-sm-4">{tour.place}</dt>
                         <dd className="col-sm-8">Дата начала:</dd>
-                        <dt className="col-sm-4"><DateSpan date={tour.start}/></dt>
+                        <dt className="col-sm-4"><DateSpan date={tour.start_time}/></dt>
                         <dd className="col-sm-8">Дата окончания:</dd>
-                        <dt className="col-sm-4"><DateSpan date={tour.end}/></dt>
+                        <dt className="col-sm-4"><DateSpan date={tour.end_time}/></dt>
                     </InfoBox>
                 </Box>
             </BoxContainer>

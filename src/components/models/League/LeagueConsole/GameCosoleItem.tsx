@@ -3,7 +3,7 @@ import {AccessGroup, Game, Team} from "../../../../types/models";
 import {Accordion, Button, ListGroup, useAccordionButton} from "react-bootstrap";
 import {BoxTitle, DateSpan} from "../../../layout";
 import {GameForm, GameFormData} from "../../Game";
-import {ButtonGroupItem, ListGroupUserData, TitledItem} from "../../../ConsoleItem";
+import {ButtonGroupItem, TitledItem} from "../../../ConsoleItem";
 import {gameName} from "../../../../helpers";
 import AccessGroupEditor from "../../AccessGroup/AccessGroupEditor";
 
@@ -46,7 +46,7 @@ export const GameConsoleItem: FC<GameConsoleItemProps> = (
                         {game.place}
                     </TitledItem>
                     <TitledItem label={'Время начала'}>
-                        <DateSpan date={game.start} time={true} local={true}/>
+                        <DateSpan date={game.start_time} time={true} local={true}/>
                     </TitledItem>
                     <TitledItem label="Судьи" style={{padding: 0}}>
                         <AccessGroupEditor accessGroup={game.access_group as AccessGroup}/>

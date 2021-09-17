@@ -1,34 +1,46 @@
+import datetime
 import datetime as dt
 
 import sqlalchemy as sa
 from sqlalchemy import orm
 from data.base_model import BaseModel
-from data.exceptions import StatusError
 from data.access_group import AccessMixin, DefaultAccess
 
 import typing as t
 
+from data.exceptions import StatusError
+
 
 class Game(AccessMixin, BaseModel):
     __tablename__ = "games"
-    __repr_attrs__ = ["league_id", "start"]
-    _serialize_only = ("id",
-                       "title",
-                       "place",
-                       "start",
-                       "status",
-                       "league",
-                       "team1",
-                       "team2",
-                       "protocol",
-                       "full_access",
-                       "manage_access",
-                       )
+    __repr_attrs__ = ["league_id", "start_time"]
+
+    @property
+    def _serialize_only(self):
+        fields = [
+            "id",
+            "title",
+            "place",
+            "start_time",
+            "status",
+            "league",
+            "team1",
+            "team2",
+            "protocol",
+            "full_access",
+            "manage_access",
+        ]
+        if self.is_started:
+            fields.append("started_at")
+        if self.is_finished:
+            fields.append("finished_at")
+        return fields
+
     _sensitive_fields = ("access_group",)
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     place = sa.Column(sa.String, nullable=True)
-    start = sa.Column(sa.DateTime, nullable=True)
+    start_time = sa.Column(sa.DateTime, nullable=True)
     status: t.Literal['deleted', 'created', 'started', 'finished'] = sa.Column(
         sa.String(10), default='created', nullable=False
     )
@@ -38,6 +50,8 @@ class Game(AccessMixin, BaseModel):
     2 - started
     3 - finished
     """
+    finished_at = sa.Column(sa.DateTime, nullable=True)
+    started_at = sa.Column(sa.DateTime, nullable=True)
     team1_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False)
     team2_id = sa.Column(sa.Integer, sa.ForeignKey("teams.id"), nullable=False,
                          )
@@ -60,7 +74,7 @@ class Game(AccessMixin, BaseModel):
                  **kwargs):
         super().__init__(parent_access_group=league.access_group)
         self.place = place
-        self.start = start
+        self.start_time = start
         self.team1 = team1
         self.team2 = team2
         self.league = league
@@ -89,17 +103,41 @@ class Game(AccessMixin, BaseModel):
     def is_deleted(self):
         return self.status == 'deleted'
 
+    @property
+    def is_started(self):
+        return self.status == "started" or self.is_finished
+
+    @property
+    def is_finished(self):
+        return self.status == "finished"
+
     def delete(self):
         self.status = 'deleted'
 
     def restore(self):
         self.status = 'created'
 
-    def start_game(self):
+    def start(self):
+        if self.status != 'created':
+            raise StatusError(f"Cant start_time {self!r} with status {self.status}")
         self.status = 'started'
+        self.started_at = datetime.datetime.utcnow()
 
     def finish(self):
+        if self.status != 'started':
+            raise StatusError(f"Cant finish {self!r} with status {self.status}")
         self.status = 'finished'
+        self.finished_at = datetime.datetime.utcnow()
+
+    def cast_status_to(self, status):
+        if status == "created":
+            self.restore()
+        elif status == "started":
+            self.start()
+        elif status == "finished":
+            self.finish()
+        else:
+            raise ValueError(f"Cant cast Game.status to {status}")
 
 
 class Protocol(BaseModel, DefaultAccess):
@@ -193,7 +231,7 @@ class Round(BaseModel):
 
     protocol_id = sa.Column(sa.Integer, sa.ForeignKey('protocols.game_id'), primary_key=True)
     protocol = orm.relationship('Protocol',
-                                back_populates='rounds',)
+                                back_populates='rounds', )
 
     def __init__(self, *,
                  order: int,
@@ -201,7 +239,7 @@ class Round(BaseModel):
                  team2_data: t.Optional['TeamRoundData'] = None,
                  problem: int,
                  call_type: int,
-                 additional: str = '',):
+                 additional: str = '', ):
         super().__init__()
         self.order = order
         self.team1_data = team1_data
@@ -252,7 +290,7 @@ class TeamRoundData(BaseModel):
     def __init__(self, *args,
                  points: int,
                  stars: int = 0,
-                 players = None,
+                 players=None,
                  **kwargs):
         super(TeamRoundData, self).__init__(*args, **kwargs)
 

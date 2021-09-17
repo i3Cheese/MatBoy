@@ -23,8 +23,8 @@ export interface Tournament {
     description: string,
     chief: User,
     place: string,
-    start: Date | null,
-    end: Date | null,
+    start_time: Date | null,
+    end_time: Date | null,
     full_access: boolean,
     manage_access: boolean,
     access_group?: AccessGroup,
@@ -53,11 +53,22 @@ export interface Team {
     manage_access: boolean,
 }
 
-export interface Game {
+type _GameStatus = {
+    status: "deleted" | "created"
+} | {
+    status: "started",
+    started_at: Date,
+} | {
+    status: "finished",
+    started_at: Date,
+    finished_at: Date,
+}
+
+export type Game = {
     id: number,
     title: string,
     place: string,
-    start: Date,
+    start_time: Date,
     status: "deleted" | "created" | "started" | "finished",
     league: League,
     team1: Team,
@@ -66,7 +77,8 @@ export interface Game {
     full_access: boolean,
     manage_access: boolean,
     access_group?: AccessGroup,
-}
+} & _GameStatus;
+
 
 export interface Protocol {
     rounds: Round[],

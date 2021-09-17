@@ -9,7 +9,7 @@ import './CaptainTask.scss';
 
 export interface CaptainTaskBaseProps {
     captainTask: ReactNode,
-    winner: ReactNode,
+    winner?: ReactNode,
 }
 
 export const CaptainTaskBase: FC<CaptainTaskBaseProps> = ({
@@ -23,12 +23,14 @@ export const CaptainTaskBase: FC<CaptainTaskBaseProps> = ({
             </label>
             {captainTask}
         </div>
+        {winner &&
         <div className={"CaptainTask__winner"}>
             <label className={"CaptainTask__label"}>
                 Победил капитан команды:
             </label>
             {winner}
         </div>
+        }
     </div>
 )
 
@@ -42,10 +44,11 @@ export const CaptainTaskEdit: FC<{ game: Game }> = ({game,}) => (
                         as={"textarea"}
                         {...field}
                         isInvalid={fieldState.invalid}
+                        placeholder={game.status=="created"?"Никто не увидит содержимого пока вы не начнёте игру.":""}
                     />
                 )}/>}
         winner={
-            <TeamSelect path={`captain_winner`} teams={[game.team1, game.team2]} />
+            game.status != "created"?<TeamSelect path={`captain_winner`} teams={[game.team1, game.team2]} />:undefined
         }
     />
 );
