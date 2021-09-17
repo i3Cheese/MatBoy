@@ -90,7 +90,7 @@ export const ProtocolToolbarView: FC<{ game: Game, onSwapTeams: () => any }> = (
         game={game}
         onSwapTeams={onSwapTeams}
         buttons={
-            <Button
+            game.manage_access && <Button
                 as={Link}
                 to={`${gameLink(game)}/console`}
                 variant={"outline-primary"}

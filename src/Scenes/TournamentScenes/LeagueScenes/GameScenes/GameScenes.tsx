@@ -5,6 +5,8 @@ import {LoaderPage} from "../../../../components";
 import {gameServices} from "../../../../services";
 import GameConsole from "../../../../components/models/Game/GameConsole";
 import GameView from "../../../../components/models/Game/GameView";
+import MenuItemComponent from "../../../../components/MenuItemComponent";
+import {gameName} from "../../../../helpers";
 
 
 const GameIdScenes: FC<{ tour: Tournament, league: League }> = ({tour, league}) => {
@@ -17,14 +19,18 @@ const GameIdScenes: FC<{ tour: Tournament, league: League }> = ({tour, league}) 
     }, [gameId]);
     if (game === null) return <LoaderPage/>
     return (
-        <Switch>
-            <Route exact path={`${path}`}>
-                <GameView game={game}/>
-            </Route>
-            <Route path={`${path}/console`}>
-                <GameConsole game={game} setGame={setGame}/>
-            </Route>
-        </Switch>
+        <MenuItemComponent title={gameName(game)}>
+            <Switch>
+                <Route exact path={`${path}`}>
+                    <GameView game={game}/>
+                </Route>
+                <Route path={`${path}/console`}>
+                    <MenuItemComponent title={"Консоль"}>
+                        <GameConsole game={game} setGame={setGame}/>
+                    </MenuItemComponent>
+                </Route>
+            </Switch>
+        </MenuItemComponent>
     )
 }
 

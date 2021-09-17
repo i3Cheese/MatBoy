@@ -5,7 +5,7 @@ import {TeamProtocolDataEdit, TeamProtocolDataViewContainer} from "./ProtocolVie
 import {protocolObject} from "../../../helpers/yupFields";
 import {useFieldArray, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {Button, ButtonGroup} from "react-bootstrap";
+import {Button, ButtonGroup, Spinner} from "react-bootstrap";
 import {FormProvider} from 'react-hook-form';
 import {ProtocolBox, ProtocolPage} from "./ProtocolView/Protocol";
 import {ProtocolToolbarEdit} from "./ProtocolView/ProtocolToolbar";
@@ -119,42 +119,44 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
                     <ProtocolAdditionalEdit/>
 
                     <div className={"mt-4 d-flex justify-content-between flex-row-reverse"}>
-                        <ButtonGroup>
-                            <Button
-                                onClick={handleSubmit(sendProtocol)}
-                                variant={"success"}
-                            >Сохранить</Button>
-                            {game.status == 'started' &&
-                            <Button
-                                onClick={handleSubmit(finishGame)}
-                                variant={"secondary"}
-                            >Завершить</Button>
-                            }
-                            {game.status == 'created' &&
-                            <Button
-                                onClick={handleSubmit(startGame)}
-                                variant={"primary"}
-                            >Начать</Button>
-                            }
-                            {game.status == 'finished' &&
-                            <Button
-                                onClick={handleSubmit(restoreGame)}
-                                variant={"secondary"}
-                            >Востановить</Button>
-                            }
-                        </ButtonGroup>
+                        {status === "saving" ? <Spinner animation={"border"}/> :
+                            <ButtonGroup>
+                                <Button
+                                    onClick={handleSubmit(sendProtocol)}
+                                    variant={"success"}
+                                >Сохранить</Button>
+                                {game.status == 'started' &&
+                                <Button
+                                    onClick={handleSubmit(finishGame)}
+                                    variant={"secondary"}
+                                >Завершить</Button>
+                                }
+                                {game.status == 'created' &&
+                                <Button
+                                    onClick={handleSubmit(startGame)}
+                                    variant={"primary"}
+                                >Начать</Button>
+                                }
+                                {game.status == 'finished' &&
+                                <Button
+                                    onClick={handleSubmit(restoreGame)}
+                                    variant={"secondary"}
+                                >Востановить</Button>
+                                }
+                            </ButtonGroup>
+                        }
                         {game.status != "created" &&
-                        <ButtonGroup>
+                            <ButtonGroup>
                             <Button
-                                onClick={removeLastRound}
-                                variant={"danger"}
-                                disabled={rounds.length <= 1}
+                            onClick={removeLastRound}
+                            variant={"danger"}
+                            disabled={rounds.length <= 1}
                             >Удалить раунд</Button>
                             <Button
-                                onClick={appendDefaultRound}
-                                variant={"primary"}
+                            onClick={appendDefaultRound}
+                            variant={"primary"}
                             >Добавить раунд</Button>
-                        </ButtonGroup>
+                            </ButtonGroup>
                         }
                     </div>
                 </ProtocolBox>

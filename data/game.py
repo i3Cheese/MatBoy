@@ -34,9 +34,15 @@ class Game(AccessMixin, BaseModel):
             fields.append("started_at")
         if self.is_finished:
             fields.append("finished_at")
-        return fields
+        return tuple(fields)
 
     _sensitive_fields = ("access_group",)
+
+    def have_manage_access(self, user) -> bool:
+        if self.status == "finished":
+            return self.have_full_access(user)
+        else:
+            return super().have_manage_access(user)
 
     id = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     place = sa.Column(sa.String, nullable=True)
