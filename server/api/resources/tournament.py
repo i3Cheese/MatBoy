@@ -13,8 +13,8 @@ class TournamentInfoForm(BaseForm):
     title = StringField("Название", validators=[RuDataRequired()])
     description = TextAreaField("Дополнительная информация", )
     place = StringField("Место проведения", validators=[RuDataRequired()])
-    start = RuDateField("Начало турнира", validators=[RuDataRequired()])
-    end = RuDateField("Конец турнира", validators=[RuDataRequired()])
+    start_time = RuDateField("Начало турнира", validators=[RuDataRequired()])
+    end_time = RuDateField("Конец турнира", validators=[RuDataRequired()])
     submit = SubmitField("Подтвердить")
 
 
@@ -32,10 +32,10 @@ class TournamentsResource(Resource):
             # Validate posted data. Create tour
             session = get_session()
             tournament = Tournament(title=form.title.data,
-                                    description=form.description.data,
+                                    description=form.description.data or "",
                                     place=form.place.data,
-                                    start=form.start_time.data,
-                                    end=form.end_time.data,
+                                    start_time=form.start_time.data,
+                                    end_time=form.end_time.data,
                                     chief=current_user,
                                     )
             session.add(tournament)
@@ -76,12 +76,13 @@ class TournamentResource(Resource):
         if not tour.have_permission(current_user):
             abort(403)
         data = request.get_json()
+        print(data)
         form = TournamentInfoForm.from_json(data['form'])
         res = {"success": False}
         if form.validate():
             # Change tour values
             tour.title = form.title.data
-            tour.description = form.description.data
+            tour.description = form.description.data or ""
             tour.place = form.place.data
             tour.start_time = form.start_time.data
             tour.end_time = form.end_time.data

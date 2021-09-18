@@ -61,16 +61,16 @@ class Tournament(AccessMixin, BaseModel):
     def __init__(self, *args,
                  title: str,
                  place: str,
-                 start: dt.date,
-                 end: dt.date, chief,
+                 start_time: dt.date,
+                 end_time: dt.date, chief,
                  description: str = '',
                  **kwargs):
         parent_access_group = AccessGroup(members=[chief])
         super().__init__(*args, parent_access_group=parent_access_group, **kwargs)
         self.title = title
         self.place = place
-        self.start_time = start
-        self.end_time = end
+        self.start_time = start_time
+        self.end_time = end_time
         self.chief = chief
         self.description = description
 

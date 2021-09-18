@@ -1,29 +1,27 @@
-import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandler, useState} from 'react';
+import React, {ComponentProps, FC, useState} from 'react';
 import {Tournament} from "../../../types/models";
 import moment from 'moment';
 import {Button, Form} from "react-bootstrap";
-import produce from "immer";
 import {tournamentServices, ITournamentFormRequest} from "../../../services";
 import {AppLoader} from "../../Loader";
 import {Redirect} from "react-router";
 import {FormBox} from "../../layout";
+import * as Yup from "yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import FormInput from "../../FormInput";
+import {UTCDateField} from "../../../helpers/yupFields";
 
 
 export interface TournamentFormFields {
     title: string,
     description: string,
     place: string,
-    start: string,
-    end: string,
+    start_time: string,
+    end_time: string,
 }
 
 export type TournamentFormReturn = ITournamentFormRequest;
-
-interface TournamentFormState {
-    form: TournamentFormFields,
-    isWaiting: boolean,
-    accepted: boolean,
-}
 
 export interface TournamentFormProps {
     tour?: Tournament,
@@ -31,96 +29,75 @@ export interface TournamentFormProps {
     isLoading: boolean,
 }
 
-export class TournamentForm extends Component<TournamentFormProps, TournamentFormState> {
-    constructor(props: TournamentFormProps) {
-        super(props);
-        const tour = props.tour;
-        const form: TournamentFormFields = tour === undefined ?
-            {
-                title: "",
-                description: "",
-                place: "",
-                start: "",
-                end: "",
-            } : {
-                title: tour.title,
-                description: tour.description,
-                place: tour.place,
-                start: tour.start_time == null ? "" : moment(tour.start_time).format("YYYY-MM-DD"),
-                end: tour.end_time == null ? "" : moment(tour.start_time).format("YYYY-MM-DD"),
-            };
-        this.state = {
-            form,
-            isWaiting: false,
-            accepted: false,
+export const TournamentForm: FC<TournamentFormProps> = ({tour, ...props}) => {
+    const validationSchema = Yup.object().shape({
+        title: Yup.string().required(),
+        description: Yup.string(),
+        place: Yup.string().required(),
+        start_time: UTCDateField().required(),
+        end_time: UTCDateField().required(),
+    })
+    const {register, handleSubmit: rhfHandleSubmit, formState: {errors}} = useForm<TournamentFormFields>({
+        resolver: yupResolver(validationSchema),
+        defaultValues: tour && {
+            title: tour.title,
+            description: tour.description,
+            place: tour.place,
+            start_time: tour.start_time == null ? "" : moment(tour.start_time).format("YYYY-MM-DD"),
+            end_time: tour.end_time == null ? "" : moment(tour.end_time).format("YYYY-MM-DD"),
         }
-    }
-
-    parse = ({start, end, ...fields}: TournamentFormFields): TournamentFormReturn => ({
-        start,
-        end,
-        ...fields,
     });
-
-    handleSubmit: FormEventHandler = async (event) => {
-        this.setState({isWaiting: true});
-        this.props.onSubmit(this.parse(this.state.form)).then(
-            () => {
-                this.setState({isWaiting: false, accepted: true});
-            },
-            () => {
-                this.setState({isWaiting: false, accepted: false})
-            }
-        )
-        event.preventDefault();
+    const handleSubmit = (data: TournamentFormFields) => {
+        props.onSubmit(data);
     };
-    handleChange: ChangeEventHandler<HTMLInputElement> = (event => {
-        const name = event.target.name;
-        const value = event.target.value;
-        this.setState(produce(this.state, (draft) => {
-            // @ts-ignore
-            draft.form[name] = value;
-        }));
-    });
 
-    render() {
-        const form = this.state.form;
-        if (this.props.isLoading) return <AppLoader/>
-        return (
-            <Form onSubmit={this.handleSubmit}>
-                <fieldset>
-                    <Form.Group>
-                        <Form.Label>Название *</Form.Label>
-                        <Form.Control name="title" type="text" value={form.title} onChange={this.handleChange}/>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Дополнительная информация</Form.Label>
-                        <Form.Control name="description" type="text" as="textarea" value={form.description}
-                                      onChange={this.handleChange}/>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Место проведения</Form.Label>
-                        <Form.Control name="place" type="text" value={form.place}
-                                      onChange={this.handleChange}/>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Дата начала</Form.Label>
-                        <Form.Control name="start" type="date" value={form.start}
-                                      onChange={this.handleChange}
-                                      className="datepicker-here"
+    if (props.isLoading) return <AppLoader/>
+    return (
+        <Form onSubmit={rhfHandleSubmit(handleSubmit)}>
+            <fieldset>
+                <FormBox.Group>
+                    <FormBox.Item>
+                        <FormInput
+                            label={"Название *"}
+                            className={"mb-3"}
+                            {...register("title")}
+                            error={errors.title}
                         />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Дата начала</Form.Label>
-                        <Form.Control name="end" type="date" value={form.end}
-                                      onChange={this.handleChange}/>
-                    </Form.Group>
-                    <Button variant="primary" type="submit">{this.props.tour ? "Изменить" : "Создать"}</Button>
-                </fieldset>
-            </Form>
-        );
-    }
-}
+                        <FormInput
+                            label={"Дополнительная информация"}
+                            className={"mb-3"}
+                            type="text"
+                            as="textarea"
+                            {...register("description")}
+                            error={errors.description}
+                        />
+                        <FormInput
+                            label={"Место проведения"}
+                            className={"mb-3"}
+                            {...register("place")}
+                            error={errors.place}
+                        />
+                        <FormInput
+                            label={"Дата начала"}
+                            className={"mb-3"}
+                            type="date"
+                            {...register("start_time")}
+                        />
+                        <FormInput
+                            label={"Дата начала"}
+                            type="date"
+                            {...register("end_time")}
+                            error={errors.end_time}
+                        />
+                    </FormBox.Item>
+                    <FormBox.Item>
+                        <Button variant="primary" type="submit">{tour ? "Изменить" : "Создать"}</Button>
+                    </FormBox.Item>
+                </FormBox.Group>
+            </fieldset>
+        </Form>
+    );
+};
 
 export const NewTournamentForm: FC = () => {
     const [isLoading, setLoading] = useState(false);
@@ -168,7 +145,11 @@ export const EditTournamentForm: FC<EditTournamentFormProps> = ({tour, setTour})
 }
 
 
-export const EditTournamentFormBox: FC<EditTournamentFormProps & ComponentProps<typeof FormBox>> = ({tour, setTour, ...props}) => (
+export const EditTournamentFormBox: FC<EditTournamentFormProps & ComponentProps<typeof FormBox>> = ({
+                                                                                                        tour,
+                                                                                                        setTour,
+                                                                                                        ...props
+                                                                                                    }) => (
     <FormBox size="middle" {...props}>
         <FormBox.Title>
             Редактирование турнира
@@ -182,7 +163,7 @@ export const NewTournamentFormBox: FC<ComponentProps<typeof FormBox>> = (props) 
         <FormBox.Title>
             Создание нового турнира
         </FormBox.Title>
-        <NewTournamentForm />
+        <NewTournamentForm/>
     </FormBox>
 )
 

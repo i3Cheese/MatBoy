@@ -1,72 +1,80 @@
-import React, {ChangeEventHandler, Component, ComponentProps, FC, FormEventHandler} from "react";
+import React, {ComponentProps, FC, useCallback} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {Button, Form, FormProps} from "react-bootstrap";
-import produce from "immer";
 import ArgsType = jest.ArgsType;
 import {authActions} from "../../../actions";
 import {AppDispatch, AppState} from "../../../store";
 import {Redirect} from "react-router";
 import {FormBox} from "../../layout";
 import {Link} from "react-router-dom";
+import FormInput from "../../FormInput";
+import * as Yup from "yup";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {LoginError} from "../../../types/errors";
 
 
-interface LoginState {
-    form: {
-        email: string,
-        password: string,
-    }
+interface LoginFormInputs {
+    email: string,
+    password: string,
 }
 
-class RawLoginForm extends Component<LoginProps, LoginState> {
-    constructor(props: LoginProps) {
-        super(props);
-        this.state = {
-            form: {
-                email: '',
-                password: '',
-            },
-        }
-    }
+const RawLoginForm: FC<LoginProps> = (props) => {
+    const validationSchema = Yup.object().shape({
+        email: Yup.string().required().email(),
+        password: Yup.string().required(),
+    });
+    const {register, handleSubmit, formState: {errors}, setError} = useForm<LoginFormInputs>({
+        resolver: yupResolver(validationSchema),
+    });
 
-    handleSubmit: FormEventHandler = (event) => {
-        this.props.login(this.state.form);
-        event.preventDefault();
-    }
+    const login = useCallback((data: LoginFormInputs) => {
+        props.login(data).catch(
+            (e: LoginError | Error) => {
+                if ('errors' in e) {
+                    if (e.errors.email)
+                        setError('email', {
+                            type: e.errors.email,
+                            message: 'Пользователь с таким e-mail не зарегестрирован'
+                        });
+                    if (e.errors.password)
+                        setError('password', {
+                            type: e.errors.password,
+                            message: 'Неправильный пароль',
+                        });
+                }
+            });
+    }, [props.login]);
 
-    handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-        this.setState(produce(this.state, draftState => {
-            draftState.form[event.target.name as ("email" | "password")] = event.target.value;
-        }));
-    }
-
-    render() {
-        if (this.props.loggedIn) return <Redirect to={'/'}/>;
-        return (
-            <Form onSubmit={this.handleSubmit} className={this.props.className}>
-                <fieldset disabled={this.props.isWaiting}>
-                    <Form.Group>
-                        <Form.Label>E-mail</Form.Label>
-                        <Form.Control
-                            name="email"
+    if (props.loggedIn) return <Redirect to={'/'}/>;
+    return (
+        <Form onSubmit={handleSubmit(login)} className={props.className}>
+            <FormBox.Group>
+                <FormBox.Item>
+                    <fieldset disabled={props.isWaiting}>
+                        <FormInput
+                            className={"mb-3"}
+                            label={"E-mail"}
                             type="email"
-                            placeholder="Введите e-mail"
-                            onChange={this.handleChange}
+                            {...register("email")}
+                            error={errors.email}
                         />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Пароль</Form.Label>
-                        <Form.Control
-                            name="password"
+                        <FormInput
+                            label={"Пароль"}
                             type="password"
-                            onChange={this.handleChange}
-                            value={this.state.form.password}
+                            {...register("password")}
+                            error={errors.password}
                         />
-                    </Form.Group>
-                    <Button variant="primary" type="submit">Войти</Button>
-                </fieldset>
-            </Form>
-        );
-    }
+                    </fieldset>
+                </FormBox.Item>
+                <FormBox.Item>
+                    <Button variant="primary" type="submit">
+                        Подтвердить
+                    </Button>
+                </FormBox.Item>
+            </FormBox.Group>
+        </Form>
+    );
 }
 
 function mapStateToProps(state: AppState) {
@@ -76,17 +84,19 @@ function mapStateToProps(state: AppState) {
         isWaiting: state.auth.isWaiting,
     }
 }
+
 function mapDispatchToProps(dispatch: AppDispatch) {
     return {
         login: (...args: ArgsType<typeof authActions.login>) => authActions.login(...args)(dispatch),
     }
 }
+
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type LoginProps = ConnectedProps<typeof connector> & FormProps;
 export const LoginForm = connector(RawLoginForm);
 
 
-export const LoginFormBox: FC<ComponentProps<typeof FormBox> > = ({...props}) => (
+export const LoginFormBox: FC<ComponentProps<typeof FormBox>> = ({...props}) => (
     <FormBox size="middle" {...props}>
         <FormBox.Title>
             Вход

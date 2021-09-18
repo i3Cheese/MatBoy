@@ -1,15 +1,15 @@
 import {User} from "../types/models";
 import {UserDataFormData} from "../components";
 import axios from "axios";
+import {LoginError} from "../types/errors";
 
 export const authService = {
     login: async function login(form: object) {
-        const {data: res} = await axios.post<{ success: boolean, user?: User, message?: string }>(`/api/login`, {form});
-        const {success, user, message} = res;
-        if (success) {
-            return user as User;
+        const {data: res} = await axios.post<{ success: true, user: User } | LoginError>(`/api/login`, {form});
+        if (res.success) {
+            return res.user;
         } else {
-            return Promise.reject(message);
+            return Promise.reject(res);
         }
     },
     registration: async function (data: UserDataFormData) {

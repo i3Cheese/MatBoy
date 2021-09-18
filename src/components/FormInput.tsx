@@ -25,7 +25,7 @@ const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>((props, ref
         onFocus: props.onFocus,
         onKeyDown: props.onKeyDown,
         id: props.id,
-        placeholder: props.placeholder,
+        placeholder: props.placeholder || props.label,
         disabled: props.disabled,
         className: props.inputClassName,
         title: props.title,

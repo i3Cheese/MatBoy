@@ -1,7 +1,7 @@
 import {authService} from '../services';
 import {AppAction, AppDispatch} from '../store'
 import {User} from "../types/models";
-import {UserDataFormData} from "../components/models/User";
+import {UserDataFormData} from "../components";
 
 export const authActions = {
     login,
@@ -15,16 +15,15 @@ function login(form: { email: string, password: string, }) {
     return (dispatch: AppDispatch) => {
         dispatch(request());
 
-        authService.login(form)
+        return authService.login(form)
             .then(
                 (user: User) => {
-                    console.log(user);
                     dispatch(success(user));
                 },
                 (error: string) => {
-                    console.log(error);
                     dispatch(failure(error));
                     // dispatch(alertActions.error(error));
+                    throw error;
                 }
             );
     };

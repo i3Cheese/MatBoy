@@ -1,7 +1,9 @@
 import * as Yup from "yup";
 import {userServices} from "../services";
 import {Game, Team, User} from "../types/models";
+import {fromLocalToUtc} from "./datetime";
 
+export const UTCDateField = () => Yup.date().transform(fromLocalToUtc)
 
 export const userObject = () => Yup.object().shape({
     email: Yup.string().required("Это поле обязательно").ensure()

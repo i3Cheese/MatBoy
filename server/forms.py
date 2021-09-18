@@ -1,10 +1,13 @@
+import datetime
+from dateutil import parser
+
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from wtforms import TextAreaField, SubmitField, DateField, FieldList, SelectField
 from wtforms import FormField
 from wtforms.fields.html5 import EmailField
 from flask_wtf import FlaskForm, RecaptchaField, Recaptcha
-import datetime
+
 from data import User, Game, get_session
 from config import config
 
@@ -22,8 +25,7 @@ class NullableDateField(DateField):
                 self.data = None
                 return
             try:
-                self.data = datetime.datetime.strptime(
-                    date_str, self.format).date()
+                self.data = parser.parse(date_str).date()
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Неправильный формат даты'))
@@ -43,8 +45,7 @@ class RuDateField(DateField):
         if valuelist:
             date_str = ' '.join(valuelist)
             try:
-                self.data = datetime.datetime.strptime(
-                    date_str, self.format).date()
+                self.data = parser.parse(date_str).date()
             except ValueError:
                 self.data = None
                 raise ValueError(self.gettext('Неправильный формат даты'))

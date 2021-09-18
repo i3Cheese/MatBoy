@@ -31,8 +31,8 @@ export interface ITournamentFormRequest {
     title: string,
     description: string,
     place: string,
-    start: string,
-    end: string,
+    start_time: string,
+    end_time: string,
 }
 
 

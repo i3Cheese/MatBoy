@@ -20,9 +20,11 @@ class LoginResource(Resource):
             user = User.query.filter(User.email == form.email.data).first()
             if not user:
                 res['message'] = 'Пользователь не найден'
+                res['errors'] = {'email': 'not found'}
                 res["success"] = False
             elif not user.check_password(form.password.data):
                 res['message'] = 'Неправильный пароль'
+                res['errors'] = {'password': 'invalid'}
                 res["success"] = False
             else:
                 login_user(user, remember=True)
@@ -31,6 +33,7 @@ class LoginResource(Resource):
         else:
             res['success'] = False
             res['message'] = str(form.errors)
+            res['errors'] = form.errors
         print(res)
         return jsonify(res)
 

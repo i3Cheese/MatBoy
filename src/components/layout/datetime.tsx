@@ -1,5 +1,6 @@
 import React, {ComponentProps, FC} from 'react';
 import classnames from "classnames";
+import {fromUTCToLocal} from "../../helpers/datetime";
 
 interface DateSpanProps extends ComponentProps<'span'> {
     date: Date | null,
@@ -25,7 +26,7 @@ export function timezoneOffsetString(date?: Date) {
 export const DateSpan: FC<DateSpanProps> = ({date, className, children, local, time, ...props}) => {
     className = classnames(className, 'date', time && 'time');
     if (date == null) return <span className={classnames('date-unspecified', className)}>{"Не известно"}</span>;
-    if (!local) date = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDay(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.getUTCMilliseconds());
+    if (!local) date = fromUTCToLocal(date);
     let options: Intl.DateTimeFormatOptions = time ?
         {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}
         :

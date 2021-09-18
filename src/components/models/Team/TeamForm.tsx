@@ -2,14 +2,15 @@ import React, {ComponentProps, FC, useState} from 'react';
 import * as Yup from 'yup';
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {Button, FloatingLabel, Form, ListGroup} from "react-bootstrap";
+import {Button, Form, ListGroup} from "react-bootstrap";
 import {Team, Tournament} from "../../../types/models";
-import {teamServices, userServices} from "../../../services";
+import {teamServices} from "../../../services";
 import {Redirect} from "react-router";
 import {AppLoader} from "../../Loader";
 import {FormBox} from "../../layout";
 import {UserInputs} from "../User";
 import {usersObject} from "../../../helpers/yupFields";
+import FormInput from "../../FormInput";
 
 
 export interface TeamFormProps {
@@ -54,50 +55,51 @@ export const TeamForm: FC<TeamFormProps> = ({onSubmit, isLoading}) => {
     if (isLoading) return <AppLoader/>
     return (
         <Form onSubmit={handleSubmit(onSubmit)}>
-            <ListGroup variant="flush">
+            <FormBox.Group>
                 <ListGroup.Item>
-                    <FloatingLabel label="Название" className="mb-3">
-                        <Form.Control {...register("name")} isInvalid={errors.name !== undefined}/>
-                        <Form.Control.Feedback type="invalid">
-                            {errors.name?.message}
-                        </Form.Control.Feedback>
-                    </FloatingLabel>
-                    <FloatingLabel label="Девиз" className="mb-3">
-                        <Form.Control {...register("motto")} as="textarea" style={{height: "100px"}}
-                                      isInvalid={errors.motto !== undefined}/>
-                        <Form.Control.Feedback type="invalid">
-                            {errors.motto?.message}
-                        </Form.Control.Feedback>
-                    </FloatingLabel>
-                    <FloatingLabel label="Количество участников">
-                        <Form.Select onChange={(e) => setNumberOfPlayers(parseInt(e.currentTarget.value))}>
-                            {numberOfPlayersChoicesArray().map((i) => (
-                                <option key={i} value={i}>{i}</option>
-                            ))}
-                        </Form.Select>
-                    </FloatingLabel>
+                    <FormInput
+                        label="Название"
+                        className="mb-3"
+                        {...register("name")} error={errors.name}
+                    />
+                    <FormInput
+                        label="Девиз"
+                        className="mb-3"
+                        {...register("motto")}
+                        as="textarea"
+                        style={{height: "100px"}}
+                        error={errors.motto}
+                    />
+                    <FormInput
+                        label="Количество участников"
+                        onChange={(e) => setNumberOfPlayers(parseInt(e.currentTarget.value))}
+                        customInput={
+                            <Form.Select>
+                                {numberOfPlayersChoicesArray().map((i) => (
+                                    <option key={i} value={i}>{i}</option>
+                                ))}
+                            </Form.Select>
+                        }
+                    />
                 </ListGroup.Item>
 
-                <ListGroup.Item>
+                <FormBox.Item>
                     {playersIndexes().map((i,) => (
-                        <FloatingLabel key={i}
-                                       label={`Почта участника ${i + 1}`}
-                                       className={i === numberOfPlayers - 1 ? "" : "mb-3"}
-                        >
-                            <Form.Control {...register(`players.${i}.email`)}
-                                          isInvalid={errors.players?.[i]?.email?.message !== undefined}/>
-                            <Form.Control.Feedback type="invalid">
-                                {errors.players?.[i]?.email?.message}
-                            </Form.Control.Feedback>
-                        </FloatingLabel>
+                        <FormInput
+                            key={i}
+                            label={`Почта участника ${i + 1}`}
+                            className={i === numberOfPlayers - 1 ? "" : "mb-3"}
+                            {...register(`players.${i}.email`)}
+                            error={errors.players?.[i]?.email}
+                        />
                     ))}
-                </ListGroup.Item>
-                <ListGroup.Item>
+                </FormBox.Item>
+                <FormBox.Item>
                     <Button variant="primary" type="submit">
                         Подтвердить
                     </Button>
-                </ListGroup.Item>
-            </ListGroup>
+                </FormBox.Item>
+            </FormBox.Group>
         </Form>
     );
 }
@@ -126,11 +128,27 @@ export const NewTeamForm: FC<{ tour: Tournament }> = ({tour}) => {
     );
 }
 
-export const NewTeamFormBox: FC<ComponentProps<typeof FormBox> & {tour: Tournament}> = ({tour, ...props}) => (
-    <FormBox size="middle" {...props}>
-        <FormBox.Title>
-            Регистация команды
-        </FormBox.Title>
-        <NewTeamForm tour={tour}/>
-    </FormBox>
-)
+export const NewTeamFormBox: FC<ComponentProps<typeof FormBox> &
+    {
+        tour: Tournament
+    }>
+    = ({
+           tour, ...props
+       }) =>
+    (
+        <
+            FormBox size
+                        =
+                        "middle"
+                    {...props
+                    }
+        >
+            <FormBox.Title>
+                Регистация команды
+            </FormBox.Title>
+            <NewTeamForm tour
+                             ={
+                tour
+            }/>
+        </FormBox>
+    )
