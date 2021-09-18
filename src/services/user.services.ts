@@ -9,11 +9,7 @@ const userServices = {
     },
     get: async (id: number) => {
         const {data: r} = await axios.get<Response<{user: User}>>(`/api/user/${id}`);
-        if (r.success) {
-            return r.user;
-        } else {
-            return Promise.reject(r.message);
-        }
+        return r.user;
     }
 }
 

@@ -25,7 +25,7 @@ interface TeamData {
 
 export interface GameFormData {
     place: string,
-    start: Date,
+    start_time: Date,
     team1: TeamData,
     team2: TeamData,
 }
@@ -37,7 +37,7 @@ interface GameFormInputs extends GameFormData {
 export const GameForm: FC<GameFormProps> = ({onSubmit, game, teams, onReset}) => {
     const validationSchema = Yup.object().shape({
         place: Yup.string().notRequired(),
-        start: Yup.date().notRequired(),
+        start_time: Yup.date().notRequired(),
         // judge: userObject(),
         team1: teamObject(teams),
         team2: teamObject(teams).test('not-same-teams', 'Команды не должны совпадать', function (value) {
@@ -85,9 +85,9 @@ export const GameForm: FC<GameFormProps> = ({onSubmit, game, teams, onReset}) =>
                                error={errors.place}
                     />
                     <FloatingDatePicker control={control}
-                                        name={'start'}
+                                        name={'start_time'}
                                         label={'Дата и время начала'}
-                                        error={errors.start}
+                                        error={errors.start_time}
                                         mb
                                         showTime
                     />

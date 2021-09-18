@@ -14,6 +14,7 @@ import {gameServices} from "../../../services";
 import {GameHeaderEdit} from "./GameHeader";
 import {useHistory} from "react-router";
 import {gameLink} from "../../../helpers/links";
+import DismissibleAlert from "../../DismissibleAlert";
 
 export interface GameConsoleProps {
     game: Game,
@@ -39,14 +40,14 @@ function useProtocol(game: Game, setGame: (game: Game) => any) {
         return gameServices.editProtocol(data, gameId).then(setAndReturn, failAndReturn);
     }, [setStatus, gameId]);
     const startGame = useCallback((data) => {
-        sendProtocol(data).then(g => gameServices.startGame(gameId).then(setAndReturn, failAndReturn));
+        sendProtocol(data).then(_g => gameServices.startGame(gameId).then(setAndReturn, failAndReturn));
     }, [gameId]);
     const finishGame = useCallback((data) => {
-        sendProtocol(data).then(g => gameServices.finishGame(gameId).then(
+        sendProtocol(data).then(_g => gameServices.finishGame(gameId).then(
             g=>{setAndReturn(g); history.push(gameLink(g)); return g;}, failAndReturn));
     }, [gameId]);
     const restoreGame = useCallback((data) => {
-        sendProtocol(data).then(g => gameServices.restoreGame(gameId).then(setAndReturn, failAndReturn));
+        sendProtocol(data).then(_g => gameServices.restoreGame(gameId).then(setAndReturn, failAndReturn));
     }, [gameId]);
     return {game, status, savedTime, sendProtocol, startGame, finishGame, restoreGame};
 }
@@ -87,7 +88,6 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
     }, [rounds.length]);
 
     const [swapped, setSwapped] = useState(false);
-
     return (
         <FormProvider {...formMethods}>
             <ProtocolPage>
@@ -117,7 +117,10 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
                     </GameTable>
                     }
                     <ProtocolAdditionalEdit/>
-
+                    <DismissibleAlert variant={"warning"} show={game.status == "finished" && !game.full_access}>
+                        Вы потеряете доступ к протоколу через 15 минут после завершения игры.
+                        Если вы завершили игру по ошибке, нажмите кнопку «Востановить»
+                    </DismissibleAlert>
                     <div className={"mt-4 d-flex justify-content-between flex-row-reverse"}>
                         {status === "saving" ? <Spinner animation={"border"}/> :
                             <ButtonGroup>

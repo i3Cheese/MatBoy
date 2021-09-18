@@ -29,6 +29,8 @@ class GameResource(Resource):
     def get(self, game_id):
         game = get_model(Game, game_id)
         d = game.to_dict()
+        if game.is_deleted:
+            abort(404)
         return jsonify({'game': d, 'success': True})
 
     def delete(self, game_id):
@@ -70,17 +72,27 @@ class GameResource(Resource):
 @api.resource('/game/<int:game_id>/status')
 class GameStatusResource(Resource):
     put_pars = reqparse.RequestParser()
-    put_pars.add_argument('status', type=str, required=True)
+    put_pars.add_argument(
+        'action',
+        type=str,
+        required=True,
+        choices=["start", "finish", "restore"],
+    )
 
     def put(self, game_id):
         args = self.put_pars.parse_args()
         game = get_model(Game, game_id)
-        status = args['status']
-        if not game.have_manage_access(current_user) or (status == 'created' and not game.have_full_access(current_user)):
+        action = args['action']
+        if not game.have_manage_access(current_user):
             abort(403)
         try:
-            game.cast_status_to(status)
-        except (StatusError, ValueError) as e:
+            if action == "start":
+                game.start()
+            elif action == "finish":
+                game.finish()
+            elif action == "restore":
+                game.restore()
+        except StatusError as e:
             abort(400, message=str(e))
 
         db_session.merge(game)

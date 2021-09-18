@@ -13,20 +13,12 @@ const gameServices = {
             url += `team_id=${gameId}&`
         }
         const {data: r} = await axios.get<Response<{games: Game[]}>>(url);
-        if (r.success) {
-            return r.games;
-        } else {
-            throw r.message;
-        }
+        return r.games;
     },
     get: async function (gameId: number) {
         let url = `/api/game/${gameId}`
         const {data: r} = await axios.get<Response<{game: Game}>>(url);
-        if (r.success) {
-            return r.game;
-        } else {
-            throw r.message;
-        }
+        return r.game;
     },
     addGame: async function(formData: GameFormData, leagueId: number) {
         const sendData = {
@@ -34,62 +26,39 @@ const gameServices = {
             league_id: leagueId,
         }
         const {data: res} = await axios.post<Response<{game: Game}>>(`/api/game`, sendData);
-        if (res.success) {
-            return res.game;
-        } else {
-            throw res.message;
-        }
+        return res.game;
     },
     editGame: async function(formData: GameFormData, gameId: number) {
         const sendData = {
             ...formData,
         }
         const {data: res} = await axios.put<Response<{game: Game}>>(`/api/game/${gameId}`, sendData);
-        if (res.success) {
-            return res.game;
-        } else {
-            throw res.message;
-        }
+        return res.game;
     },
     deleteGame: async function(gameId: number) {
-        const {data: res} = await axios.delete<Response>(`/api/game/${gameId}`);
-        if (res.success) {
-            return;
-        } else {
-            const er = res.message;
-            return Promise.reject(er);
-        }
+        await axios.delete<Response>(`/api/game/${gameId}`);
     },
     editProtocol: async function(formData: any, gameId: number) {
         const sendData = {
             ...formData,
         }
         const {data: res} = await axios.put<Response<{game: Game}>>(`/api/game/${gameId}/protocol`, sendData);
-        if (res.success) {
-            return res.game;
-        } else {
-            throw res.message;
-        }
+        return res.game;
     },
     startGame: function(gameId: number) {
-        return gameStatusChanger(gameId, {status: "started"});
+        return gameStatusChanger(gameId, {action: "start"});
     },
     finishGame: function(gameId: number) {
-        return gameStatusChanger(gameId, {status: "finished"});
+        return gameStatusChanger(gameId, {action: "finish"});
     },
     restoreGame: function(gameId: number) {
-        return gameStatusChanger(gameId, {status: "created"});
+        return gameStatusChanger(gameId, {action: "restore"});
     },
 }
 
 async function gameStatusChanger(gameId: number, data: any): Promise<Game> {
     const {data: res} = await axios.put<Response<{game:Game}>>(`/api/game/${gameId}/status`, data);
-    if (res.success) {
-        return res.game;
-    } else {
-        const er = res.message;
-        return Promise.reject(er);
-    }
+    return res.game;
 }
 
 

@@ -24,7 +24,7 @@ const ProtocolToolbarBase: FC<ProtocolToolbarBaseProps> = ({game, onSwapTeams, b
         {game.status == "started" &&
         <span className={"ProtocolToolbar__status ProtocolToolbar__status-started"}>
                 Игра идёт. Последнее изменение
-                <DateSpan date={game.protocol.updated_at} time
+                <DateSpan date={game.protocol.updated_at} time local
                           className={"ProtocolToolbar__status__time ProtocolToolbar__status__time-updated"}/>
             </span>
         }
@@ -32,7 +32,7 @@ const ProtocolToolbarBase: FC<ProtocolToolbarBaseProps> = ({game, onSwapTeams, b
         <span className={"ProtocolToolbar__status ProtocolToolbar__status-finished"}>
                 Игра завершена
                 <DateSpan
-                    date={game.protocol.updated_at} time
+                    date={game.protocol.updated_at} time local
                     className={"ProtocolToolbar__status__time ProtocolToolbar__status__time-finished"}/>
             </span>
         }

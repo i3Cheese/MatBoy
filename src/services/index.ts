@@ -1,8 +1,8 @@
 import authService from "./auth.services";
 export {authService};
 
-import tournamentService, {ITournamentFormRequest} from "./tournament.services";
-export {tournamentService, ITournamentFormRequest };
+import tournamentServices, {ITournamentFormRequest} from "./tournament.services";
+export {tournamentServices, ITournamentFormRequest };
 
 import leagueServices from "./league.services";
 export {leagueServices};

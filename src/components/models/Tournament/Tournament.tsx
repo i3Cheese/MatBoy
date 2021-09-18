@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {Tournament} from "../../../types/models";
 import {connect, ConnectedProps} from "react-redux";
 import {AppState} from "../../../store";
-import {tournamentService} from "../../../services";
+import {tournamentServices} from "../../../services";
 import {AppLoader, Box, BoxTitle,} from "../../layout";
 import {DateSpan} from "../../layout/";
 import DivLink from "../../layout/DivLink";
@@ -48,7 +48,7 @@ class TournamentsBox extends Component<TournamentBoxProps, { tours: Tournament[]
     }
 
     componentDidMount() {
-        tournamentService.getAll().then(
+        tournamentServices.getAll().then(
             (tours) => {
                 this.setState({tours, isWaiting: false});
             }

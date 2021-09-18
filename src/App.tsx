@@ -5,6 +5,7 @@ import {AppAction} from "./store";
 import {authActions} from "./actions";
 import {Dispatch} from "redux";
 import IndexScenes from "./Scenes/IndexScenes";
+import {ErrorsGlobalHandler} from "./components";
 
 const App: FC = () => {
     const dispatch = useDispatch<Dispatch<AppAction>>();
@@ -12,7 +13,7 @@ const App: FC = () => {
         authActions.getCurrentUser()(dispatch)
     },[dispatch])
     return (
-        <IndexScenes/>
+        <ErrorsGlobalHandler><IndexScenes/></ErrorsGlobalHandler>
     )
 }
 

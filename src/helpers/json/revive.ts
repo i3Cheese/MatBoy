@@ -26,7 +26,12 @@ function revive(key: any, value: any) {
 }
 
 function parseJson(data: string) {
-    return JSON.parse(data, revive);
+    try {
+        return JSON.parse(data, revive);
+    } catch (e) {
+        console.info(e);
+        return data;
+    }
 }
 
 

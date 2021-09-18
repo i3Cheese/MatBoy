@@ -4,6 +4,7 @@ import DivLink from "../../layout/DivLink";
 import {Box, BoxTitle} from "../../layout";
 import Loader from "react-loader-spinner";
 import {useLeagues} from "../../../helpers/hooks";
+import {ErrorHandler} from "../../errors";
 
 export const LeagueItem: FC<{ league: League }> = ({league}) => {
     return (
@@ -14,7 +15,8 @@ export const LeagueItem: FC<{ league: League }> = ({league}) => {
 };
 
 export const LeaguesBox: FC<{tourId: number}> = ({tourId}) => {
-    const [leagues, setLeagues] = useLeagues(tourId);
+    const [leagues, error] = useLeagues(tourId);
+    if (error) return <ErrorHandler error={error}/>
     return (
         <Box size="large">
             <BoxTitle>

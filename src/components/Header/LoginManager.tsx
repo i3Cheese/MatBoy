@@ -29,7 +29,7 @@ const Logged = connect(null, (dispatch => {
 });
 
 
-const Logout: FC<{}> = ({}) => {
+const Logout: FC = ({}) => {
     return (
         <div className="login_manager">
             <Link className="btn btn-success" to="/registration">
@@ -44,7 +44,6 @@ const Logout: FC<{}> = ({}) => {
 
 const LoginManager: FC = () => {
     const auth = useSelector<AppState, AppState["auth"]>((state) => state.auth);
-
     if (auth.loggedIn && auth.user !== null)
         return <Logged user={auth.user}/>;
     else

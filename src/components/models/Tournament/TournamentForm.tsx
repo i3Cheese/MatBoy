@@ -3,7 +3,7 @@ import {Tournament} from "../../../types/models";
 import moment from 'moment';
 import {Button, Form} from "react-bootstrap";
 import produce from "immer";
-import {tournamentService, ITournamentFormRequest} from "../../../services";
+import {tournamentServices, ITournamentFormRequest} from "../../../services";
 import {AppLoader} from "../../Loader";
 import {Redirect} from "react-router";
 import {FormBox} from "../../layout";
@@ -127,7 +127,7 @@ export const NewTournamentForm: FC = () => {
     const [success, setSuccess] = useState<{ success: false } | { success: true, tourId: number }>({success: false})
     const handleSubmit = (data: ITournamentFormRequest) => {
         setLoading(true);
-        return tournamentService.postNew(data).then(
+        return tournamentServices.postNew(data).then(
             (tour: Tournament) => {
                 setLoading(false);
                 setSuccess({success: true, tourId: tour.id});
@@ -152,7 +152,7 @@ export const EditTournamentForm: FC<EditTournamentFormProps> = ({tour, setTour})
     const [{isLoading, isSuccess}, setState] = useState({isLoading: false, isSuccess: false});
     const handleSubmit = (data: ITournamentFormRequest) => {
         setState({isLoading: true, isSuccess: false});
-        return tournamentService.edit(tour.id, data).then(
+        return tournamentServices.edit(tour.id, data).then(
             (tour: Tournament) => {
                 setState({isLoading: false, isSuccess: true});
                 setTour(tour);

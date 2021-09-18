@@ -7,4 +7,4 @@ export type SuccessResponse<T = {}> = T & {
     success: true,
 }
 
-export type Response<T = {}> = ErrorResponse | SuccessResponse<T>;
+export type Response<T = {}> = SuccessResponse<T>;

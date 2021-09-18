@@ -1,19 +1,19 @@
 import React, {FC} from "react";
-import {Route, Switch} from "react-router";
-import {BoxContainer} from "../components";
-import {LoginFormBox, RegistrationFormBox} from "../components/models/User";
+import {Route} from "react-router";
+import {BoxContainer, SwitchWith404} from "../components";
+import {LoginFormBox, RegistrationFormBox} from "../components";
 
 const AuthScenes: FC = () => {
     return (
         <BoxContainer>
-            <Switch>
+            <SwitchWith404>
                 <Route path="/login">
                     <LoginFormBox/>
                 </Route>
                 <Route path="/registration">
                     <RegistrationFormBox/>
                 </Route>
-            </Switch>
+            </SwitchWith404>
         </BoxContainer>
     );
 }

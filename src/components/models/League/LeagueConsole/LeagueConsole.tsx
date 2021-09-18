@@ -6,7 +6,7 @@ import {Accordion} from "react-bootstrap";
 import {TeamConsoleItem} from "./TeamConsoleItem";
 import {useGames, useTeams} from "../../../../helpers/hooks";
 import {GameCallbacks, GameConsoleItem} from "./GameCosoleItem";
-import {GameForm, GameFormData} from "../../Game/GameForm";
+import {GameForm, GameFormData} from "../../Game";
 import {gameServices} from "../../../../services";
 import produce from "immer";
 
@@ -16,8 +16,8 @@ export interface LeagueConsoleProps {
 }
 
 const LeagueConsole: FC<LeagueConsoleProps> = ({league}) => {
-    const [teams, , refreshTeams] = useTeams(undefined, league.id);
-    const [games, setGames] = useGames(league.id);
+    const [teams, teamsError, , refreshTeams] = useTeams(undefined, league.id);
+    const [games, gamesError, setGames] = useGames(league.id);
 
     const handleAddGame = useCallback((data: GameFormData) => (
         gameServices.addGame(data, league.id).then((game) => {

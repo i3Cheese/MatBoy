@@ -39,7 +39,8 @@ class Game(AccessMixin, BaseModel):
     _sensitive_fields = ("access_group",)
 
     def have_manage_access(self, user) -> bool:
-        if self.status == "finished":
+        if self.status == "finished" and \
+                (datetime.datetime.utcnow() - self.finished_at) > datetime.timedelta(minutes=15):
             return self.have_full_access(user)
         else:
             return super().have_manage_access(user)
@@ -121,7 +122,10 @@ class Game(AccessMixin, BaseModel):
         self.status = 'deleted'
 
     def restore(self):
-        self.status = 'created'
+        if self.status == "finished":
+            self.status = "started"
+        else:
+            self.status = "created"
 
     def start(self):
         if self.status != 'created':
@@ -134,16 +138,6 @@ class Game(AccessMixin, BaseModel):
             raise StatusError(f"Cant finish {self!r} with status {self.status}")
         self.status = 'finished'
         self.finished_at = datetime.datetime.utcnow()
-
-    def cast_status_to(self, status):
-        if status == "created":
-            self.restore()
-        elif status == "started":
-            self.start()
-        elif status == "finished":
-            self.finish()
-        else:
-            raise ValueError(f"Cant cast Game.status to {status}")
 
 
 class Protocol(BaseModel, DefaultAccess):

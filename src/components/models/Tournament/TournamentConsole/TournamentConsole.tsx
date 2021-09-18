@@ -22,7 +22,7 @@ export interface TournamentConsoleProps {
 }
 
 const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
-    const [leagues, setLeagues] = useLeagues(tour.id);
+    const [leagues, , setLeagues] = useLeagues(tour.id);
 
     const handleAddLeague = useCallback((data: LeagueFormData) => (
         leagueServices.addLeague(data, tour.id).then(
@@ -63,7 +63,7 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
     ), [setLeagues, leagues]);
 
 
-    const [teams, setTeams, refreshTeams] = useTeams(tour.id);
+    const [teams, teamsError, setTeams, refreshTeams] = useTeams(tour.id);
 
     const editTeam = (team: Team) => {
         setTeams(sortTeams(produce(teams as Team[], draft => {

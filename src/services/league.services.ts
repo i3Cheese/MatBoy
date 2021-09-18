@@ -1,28 +1,16 @@
-import revive from "../helpers/json/revive";
 import {League} from "../types/models";
-import {LeagueFormData} from "../components/models/League/LeagueForm";
+import {LeagueFormData} from "../components";
 import axios from "axios";
 import {Response} from "./types";
 
 const leagueServices = {
     get: async function(leagueId: number) {
         const {data: r} = await axios.get<Response<{league: League}>>(`/api/league/${leagueId}`);
-        if (r.success) {
-            return r.league;
-        } else {
-            return Promise.reject(r.message);
-        }
+        return r.league;
     },
     getLeagues: async function(tourId: number) {
-        const requestOptions: RequestInit = {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            }
-        }
-        const response = await fetch(`/api/league?tournament_id=${tourId}`, requestOptions);
-        const {leagues} = await response.text().then(t => JSON.parse(t, revive));
-        console.log(leagues);
+        const {data: res} = await axios.get(`/api/league?tournament_id=${tourId}`)
+        const {leagues} = res;
         return leagues as League[];
     },
     addLeague: async function(formData: LeagueFormData, tourId: number) {
@@ -31,32 +19,18 @@ const leagueServices = {
             tournament_id: tourId,
         }
         const {data: res} = await axios.post<LeagueResponse>(`/api/league`, sendData);
-        if (res.success) {
-            return res.league;
-        } else {
-            throw res.message;
-        }
+        return res.league;
     },
     editLeague: async function(formData: LeagueFormData, leagueId: number) {
         const sendData = {
             ...formData,
         }
         const {data: res} = await axios.put<LeagueResponse>(`/api/league/${leagueId}`, sendData);
-        if (res.success) {
-            return res.league;
-        } else {
-            const er = res.message;
-            return Promise.reject(er);
-        }
+        return res.league;
     },
     deleteLeague: async function(leagueId: number) {
-        const {data: res} = await axios.delete<Response>(`/api/league/${leagueId}`);
-        if (res.success) {
-            return;
-        } else {
-            const er = res.message;
-            return Promise.reject(er);
-        }
+        await axios.delete<Response>(`/api/league/${leagueId}`);
+        return;
     },
 }
 

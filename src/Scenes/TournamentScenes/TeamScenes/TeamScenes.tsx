@@ -1,33 +1,32 @@
-import React, {FC, useEffect, useState} from 'react';
-import {Route, Switch, useParams, useRouteMatch} from "react-router";
-import {Team, Tournament} from "../../../types/models";
-import {BoxContainer, LoaderPage, NewTeamFormBox} from "../../../components";
-import {teamServices} from "../../../services";
+import React, {FC} from 'react';
+import {Route, useParams, useRouteMatch} from "react-router";
+import {Tournament} from "../../../types/models";
+import {BoxContainer, ErrorHandler, LoaderPage, NewTeamFormBox, SwitchWith404} from "../../../components";
 import MenuItemComponent from "../../../components/MenuItemComponent";
 import {TeamPage} from "./TeamPage";
+import {useTeam} from "../../../helpers/hooks";
 
-const TeamIdScenes: FC<{tour: Tournament}> = ({tour}) => {
+const TeamIdScenes: FC<{tour: Tournament}> = ({}) => {
     const {path} = useRouteMatch();
     const {teamId: teamIdString} = useParams<{teamId: string, tourId: string}>();
     const teamId = parseInt(teamIdString);
-    const [team, setTeam] = useState<Team | null>(null);
-    useEffect(()=>{
-        teamServices.get(teamId).then(setTeam);
-    }, [teamId]);
+    const [team, error] = useTeam(teamId);
+
+    if (error) return <ErrorHandler error={error}/>
     if (team === null) return <LoaderPage/>
     return (
-        <MenuItemComponent title={team.name}><Switch>
+        <MenuItemComponent title={team.name}><SwitchWith404>
             <Route path={path} exact>
                 <TeamPage team={team}/>
             </Route>
-        </Switch></MenuItemComponent>
+        </SwitchWith404></MenuItemComponent>
     )
 }
 
-const TeamScenes: FC<{tour: Tournament}> = ({tour, ...props}) => {
+const TeamScenes: FC<{tour: Tournament}> = ({tour}) => {
     const {path} = useRouteMatch();
     return (
-        <Switch>
+        <SwitchWith404>
             <Route path={`${path}/new`}>
                 <MenuItemComponent title={"командная заявка"}>
                     <BoxContainer>
@@ -38,7 +37,7 @@ const TeamScenes: FC<{tour: Tournament}> = ({tour, ...props}) => {
             <Route path={`${path}/:teamId`} render={(...props) => (
                 <TeamIdScenes tour={tour} {...props}/>
             )}/>
-        </Switch>
+        </SwitchWith404>
     );
 }
 
