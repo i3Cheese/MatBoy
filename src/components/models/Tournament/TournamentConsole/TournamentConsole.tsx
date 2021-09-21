@@ -11,7 +11,7 @@ import {
     TeamCallbacks
 } from "./TeamConsoleItem";
 import {DeleteLeagueCallback, EditableLeagueConsoleItem, EditLeagueCallback} from "./LeagueConsoleItem";
-import {LeagueForm, LeagueFormData} from "../../League/LeagueForm";
+import {LeagueForm, LeagueFormData} from "../../League";
 import {leagueServices, teamServices} from "../../../../services";
 import produce from "immer";
 import {sortTeams} from "../../../../helpers";
@@ -90,7 +90,7 @@ const TournamentConsole: FC<TournamentConsoleProps> = ({tour}) => {
         return <LoaderPage/>
     else {
         return (
-            <BoxContainer covid>
+            <BoxContainer covid reverseWrap>
                 <TeamList teams={teams} leagues={leagues} {...teamCallbacks}/>
                 <LeagueList teams={teams} leagues={leagues} onAddLeague={handleAddLeague}
                             onEditLeague={handleEditLeague}

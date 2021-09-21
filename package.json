@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/i3Cheese/MatBoy#readme",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^29.2.0",
+    "@ckeditor/ckeditor5-react": "^3.0.2",
     "@hookform/resolvers": "^2.6.1",
     "@reduxjs/toolkit": "^1.6.0",
     "@types/classnames": "^2.3.1",
@@ -39,6 +41,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^10.0.0",
     "bootstrap": "^5.0.2",
+    "bootstrap-icons": "^1.5.0",
     "classnames": "^2.3.1",
     "date-fns": "^2.23.0",
     "history": "^4.10.1",
@@ -47,6 +50,7 @@
     "popper.js": "^1.16.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-beta.3",
+    "react-bootstrap-icons": "^1.5.0",
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.11.1",
@@ -56,11 +60,13 @@
     "react-router-dom": "^5.2.0",
     "redux": "^4.1.0",
     "terser-webpack-plugin": "^5.1.4",
+    "yandex-share": "file:yandex-share",
     "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/preset-react": "^7.12.1",
+    "@types/ckeditor__ckeditor5-build-classic": "^29.0.1",
     "@types/react-datepicker": "^4.1.4",
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-class-properties": "^6.24.1",

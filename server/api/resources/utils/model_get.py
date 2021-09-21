@@ -2,10 +2,10 @@ from flask_restful import abort
 from data import User, Team, Tournament, League, Game, Post
 
 
-def get_model(cls, _id, do_abort=True):
-    res = cls.query.get(_id)
+def get_model(cls, id_, do_abort=True):
+    res = cls.query.get(id_)
     if do_abort and not res:
-        abort(404, message=f"{cls.__name__} #{_id} not found")
+        abort(404, message=f"{cls.__name__} #{id_} not found")
     return res
 
 

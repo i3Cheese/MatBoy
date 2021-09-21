@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Team, User} from "../../../types/models";
+import {Team} from "../../../types/models";
 import {Link} from "react-router-dom";
 import {AppLoader, Box, BoxProps, InfoBox} from "../../layout";
 import DivLink from "../../layout/DivLink";
@@ -44,17 +44,17 @@ export const TeamInfoBox: FC<TeamInfoBoxProps> = ({team, title, border, ...props
             <AppLoader/>
             :
             <InfoBox>
-                <Col sm={3} as={"dd"}>Статус:</Col>
-                <Col sm={9} as={"dt"}>{teamStatus(team)}</Col>
-                <Col sm={3} as={"dd"}>Турнир:</Col>
-                <Col sm={9} as={"dt"}>
+                <Col sm={4} as={"dd"}>Статус:</Col>
+                <Col sm={8} as={"dt"}>{teamStatus(team)}</Col>
+                <Col sm={4} as={"dd"}>Турнир:</Col>
+                <Col sm={8} as={"dt"}>
                     <Link to={tourLink(team.tournament)}>
                         {team.tournament.title}
                     </Link>
                 </Col>
                 {team.league != null && <>
-                    <Col sm={3} as={"dd"}>Лига:</Col>
-                    <Col sm={9} as={"dt"}><Link to={leagueLink(team.league)}>{team.league.title}</Link></Col>
+                    <Col sm={4} as={"dd"}>Лига:</Col>
+                    <Col sm={8} as={"dt"}><Link to={leagueLink(team.league)}>{team.league.title}</Link></Col>
                 </>}
             </InfoBox>
         }
@@ -70,7 +70,7 @@ export const TeamSelect: FC<{ control?: Control<any>, path: string, teams: Team[
         render={({field, fieldState}) => (
             <Form.Select {...props} {...field} isInvalid={fieldState.invalid}>
                 <option/>
-                {teams.map((team, i) => (
+                {teams.map((team) => (
                     <option value={team.id} key={team.id}>
                         {team.name}
                     </option>

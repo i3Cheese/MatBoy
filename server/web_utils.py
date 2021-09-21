@@ -1,3 +1,5 @@
+import os.path
+
 from flask import Blueprint, request, url_for, make_response, jsonify, render_template, redirect
 from flask import abort, flash
 from flask_login import login_required, current_user
@@ -78,14 +80,18 @@ def edit_email(token=None):
 def upload_image_creator():
     """Load images from ck-editor"""
     image = request.files.get('upload')
+
     type_img = image.filename.split('.')[-1]
     filename = ''.join(choice(ascii_letters + digits) for _ in range(50)) + '.' + type_img
-    url_image = './static/img/' + filename
-    image.save(url_image)
+
+    prefix = '/img/user_content'
+    image_path = os.path.join(*('./static' + prefix + '/' + filename).split('/'))
+    image.save(image_path)
+
     return make_response(jsonify({
         'uploaded': 1,
         'fileName': filename,
-        'url': url_for('static', filename='img/{0}'.format(filename))
+        'url': url_for('static', filename=prefix+'/'+filename)
     }))
 
 

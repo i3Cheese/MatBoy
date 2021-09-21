@@ -1,20 +1,18 @@
 import React, {FC, ReactNode} from 'react';
-import {Button, ButtonGroup, Spinner} from "react-bootstrap";
+import {Spinner} from "react-bootstrap";
 
 import "./ProtocolToolbar.scss"
 import {Game} from "../../../../types/models";
 import {DateSpan} from "../../../layout";
-import {Link} from "react-router-dom";
-import {gameLink} from "../../../../helpers/links";
+import {ThreeDotsDropdown, MBDropdownItem} from "../../../Dropdown";
 
 interface ProtocolToolbarBaseProps {
     game: Game,
     onSwapTeams: () => any,
-    buttons?: ReactNode,
     save_manager?: ReactNode,
 }
 
-const ProtocolToolbarBase: FC<ProtocolToolbarBaseProps> = ({game, onSwapTeams, buttons, save_manager}) => (
+const ProtocolToolbarBase: FC<ProtocolToolbarBaseProps> = ({game, onSwapTeams, save_manager}) => (
     <div className={"ProtocolToolbar"}>
         {game.status == "created" &&
         <span className={"ProtocolToolbar__status ProtocolToolbar__status-created"}>
@@ -37,16 +35,14 @@ const ProtocolToolbarBase: FC<ProtocolToolbarBaseProps> = ({game, onSwapTeams, b
             </span>
         }
         {save_manager}
-        <ButtonGroup className={"ProtocolToolbar__buttons"}>
-            {buttons}
-            <Button
-                className={"ProtocolToolbar__buttons__swap"}
+        <ThreeDotsDropdown>
+            <MBDropdownItem
                 onClick={onSwapTeams}
                 variant={"outline-secondary"}
             >
                 Поменять команды местами
-            </Button>
-        </ButtonGroup>
+            </MBDropdownItem>
+        </ThreeDotsDropdown>
     </div>
 )
 
@@ -89,15 +85,6 @@ export const ProtocolToolbarView: FC<{ game: Game, onSwapTeams: () => any }> = (
     <ProtocolToolbarBase
         game={game}
         onSwapTeams={onSwapTeams}
-        buttons={
-            game.manage_access && <Button
-                as={Link}
-                to={`${gameLink(game)}/console`}
-                variant={"outline-primary"}
-            >
-                Изменить
-            </Button>
-        }
     />
 )
 

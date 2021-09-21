@@ -6,3 +6,4 @@ from . import user
 from . import game
 from . import access_group
 from . import protocol
+from . import post

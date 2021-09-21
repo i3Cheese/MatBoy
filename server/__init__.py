@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -7,9 +9,24 @@ from data import global_init, get_session, User
 from data.user import AnonymousUser
 from config import config
 
+
+def make_dir(name):
+    try:
+        os.mkdir(name)
+    except FileExistsError:
+        pass
+
+
+def create_dirs():
+    make_dir('db')
+    make_dir('static/img/user_content')
+
+
+create_dirs()
 wtforms_json.init()
 config.setup()
 global_init()
+
 
 app = Flask(__name__, static_folder=config.STATIC_FOLDER)
 for ex in config.JINJA_EXTENSIONS:
@@ -32,9 +49,9 @@ def load_user(user_id) -> User:
 
 # from . import errorhandlers
 # from . import web_pages
-# from . import web_utils
+from . import web_utils
 
 # app.register_blueprint(web_pages.blueprint)
-# app.register_blueprint(web_utils.blueprint)
+app.register_blueprint(web_utils.blueprint)
 
 import server.api

@@ -4,8 +4,8 @@ import {useRouteMatch} from "react-router";
 import PageHeader from "../../../components/PageHeader";
 import SimpleMenu from "../../../components/SimpleMenu";
 import {BoxContainer, TeamInfoBox} from "../../../components";
-import {UsersBox} from "../../../components/models/User";
-import {GamesBox} from "../../../components/models/Game/Game";
+import {UsersBox} from "../../../components";
+import {GamesBox} from "../../../components";
 import {useGames} from "../../../helpers/hooks";
 
 export const TeamPage: FC<{team: Team}> = ({team}) => {
@@ -23,7 +23,7 @@ export const TeamPage: FC<{team: Team}> = ({team}) => {
                     ]}
                 </SimpleMenu>
             </PageHeader>
-            <BoxContainer fluid={"md"}>
+            <BoxContainer fluid={"md"} reverseWrap>
                 <TeamInfoBox team={team}/>
                 <UsersBox users={team.players} title='Сотстав команды'/>
                 <GamesBox games={games}/>

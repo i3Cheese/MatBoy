@@ -18,3 +18,6 @@ export {gameServices};
 
 import agServices from "./accessGroup.services";
 export {agServices};
+
+import postServices from "./post.services";
+export {postServices};

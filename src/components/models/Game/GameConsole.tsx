@@ -15,6 +15,7 @@ import {GameHeaderEdit} from "./GameHeader";
 import {useHistory} from "react-router";
 import {gameLink} from "../../../helpers/links";
 import DismissibleAlert from "../../DismissibleAlert";
+import {Link} from "react-router-dom";
 
 export interface GameConsoleProps {
     game: Game,
@@ -33,7 +34,11 @@ function useProtocol(game: Game, setGame: (game: Game) => any) {
         setGame(game);
         return game;
     }
-    const failAndReturn = (e: any) => {setStatus("failed"); console.log(e); return Promise.reject(e);}
+    const failAndReturn = (e: any) => {
+        setStatus("failed");
+        console.log(e);
+        return Promise.reject(e);
+    }
 
     const sendProtocol = useCallback((data: any) => {
         setStatus("saving");
@@ -44,7 +49,11 @@ function useProtocol(game: Game, setGame: (game: Game) => any) {
     }, [gameId]);
     const finishGame = useCallback((data) => {
         sendProtocol(data).then(_g => gameServices.finishGame(gameId).then(
-            g=>{setAndReturn(g); history.push(gameLink(g)); return g;}, failAndReturn));
+            g => {
+                setAndReturn(g);
+                history.push(gameLink(g));
+                return g;
+            }, failAndReturn));
     }, [gameId]);
     const restoreGame = useCallback((data) => {
         sendProtocol(data).then(_g => gameServices.restoreGame(gameId).then(setAndReturn, failAndReturn));
@@ -54,7 +63,15 @@ function useProtocol(game: Game, setGame: (game: Game) => any) {
 
 
 const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
-    const {game, status, sendProtocol, savedTime, startGame, finishGame, restoreGame} = useProtocol(initialGame, setGame);
+    const {
+        game,
+        status,
+        sendProtocol,
+        savedTime,
+        startGame,
+        finishGame,
+        restoreGame
+    } = useProtocol(initialGame, setGame);
     const validationSchema = protocolObject(game);
     const formMethods = useForm({
         resolver: yupResolver(validationSchema),
@@ -121,9 +138,16 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
                         Вы потеряете доступ к протоколу через 15 минут после завершения игры.
                         Если вы завершили игру по ошибке, нажмите кнопку «Востановить»
                     </DismissibleAlert>
-                    <div className={"mt-4 d-flex justify-content-between flex-row-reverse"}>
+                    <div className={"mt-4 d-flex justify-content-between flex-row-reverse flex-wrap-reverse"}>
                         {status === "saving" ? <Spinner animation={"border"}/> :
                             <ButtonGroup>
+                                {game.status != "started" &&
+                                <Button
+                                    as={Link}
+                                    to={gameLink(game)}
+                                    variant={"danger"}
+                                >Выйти</Button>
+                                }
                                 <Button
                                     onClick={handleSubmit(sendProtocol)}
                                     variant={"success"}
@@ -141,25 +165,25 @@ const GameConsole: FC<GameConsoleProps> = ({game: initialGame, setGame}) => {
                                 >Начать</Button>
                                 }
                                 {game.status == 'finished' &&
-                                <Button
-                                    onClick={handleSubmit(restoreGame)}
-                                    variant={"secondary"}
-                                >Востановить</Button>
+                                    <Button
+                                        onClick={handleSubmit(restoreGame)}
+                                        variant={"secondary"}
+                                    >Востановить</Button>
                                 }
                             </ButtonGroup>
                         }
                         {game.status != "created" &&
-                            <ButtonGroup>
+                        <ButtonGroup>
                             <Button
-                            onClick={removeLastRound}
-                            variant={"danger"}
-                            disabled={rounds.length <= 1}
+                                onClick={removeLastRound}
+                                variant={"danger"}
+                                disabled={rounds.length <= 1}
                             >Удалить раунд</Button>
                             <Button
-                            onClick={appendDefaultRound}
-                            variant={"primary"}
+                                onClick={appendDefaultRound}
+                                variant={"primary"}
                             >Добавить раунд</Button>
-                            </ButtonGroup>
+                        </ButtonGroup>
                         }
                     </div>
                 </ProtocolBox>

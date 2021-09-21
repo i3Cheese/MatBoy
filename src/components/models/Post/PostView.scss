@@ -1,0 +1,30 @@
+.Post {
+  position: relative;
+  &__title {
+    &__publishTime {
+      float: right;
+      font-weight: lighter;
+      font-size: 1rem;
+    }
+  }
+  &__toolbar {
+    margin-top: -1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    width: 100%;
+    padding: 0 1rem;
+    &__buttons {
+      margin-left: auto;
+      .btn {
+        padding: 0 .2em;
+      }
+      &__swap {
+
+      }
+    }
+  }
+  &__buttons .btn-group {
+    float: right;
+  }
+}

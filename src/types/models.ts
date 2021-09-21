@@ -17,9 +17,12 @@ export interface AccessGroup {
     members: User[],
 }
 
-export interface Tournament {
+export interface TournamentBasics {
     id: number,
     title: string,
+}
+
+export interface Tournament extends TournamentBasics {
     description: string,
     chief: User,
     place: string,
@@ -28,6 +31,24 @@ export interface Tournament {
     full_access: boolean,
     manage_access: boolean,
     access_group?: AccessGroup,
+}
+
+export interface PostBasics {
+    id: number,
+    title: string,
+    status: "archived" | "published",
+    tournament: TournamentBasics,
+    created_at: Date,
+    updated_at: Date,
+    published_at: Date | null,
+}
+
+export interface Post extends PostBasics {
+    content: string,
+    tournament: Tournament,
+    author: User,
+    manage_access: boolean,
+    full_access: boolean,
 }
 
 export interface League {

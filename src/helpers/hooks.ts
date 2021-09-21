@@ -3,8 +3,8 @@ import {addMenuItem, removeMenuItem} from "../actions";
 import {useDispatch} from "react-redux";
 import {AppDispatch} from "../store";
 import {MenuItem} from "../types/menu";
-import {leagueServices, teamServices, tournamentServices, userServices} from "../services";
-import {sortTeams} from "./funcs";
+import {leagueServices, teamServices, tournamentServices, userServices, postServices} from "../services";
+import {sortPosts, sortTeams} from "./funcs";
 import gameServices from "../services/game.services";
 import {ErrorType} from "../types/errors";
 
@@ -16,6 +16,18 @@ export function useMenuItem(item: MenuItem) {
             removeMenuItem(item)(dispatch);
         }
     }, [item,]);
+}
+
+export function useScrollOnLoad(loaded: boolean) {
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+        if (loaded && !scrolled) {
+            setScrolled(true);
+            const hash = location.hash;
+            location.hash = "";
+            setTimeout(() => {location.hash = hash}, 100);
+        }
+    }, [loaded, scrolled, setScrolled])
 }
 
 export function useLoadingOnCallback<U, T>(f: (data: U) => Promise<T>): [boolean, (data: U) => Promise<T>] {
@@ -41,13 +53,21 @@ export function useService<T>(f: () => Promise<T>): [null | T, ErrorType, React.
     const [error, setError] = useState<ErrorType>(null)
     const getData = useCallback(() => {
         setData(null);
-        f().then((data: T) => {setData(data); setError(null);}).catch((e) => {
+        setError(null);
+        f().then((data: T) => {
+            setData(data);
+            setError(null);
+        }).catch((e) => {
             console.log("At hook", e)
             setError(e);
         });
     }, [f, setData]);
     useEffect(() => {
-        getData()
+        getData();
+        return () => {
+            setData(null);
+            setError(null);
+        }
     }, [getData]);
     return [data, error, setData, getData];
 }
@@ -56,18 +76,27 @@ export function useTournament(tourId: number) {
     const callback = useCallback(() => tournamentServices.get(tourId), [tourId]);
     return useService(callback);
 }
+
+export function usePost(postId: number) {
+    const callback = useCallback(() => postServices.get(postId), [postId]);
+    return useService(callback);
+}
+
 export function useLeague(leagueId: number) {
     const callback = useCallback(() => leagueServices.get(leagueId), [leagueId]);
     return useService(callback);
 }
+
 export function useTeam(teamId: number) {
     const callback = useCallback(() => teamServices.get(teamId), [teamId]);
     return useService(callback);
 }
+
 export function useGame(gameId: number) {
     const callback = useCallback(() => gameServices.get(gameId), [gameId]);
     return useService(callback);
 }
+
 export function useUser(userId: number) {
     const callback = useCallback(() => userServices.get(userId), [userId]);
     return useService(callback);
@@ -78,8 +107,13 @@ export function useLeagues(tourId: number) {
     return useService(callback);
 }
 
-export function useTeams(...args : Parameters<typeof teamServices.getTeams>) {
+export function useTeams(...args: Parameters<typeof teamServices.getTeams>) {
     const callback = useCallback(() => teamServices.getTeams(...args).then(sortTeams), args);
+    return useService(callback);
+}
+
+export function usePosts(...args: Parameters<typeof postServices.getTourPosts>) {
+    const callback = useCallback(() => postServices.getTourPosts(...args).then(sortPosts), args);
     return useService(callback);
 }
 

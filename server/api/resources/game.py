@@ -76,7 +76,7 @@ class GameStatusResource(Resource):
         'action',
         type=str,
         required=True,
-        choices=["start_time", "finish", "restore"],
+        choices=["start", "finish", "restore"],
     )
 
     def put(self, game_id):
@@ -86,7 +86,7 @@ class GameStatusResource(Resource):
         if not game.have_manage_access(current_user):
             abort(403)
         try:
-            if action == "start_time":
+            if action == "start":
                 game.start()
             elif action == "finish":
                 game.finish()

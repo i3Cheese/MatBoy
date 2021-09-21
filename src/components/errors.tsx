@@ -1,10 +1,11 @@
-import React, {FC, useMemo} from "react";
+import React, {FC, ReactNode, useMemo} from "react";
 import {Link, SwitchProps, useLocation} from "react-router-dom";
 import {Redirect, Route, Switch} from "react-router";
 import {useSelector} from "react-redux";
 import {AppState} from "../store";
 import PageWrapper from "./PageWrapper";
 import {Error} from "../types/errors";
+import {Button} from "react-bootstrap";
 
 
 export const ErrorPage: FC<{ code?: number, message?: string }> = ({code, message, children}) => (
@@ -15,6 +16,16 @@ export const ErrorPage: FC<{ code?: number, message?: string }> = ({code, messag
         {children}
         <h5><Link to={'/feedback'}> Написать нам </Link></h5>
         <p> Телеграмм, для важных сообщений: <a href={"https://t.me/i3cheese"} target={"_blank"}>@i3Cheese</a></p>
+        <Button onClick={() => location.reload()}>Перезагрузить страницу</Button>
+    </>
+);
+
+export const ErrorElement: FC<{code?: number, message?: string, onRetry?: () => void}> = ({code, message, onRetry}) => (
+    <>
+        <h6 className={"text-danger"}>{code || "ERROR"}</h6>
+        <p className={'text-danger'}>Произошла ошибка при загрузке</p>
+        {message && <p className={'text-muted'}>{message}</p>}
+        {onRetry && <Button onClick={onRetry}>Попробовать ещё раз</Button>}
     </>
 )
 
@@ -31,13 +42,49 @@ export const NotFoundError: FC<{ message?: string }> = ({message}) => (
     <ErrorPage code={404} message={"Тут ничего нет"}>{message}</ErrorPage>
 )
 
+export class ErrorBoundary extends React.Component<{errorPage?: ReactNode}, { hasError: boolean }> {
+    constructor(props: any) {
+        super(props);
+        this.state = {hasError: false};
+    }
+
+    static getDerivedStateFromError(_error: any) {
+        // Update state so the next render will show the fallback UI.
+        return {hasError: true};
+    }
+
+    componentDidCatch(error: any, errorInfo: any) {    // You can also log the error to an error reporting service
+        // TODO: logErrorToMyService(error, errorInfo);
+        console.log("I CATCH!")
+    }
+
+    render() {
+        if (this.state.hasError) {      // You can render any custom fallback UI
+            if (this.props.errorPage) return this.props.errorPage
+            return (
+                <div>
+                    <h1>
+                        Что-то пошло не так.
+                    </h1>
+                    Нам очень жаль. Данные об ошибке уже отправлены.
+                    <div>
+                        <button onClick={() => location.reload()}>Перезагрузить страницу</button>
+                    </div>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+
+}
+
 
 export const ErrorsGlobalHandler: FC = ({children}) => {
     const location: any = useLocation();
     if (location.error !== undefined) {
         const error: any = location.error;
-        return (<PageWrapper>
-                {() => {
+        return (<ErrorBoundary><PageWrapper>
+                {(() => {
                     switch (error.code) {
                         case 401:
                             return <UnauthorizedError message={error.message}/>
@@ -48,11 +95,11 @@ export const ErrorsGlobalHandler: FC = ({children}) => {
                         default:
                             return <ErrorPage code={error.code} message={error.message}/>
                     }
-                }}
-            </PageWrapper>
+                })()}
+            </PageWrapper></ErrorBoundary>
         )
     } else {
-        return <>{children}</>
+        return <ErrorBoundary errorPage={<PageWrapper><ErrorPage/></PageWrapper>}>{children}</ErrorBoundary>
     }
 }
 
@@ -92,11 +139,23 @@ export const SwitchWith404: FC<SwitchProps> = ({children, ...props}) => {
         </Switch>
     )
 }
-//
-export const ErrorHandler: FC<{ error: Error }> = ({error}) => {
-    console.error(error);
+
+function parseError(error: Error) {
     const response = error.response;
     const code = response?.code;
     const message = response?.data?.message || response?.statusText || error.message;
+    return {code, message};
+}
+
+export const ErrorHandler: FC<{ error: Error }> = ({error}) => {
+    console.error(error);
+    const {code, message} = parseError(error);
     return <RedirectAs code={code} message={message}/>
 }
+
+export const LocalErrorHandler: FC<{error: Error, onRetry?: ()=>void}> = ({error, onRetry}) => {
+    console.error(error);
+    const {code, message} = parseError(error);
+    return <ErrorElement code={code} message={message} onRetry={onRetry}/>
+}
+

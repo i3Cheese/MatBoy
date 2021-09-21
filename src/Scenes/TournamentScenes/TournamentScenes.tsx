@@ -8,6 +8,7 @@ import MenuItemComponent from "../../components/MenuItemComponent";
 import TournamentConsole, {TournamentConsoleProps} from "../../components/models/Tournament/TournamentConsole/TournamentConsole";
 import LeagueScenes from "./LeagueScenes/LeagueScenes";
 import {useTournament} from "../../helpers/hooks";
+import PostScenes from "./PostScenes/PostScenes";
 
 
 const EditTournamentPage: FC<ComponentProps<typeof EditTournamentFormBox>> = (props) => {
@@ -56,6 +57,9 @@ const TournamentIdScenes: FC = () => {
                 />
                 <Route path={`${path}/league`}>
                     <LeagueScenes tour={tour}/>
+                </Route>
+                <Route path={`${path}/post`}>
+                    <PostScenes tour={tour}/>
                 </Route>
             </SwitchWith404>
         </MenuItemComponent>

@@ -36,13 +36,10 @@ module.exports = {
                 test: /\.html$/,
                 loader: "html-loader"
             },
+
             {
-                test: /\.(png|jpg|gif)$/,
-                use: [
-                    {
-                        loader: 'url-loader'
-                    }
-                ]
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
             },
         ]
     },
@@ -63,6 +60,9 @@ module.exports = {
             "/api": {
                 target: "http://localhost:5000",
                 pathRewrite: {"^/api": ""}
+            },
+            "/static": {
+                target: "http://localhost:5000",
             }
         },
         hot: true

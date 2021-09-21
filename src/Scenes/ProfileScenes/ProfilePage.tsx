@@ -7,7 +7,7 @@ export const ProfilePage: FC<{user: User}> = ({user}) => {
     const [teams] = useTeams(undefined, undefined, user.id);
     return (
         <>
-            <BoxContainer>
+            <BoxContainer reverseWrap>
                 <TeamsBox teams={teams} size={undefined}/>
                 <UserInfoBox user={user}/>
             </BoxContainer>

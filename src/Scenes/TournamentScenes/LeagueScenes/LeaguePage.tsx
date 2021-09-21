@@ -5,7 +5,7 @@ import PageHeader from "../../../components/PageHeader";
 import SimpleMenu from "../../../components/SimpleMenu";
 import {BoxContainer, TeamsBox} from "../../../components";
 import {useGames, useTeams} from "../../../helpers/hooks";
-import {GamesBox} from "../../../components/models/Game/Game";
+import {GamesBox} from "../../../components";
 
 export const LeaguePage: FC<{league: League}> = ({league}) => {
     const {url} = useRouteMatch();
@@ -23,7 +23,7 @@ export const LeaguePage: FC<{league: League}> = ({league}) => {
                     ]}
                 </SimpleMenu>
             </PageHeader>
-            <BoxContainer>
+            <BoxContainer reverseWrap covid>
                 <TeamsBox teams={teams}/>
                 <GamesBox games={games}/>
             </BoxContainer>
