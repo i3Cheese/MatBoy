@@ -25,7 +25,6 @@ pytz==2020.1
 requests==2.22.0
 six==1.15.0
 SQLAlchemy~=1.4.23
-mysqlclient==2.0.2
 psycopg2==2.8.6
 sqlalchemy-json==0.4.0
 sqlalchemy-mixins==1.2.1

@@ -81,3 +81,6 @@ class DebugConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
+    LOGGING_LEVEL = logging.INFO
+    SECRET_KEY = 'dByFs7fb'
+
