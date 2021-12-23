@@ -83,4 +83,5 @@ class ProductionConfig(BaseConfig):
     DEBUG = False
     LOGGING_LEVEL = logging.INFO
     SECRET_KEY = 'dByFs7fb'
-
+    DATA_BASE = 'postgresql://postgres:interned2003@localhost:5432/MatBoy2'
+    DATA_BASE_URL = 'postgresql://postgres:interned2003@localhost:5432/MatBoy2'
