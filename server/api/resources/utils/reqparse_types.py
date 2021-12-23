@@ -58,7 +58,7 @@ def lower(value):
 def date_type(strdate: str):
     if not strdate:
         return None
-    return date.fromisoformat(strdate)
+    return parser.parse(strdate).date()
 
 
 def datetime_type(strdatetime: str):

@@ -17,15 +17,15 @@
   padding: 20px;
   margin: 5px;
   box-sizing: border-box;
-  //&-tiny {
-  //  max-width: 380px;
-  //}
-  //&-middle {
-  //  max-width: 530px;
-  //}
-  //&-large {
-  //  max-width: 700px;
-  //}
+  &-tiny {
+    max-width: 380px;
+  }
+  &-middle {
+    max-width: 530px;
+  }
+  &-large {
+    max-width: 700px;
+  }
   &-full {
     width: 100%;
   }
