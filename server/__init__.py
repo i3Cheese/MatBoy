@@ -9,6 +9,8 @@ from data import global_init, get_session, User
 from data.user import AnonymousUser
 from config import config
 
+config.setup()
+
 
 def make_dir(name):
     try:
@@ -24,7 +26,6 @@ def create_dirs():
 
 create_dirs()
 wtforms_json.init()
-config.setup()
 global_init()
 
 

@@ -119,7 +119,6 @@ class GamesResource(Resource):
         else:
             abort(400, message='Details not provided')
             return
-        print(games)
         games = filter(lambda g: not g.is_deleted, games)
         res = {
             'success': True,

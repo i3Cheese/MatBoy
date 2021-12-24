@@ -10,7 +10,6 @@ class ModelId:
         self.cls = cls
 
     def __call__(self, value, name):
-        print(value, name)
         res = self.cls.query.get(value)
         if not res:
             raise ValueError(f"Parameter {name} isn't existing id of {self.cls.__name__}")

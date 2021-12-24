@@ -76,7 +76,6 @@ class TournamentResource(Resource):
         if not tour.have_permission(current_user):
             abort(403)
         data = request.get_json()
-        print(data)
         form = TournamentInfoForm.from_json(data['form'])
         res = {"success": False}
         if form.validate():

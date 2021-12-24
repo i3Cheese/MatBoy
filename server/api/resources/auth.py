@@ -34,7 +34,6 @@ class LoginResource(Resource):
             res['success'] = False
             res['message'] = str(form.errors)
             res['errors'] = form.errors
-        print(res)
         return jsonify(res)
 
 

@@ -46,7 +46,6 @@ class TeamsResource(Resource):
                 query = query.filter(Team.status == 2)
 
         teams = query.all()
-        print([t.status for t in teams])
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
 
     post_pars = reqparse.RequestParser()
@@ -101,7 +100,6 @@ class TeamResource(Resource):
 
         session = get_session()
         team = get_team(session, team_id)
-        print(args['status'])
         if not (args['league'] is None and args['status'] is None and args['status'] is None):
             # Change league and status can only tour chief
             if not team.tournament.have_permission(current_user):
