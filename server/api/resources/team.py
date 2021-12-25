@@ -8,21 +8,6 @@ from server.api import api
 from server.api.resources.utils import get_team, ModelId, user_type, lower, get_model
 
 
-def process_team_players(entries, team):
-    emails = []
-    for user_form in entries:  # Check players
-        email = user_form.email.data.lower()
-        emails.append(email)
-        user = User.query.filter(User.email == email).first()
-        if not user:
-            user = User()
-            for field in user_form:
-                if field.data:
-                    setattr(user, field.short_name, field.data)
-        team.players.append(user)
-    return emails
-
-
 @api.resource('/team')
 class TeamsResource(Resource):
     get_pars = reqparse.RequestParser()
@@ -42,8 +27,9 @@ class TeamsResource(Resource):
             query = query.filter_by(tournament_id=tournament_id)
         if user_id is not None:
             query = query.filter(Team.players.any(User.id == user_id))
-            if (user := User.query.get(user_id)) is not None and not user.have_permission(current_user):
-                query = query.filter(Team.status == 2)
+            if (user := User.query.get(user_id)) is not None \
+                    and not user.have_manage_access(current_user):
+                query = query.filter(Team.status == 'accepted')
 
         teams = query.all()
         return jsonify({'teams': [item.to_dict() for item in teams], 'success': True})
