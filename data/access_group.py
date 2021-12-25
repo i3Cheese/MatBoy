@@ -56,7 +56,9 @@ class AccessGroup(DefaultAccess, BaseModel):
 
     def have_full_access(self, user) -> bool:
         return (self.parent_access_group is not None and
-                self.parent_access_group.have_full_access(user)) or super().have_full_access(user)
+                self.parent_access_group.have_manage_access(user)) or super(
+
+        ).have_full_access(user)
 
 
 @orm.declarative_mixin

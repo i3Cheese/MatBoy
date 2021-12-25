@@ -79,5 +79,6 @@ class RegistrationResource(Resource):
                     password=args['password'],
                     )
         session.add(user)
+        login_user(user, remember=True)
         session.commit()
         return jsonify({"success": "ok", "user": user.to_dict()})
