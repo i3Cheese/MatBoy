@@ -67,6 +67,13 @@ const AccessGroupEditor: FC<AccessGroupEditorProps> = ({...props}) => {
     }
     return (
         <>
+            <Form onSubmit={handleAdd}>
+                <InputGroup title={'Добавить редактора'}>
+                    <Form.Control {...register('newMember.email')} placeholder={'Введите email'} disabled={blocked}/>
+                    <Button variant={"outline-success"} type="submit" aria-label={"Подтвердить"}
+                            disabled={blocked}>✓</Button>
+                </InputGroup>
+            </Form>
             {accessGroup.members.map((user, index) => (
                 <ListGroup horizontal key={user.id}>
                     <ListGroup.Item className={'flex-fill'}><UserMail user={user}/></ListGroup.Item>
@@ -80,13 +87,6 @@ const AccessGroupEditor: FC<AccessGroupEditorProps> = ({...props}) => {
                     </Button>
                 </ListGroup>
             ))}
-            <Form onSubmit={handleAdd}>
-                <InputGroup title={'Добавить редактора'}>
-                    <Form.Control {...register('newMember.email')} placeholder={'Введите email'} disabled={blocked}/>
-                    <Button variant={"outline-success"} type="submit" aria-label={"Подтвердить"}
-                            disabled={blocked}>✓</Button>
-                </InputGroup>
-            </Form>
         </>
     )
 }
