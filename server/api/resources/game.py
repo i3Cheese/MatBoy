@@ -140,7 +140,7 @@ class GamesResource(Resource):
 
         session = get_session()
         league = args['league']
-        if not league.have_permission(current_user):
+        if not league.have_manage_access(current_user):
             abort(403)
 
         team1 = args['team1']
