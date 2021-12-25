@@ -63,7 +63,7 @@ def date_type(strdate: str):
 def datetime_type(strdatetime: str):
     if not strdatetime:
         return None
-    return parser.parse(strdatetime)
+    return parser.parse(strdatetime).replace(tzinfo=None)
 
 
 __all__ = [
