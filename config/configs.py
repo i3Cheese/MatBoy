@@ -12,7 +12,8 @@ class BaseConfig:
 
     DATA_BASE = 'db/matboy.db'
     DATA_BASE_URL = 'sqlite:///' + \
-                    os.path.abspath('db/matboy.db') + '?check_same_thread=False'
+                    os.path.abspath(
+                        'db/matboy.db') + '?check_same_thread=False'
 
     SECRET_KEY = None
     SECURITY_PASSWORD_SALT = None
@@ -46,7 +47,7 @@ class BaseConfig:
 
     DATE_FORMAT = "%d.%m.%Y"
 
-    LOGGING_FILE = "matboy.log"
+    LOGGING_FILE = os.path.abspath("matboy.log")
     LOGGING_LEVEL = logging.WARNING
 
     LOCALE_LIST = ['ru_RU.utf8', 'ru_RU', 'ru']
@@ -55,9 +56,11 @@ class BaseConfig:
     @classmethod
     def setup(cls):
         """Setup builtin modules"""
-        logging.basicConfig(handlers=[logging.FileHandler(filename=cls.LOGGING_FILE,
-                                                          encoding='utf-8', )],
-                            level=cls.LOGGING_LEVEL)
+        fh = logging.FileHandler(filename=cls.LOGGING_FILE, encoding='utf-8')
+        logging.basicConfig(handlers=[fh],
+                            level=cls.LOGGING_LEVEL,
+                            force=True)
+        logging.error(cls.LOGGING_FILE)
         logging.getLogger('serializer').setLevel(
             logging.WARNING)  # Disable spam log
         for locale_name in cls.LOCALE_LIST:
@@ -70,7 +73,6 @@ class BaseConfig:
                 break
         if cls.LOCALE is None:
             raise locale.Error("OS does not support any of locales")
-
 
 
 class DebugConfig(BaseConfig):
