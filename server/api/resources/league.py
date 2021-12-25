@@ -67,7 +67,7 @@ class LeagueResource(Resource):
 
         session = get_session()
         league = get_model(League, league_id)
-        if not league.edit_access():
+        if not league.have_manage_access(current_user):
             abort(403, message="Permission denied")
 
         if args['tournament'] is not None:
@@ -91,7 +91,7 @@ class LeagueResource(Resource):
         league = get_model(League, league_id, do_abort=False)
         if not league:
             return jsonify({'success': True})
-        if not league.have_permission(current_user):
+        if not league.have_full_access(current_user):
             abort(403, message="Permission denied")
 
         for team in league.teams:

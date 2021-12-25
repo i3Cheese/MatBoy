@@ -25,7 +25,7 @@ export const TeamPage: FC<{team: Team}> = ({team}) => {
             </PageHeader>
             <BoxContainer fluid={"md"} reverseWrap>
                 <TeamInfoBox team={team}/>
-                <UsersBox users={team.players} title='Сотстав команды'/>
+                <UsersBox users={team.players} title='Состав команды'/>
                 <GamesBox games={games}/>
             </BoxContainer>
         </>

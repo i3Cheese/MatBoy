@@ -24,7 +24,7 @@ export const UserMail: FC<{user: User}> = ({user, children}) => (
 
 export const UserItem: FC<{user: User}>= ({user}) => (
     <DivLink to={userLink(user)}>
-        <h2 className="item_title">{user.name}</h2>
+        <h2 className="item_title">{user.fullname}</h2>
     </DivLink>
 )
 
