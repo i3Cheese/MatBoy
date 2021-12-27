@@ -4,7 +4,8 @@ from flask import jsonify
 import sqlalchemy.exc
 
 
-@app.errorhandler(sqlalchemy.exc.SQLAlchemyError)
+@app.errorhandler(500)
 def handle_bad_request(e):
     db_session.rollback()
+    print("x")
     raise e
