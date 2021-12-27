@@ -48,7 +48,14 @@ def load_user(user_id) -> User:
     return session.query(User).get(user_id)
 
 
-# from . import errorhandlers
+from . import errorhandlers
+
+
+@app.route('/ruin')
+def a():
+    User.query.where(User.email == 1).one()
+
+
 # from . import web_pages
 from . import web_utils
 
