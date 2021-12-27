@@ -25,7 +25,8 @@ export const TournamentPage: FC<{tour: Tournament}> = ({tour}) => {
                 </SimpleMenu>
             </PageHeader>
             <BoxContainer covid reverseWrap>
-                <LeaguesBox tourId={tour.id}/>
+                {/*<LeaguesBox tourId={tour.id}/>*/}
+                {/* TODO: раскоментить */}
                 <Box type="square">
                     <BoxTitle>
                         Информация
