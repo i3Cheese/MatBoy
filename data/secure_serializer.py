@@ -12,10 +12,10 @@ class SecureSerializerMixin(SerializerMixin):
 
     @property
     def serialize_only(self) -> t.Optional[tuple[str]]:
-        # if self._serialize_only is None:
-        #     return None
-        # elif self._sensitive_fields is None:
-        #     return self._serialize_only
+        if self._serialize_only is None:
+            return None
+        elif self._sensitive_fields is None:
+            return self._serialize_only
         # elif isinstance(self, AccessInterface) and not self.have_manage_access(flask_login.current_user):
         #     return self._serialize_only
         # else:
