@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from flask import Flask
 from flask_login import LoginManager
@@ -43,7 +44,9 @@ login_manager.anonymous_user = AnonymousUser
 
 
 @login_manager.user_loader
-def load_user(user_id) -> User:
+def load_user(user_id) -> Optional[User]:
+    if user_id is None:
+        return None
     session = get_session()
     return session.query(User).get(user_id)
 
